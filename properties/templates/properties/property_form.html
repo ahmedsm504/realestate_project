@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}تعديل عقار{% else %}إضافة عقار جديد{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg my-8">
+    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">
+        {% if form.instance.pk %}تعديل العقار: {{ form.instance.title }}{% else %}أضف عقار جديد{% endif %}
+    </h1>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+                <strong class="font-bold">خطأ!</strong>
+                <span class="block sm:inline">الرجاء تصحيح الأخطاء التالية:</span>
+                <ul class="mt-2 list-disc list-inside">
+                    {% for field in form %}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-2">
+                <label for="id_main_image" class="block text-gray-700 font-semibold mb-2">الصورة الرئيسية للعقار</label>
+                {{ form.main_image }}
+                
+                {% if form.instance.pk and main_image %}
+                    <img src="{{ main_image.image.url }}" alt="الصورة الرئيسية الحالية" class="mt-2 w-32 h-32 object-cover rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-500 mt-1">الصورة الرئيسية الحالية (ستحل الصورة الجديدة محلها)</p>
+                {% endif %}
+            </div>
+
+            {% for field in form %}
+                {% if field.name != 'main_image' and field.name != 'images' and field.name != 'new_features' and field.name != 'features' %}
+                    <div class="form-group {% if field.name == 'description' or field.name == 'location_address' %}md:col-span-2{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="block text-gray-700 font-semibold mb-2">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<p class="text-sm text-gray-500 mt-1">{{ field.help_text }}</p>{% endif %}
+                        {% for error in field.errors %}<p class="text-red-500 text-sm mt-1">{{ error }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="md:col-span-2">
+                <label class="block text-gray-700 font-semibold mb-2">{{ form.features.label }}</label>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {% for checkbox in form.features %}
+                        <div class="flex items-center bg-gray-50 p-2 rounded-md shadow-sm">
+                            {{ checkbox.tag }}
+                            <label for="{{ checkbox.id_for_label }}" class="ml-2 text-gray-700 cursor-pointer">{{ checkbox.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% for error in form.features.errors %}<p class="text-red-500 text-sm mt-1">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="{{ form.new_features.id_for_label }}" class="block text-gray-700 font-semibold mb-2">{{ form.new_features.label }}</label>
+                {{ form.new_features }}
+                {% if form.new_features.help_text %}<p class="text-sm text-gray-500 mt-1">{{ form.new_features.help_text }}</p>{% endif %}
+                {% for error in form.new_features.errors %}<p class="text-red-500 text-sm mt-1">{{ error }}</p>{% endfor %}
+            </div>
+
+            {% if form.instance.pk %}
+                <div class="md:col-span-2 border-t pt-6 mt-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">الصور الإضافية الحالية:</h3>
+                    {% if extra_images %}
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {% for img in extra_images %}
+                                <div class="relative group">
+                                    <img src="{{ img.image.url }}" alt="صورة العقار" class="w-full h-32 object-cover rounded-lg shadow-md">
+                                    <button type="submit" name="delete_image_{{ img.id }}" value="{{ img.id }}" 
+                                            class="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+                                            onclick="return confirm('هل أنت متأكد من حذف هذه الصورة؟')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500">لا توجد صور إضافية حاليًا.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="md:col-span-2">
+                <label for="id_images" class="block text-gray-700 font-semibold mb-2">صور العقار الإضافية</label>
+                <input type="file" name="{{ form.images.name }}" id="{{ form.images.id_for_label }}" multiple class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-4 mt-8">
+            <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300">
+                {% if form.instance.pk %}تحديث العقار{% else %}إضافة العقار{% endif %}
+            </button>
+            <a href="{% url 'properties:my_properties' %}" class="bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-400 transition duration-300">
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

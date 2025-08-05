@@ -1,0 +1,42 @@
+{# inquiries/templates/inquiries/realtor_inquiries.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}استفسارات عقاراتي{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg my-8">
+        <h1 class="text-3xl font-bold text-blue-700 text-center mb-6">الاستفسارات التي وصلتني</h1>
+        {% if all_inquiries %}
+            {% for inquiry in all_inquiries %}
+            <div class="p-6 mb-4 bg-gray-50 rounded-lg border {% if not inquiry.is_reviewed %}border-yellow-500{% else %}border-gray-200{% endif %}">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">بخصوص عقار: <a href="{% url 'properties:property_detail' inquiry.property.pk %}" class="text-blue-600 hover:underline">{{ inquiry.property.title }}</a></h3>
+                    <p class="text-sm text-gray-500">من: {{ inquiry.inquirer.username }} | بتاريخ: {{ inquiry.created_at|date:"d M, Y" }}</p>
+                </div>
+                <p class="text-gray-700 border-b pb-4 mb-4">{{ inquiry.message }}</p>
+
+                {% if inquiry.reply_message %}
+                    <div class="bg-blue-50 p-4 rounded-lg mt-4">
+                        <p class="font-bold text-blue-800 mb-2">ردك:</p>
+                        <p class="text-blue-700">{{ inquiry.reply_message }}</p>
+                    </div>
+                {% else %}
+                    <form method="post" action="{% url 'inquiries:reply_to_inquiry' inquiry.pk %}" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label for="id_reply_message_{{ inquiry.pk }}" class="block text-sm font-medium text-gray-700 mb-1">اكتب ردك:</label>
+                            <textarea id="id_reply_message_{{ inquiry.pk }}" name="reply_message" rows="3" class="w-full p-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        </div>
+                        <button type="submit" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
+                            إرسال الرد
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-gray-500 mt-8">لم تصلك أي استفسارات حتى الآن.</p>
+        {% endif %}
+    </div>
+{% endblock %}

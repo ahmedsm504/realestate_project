@@ -1,0 +1,27 @@
+{# properties/templates/properties/property_confirm_delete.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}تأكيد حذف العقار{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'properties/css/property_delete_style.css' %}">
+{% endblock %}
+
+{% block content %}
+    <section class="delete-confirmation-section">
+        <h1 class="section-title">تأكيد حذف العقار</h1>
+        <p>هل أنت متأكد أنك تريد حذف العقار: **"{{ property.title }}"**?</p>
+        <p class="warning-text">هذا الإجراء لا يمكن التراجع عنه.</p>
+
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="btn delete-btn">تأكيد الحذف</button>
+            <a href="{% url 'properties:property_detail' property.pk %}" class="btn cancel-btn">إلغاء</a>
+        </form>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'properties/js/property_delete_script.js' %}"></script>
+{% endblock %}

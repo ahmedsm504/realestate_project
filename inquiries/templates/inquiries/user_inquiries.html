@@ -1,0 +1,33 @@
+{# inquiries/templates/inquiries/user_inquiries.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}استفساراتي المرسلة{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg my-8">
+        <h1 class="text-3xl font-bold text-blue-700 text-center mb-6">الاستفسارات التي أرسلتها</h1>
+        {% if user_inquiries %}
+            {% for inquiry in user_inquiries %}
+            <div class="p-6 mb-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">بخصوص عقار: <a href="{% url 'properties:property_detail' inquiry.property.pk %}" class="text-blue-600 hover:underline">{{ inquiry.property.title }}</a></h3>
+                    <p class="text-sm text-gray-500">لصاحب العقار: {{ inquiry.property.owner.username }}</p>
+                </div>
+                <p class="text-gray-700 border-b pb-4 mb-4">{{ inquiry.message }}</p>
+                
+                {% if inquiry.reply_message %}
+                    <div class="bg-green-50 p-4 rounded-lg mt-4">
+                        <p class="font-bold text-green-800 mb-2">رد صاحب العقار:</p>
+                        <p class="text-green-700">{{ inquiry.reply_message }}</p>
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 mt-4">لم يتم الرد على استفسارك بعد.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-gray-500 mt-8">لم ترسل أي استفسارات حتى الآن.</p>
+        {% endif %}
+    </div>
+{% endblock %}

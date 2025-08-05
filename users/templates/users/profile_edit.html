@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}تعديل الملف الشخصي{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg my-8">
+    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">تعديل الملف الشخصي</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="bg-green-100 border-r-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg" role="alert">
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+            <div class="mt-1">
+                {{ field }}
+            </div>
+            {% for error in field.errors %}<p class="text-red-500 text-sm mt-1">{{ error }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        
+        <div class="flex justify-center gap-4 mt-8">
+            <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300">
+                حفظ التغييرات
+            </button>
+            <a href="{% url 'users:profile' %}" class="bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-400 transition duration-300">
+                إلغاء
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

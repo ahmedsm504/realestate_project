@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ property.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto my-8 bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- الصورة الرئيسية وصور المعرض -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+        <div class="main-image">
+            {% if property.images.first %}
+            <img id="main-property-image" src="{{ property.images.first.image.url }}" alt="{{ property.title }}" class="w-full h-96 object-cover rounded-lg shadow-md">
+            {% else %}
+            <img id="main-property-image" src="https://placehold.co/600x400/E5E7EB/4B5563?text=لا+توجد+صورة" alt="لا توجد صورة" class="w-full h-96 object-cover rounded-lg shadow-md">
+            {% endif %}
+        </div>
+        <div class="thumbnail-images grid grid-cols-3 gap-2">
+            {% if property.images.all %}
+                {% for img in property.images.all %}
+                    <img src="{{ img.image.url }}" alt="صورة {{ forloop.counter }}" data-full-image="{{ img.image.url }}" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity duration-300">
+                {% endfor %}
+            {% else %}
+                <img src="https://placehold.co/600x400/E5E7EB/4B5563?text=لا+توجد+صور" alt="صورة افتراضية" class="w-full h-24 object-cover rounded-lg col-span-3">
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- تفاصيل العقار -->
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-4 border-b pb-4">
+            <h1 class="text-4xl font-extrabold text-blue-800">{{ property.title }}</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-3xl font-bold text-green-600">{{ property.price|floatformat:"0" }} ج.م</span>
+                
+                {% comment %}
+                    زر المفضلة سيظهر فقط للمستخدمين العاديين المسجلين دخولهم
+                {% endcomment %}
+                {% if user.is_authenticated and not user.is_realtor %}
+                <button id="favorite-btn" 
+                        data-pk="{{ property.pk }}" 
+                        data-is-favorite="{{ is_favorite|lower }}" 
+                        class="p-2 rounded-full transition-colors duration-300 {% if is_favorite %}text-red-500 hover:text-red-600 bg-red-100{% else %}text-gray-400 hover:text-red-500 bg-gray-100{% endif %}">
+                    <svg id="favorite-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <p class="text-gray-600 mb-6">{{ property.description|linebreaksbr }}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-gray-700">
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong>الحالة:</strong> {{ property.get_status_display }}
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong>النوع:</strong> {{ property.get_property_type_display }}
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong>المساحة:</strong> {{ property.area|floatformat:"0" }} م²
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong>غرف النوم:</strong> {{ property.bedrooms }}
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong>الحمامات:</strong> {{ property.bathrooms }}
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong>الموقع:</strong> {{ property.location_address }}, {{ property.city }}
+            </div>
+        </div>
+        
+        <!-- المميزات -->
+        <div class="mt-8">
+            <h3 class="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">المميزات</h3>
+            {% if property.features.all %}
+                <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {% for feature in property.features.all %}
+                        <li class="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg shadow-sm">
+                            <svg class="w-5 h-5 text-green-500 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            {{ feature.name }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">لا توجد مميزات محددة.</p>
+            {% endif %}
+        </div>
+
+        <!-- معلومات المالك وزر الاستفسار -->
+        <div class="mt-8 p-6 bg-blue-50 rounded-lg shadow-md">
+            <h3 class="text-2xl font-bold text-blue-700 border-b pb-2 mb-4">معلومات المالك</h3>
+            <p class="text-gray-800 text-lg mb-4">
+                صاحب العقار: <span class="font-bold">{{ property.owner.username }}</span>
+            </p>
+            
+            {% comment %}
+                التحقق مما إذا كان المالك مسوق عقاري، ثم عرض رقم الهاتف
+            {% endcomment %}
+            {% if property.owner.is_realtor and property.owner.phone_number %}
+            <p class="text-gray-800 text-lg mb-4">
+                رقم الهاتف: <span class="font-bold">{{ property.owner.phone_number }}</span>
+            </p>
+            {% endif %}
+
+            {% if user.is_authenticated and not user.is_realtor %}
+                <a href="{% url 'inquiries:create_inquiry' property.pk %}" class="block w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300">
+                    إرسال استفسار
+                </a>
+            {% elif not user.is_authenticated %}
+                <a href="{% url 'users:login' %}?next={{ request.path }}" class="block w-full text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300">
+                    سجل الدخول لإرسال استفسار
+                </a>
+            {% elif user.is_authenticated and user == property.owner %}
+                <p class="text-center text-gray-500 mt-4">هذا هو عقارك الخاص، لا يمكنك إرسال استفسار.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainImage = document.getElementById('main-property-image');
+        const thumbnails = document.querySelectorAll('.thumbnail-images img');
+
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                mainImage.src = this.dataset.fullImage;
+                thumbnails.forEach(t => t.classList.remove('ring-4', 'ring-blue-500'));
+                this.classList.add('ring-4', 'ring-blue-500');
+            });
+        });
+
+        if (thumbnails.length > 0) {
+            thumbnails[0].classList.add('ring-4', 'ring-blue-500');
+        }
+
+        const favoriteBtn = document.getElementById('favorite-btn');
+        if (favoriteBtn) {
+            favoriteBtn.addEventListener('click', function() {
+                const propertyId = this.dataset.pk;
+                const url = `{% url 'properties:add_remove_favorite' pk=property.pk %}`;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error('Network response was not ok:', response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.status === 'success') {
+                        if (data.is_favorite) {
+                            favoriteBtn.classList.add('text-red-500', 'hover:text-red-600', 'bg-red-100');
+                            favoriteBtn.classList.remove('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
+                            favoriteBtn.dataset.isFavorite = 'true';
+                        } else {
+                            favoriteBtn.classList.remove('text-red-500', 'hover:text-red-600', 'bg-red-100');
+                            favoriteBtn.classList.add('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
+                            favoriteBtn.dataset.isFavorite = 'false';
+                        }
+                    } else {
+                        console.error('Error from server:', data.message);
+                    }
+                })
+                .catch(error => console.error('Fetch Error:', error));
+            });
+        }
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}
