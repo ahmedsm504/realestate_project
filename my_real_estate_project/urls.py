@@ -9,7 +9,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('properties.urls', namespace='properties')),
     path('users/', include('users.urls')),          # روابط تطبيق المستخدمين
-    path('properties/', include('properties.urls')), # روابط تطبيق العقارات
     path('inquiries/', include('inquiries.urls')),  # روابط تطبيق الاستفسارات
     # path('', include('pages.urls')), # إذا أنشأت تطبيق pages للصفحة الرئيسية
 ]

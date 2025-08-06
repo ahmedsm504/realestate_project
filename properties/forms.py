@@ -1,22 +1,20 @@
+# properties/forms.py
+
 from django import forms
 from .models import Property, Feature, PropertyImage
 
 class PropertyForm(forms.ModelForm):
-    # حقل لرفع الصورة الرئيسية
     main_image = forms.ImageField(
         label='الصورة الرئيسية للعقار',
         required=False,
         widget=forms.FileInput(attrs={'class': 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none'})
     )
 
-    # حقل لرفع الصور الإضافية المتعددة
-    # لا يوجد ويدجت مخصص هنا. سنضيف خاصية multiple في القالب يدوياً.
     images = forms.FileField(
         label='صور العقار الإضافية (يمكنك اختيار أكثر من صورة)',
         required=False
     )
 
-    # حقل لإضافة مميزات جديدة
     new_features = forms.CharField(
         label='إضافة مميزات جديدة (افصل بينها بفاصلة)',
         required=False,
@@ -28,7 +26,8 @@ class PropertyForm(forms.ModelForm):
         fields = [
             'title', 'description', 'property_type', 'status', 'price',
             'area', 'bedrooms', 'bathrooms', 'location_address', 'city',
-            'district', 'features', 'is_published'
+            'district', 'features', 'is_published',
+            'latitude', 'longitude', # إضافة الحقول الجديدة هنا
         ]
         labels = {
             'title': 'عنوان العقار',
@@ -44,6 +43,8 @@ class PropertyForm(forms.ModelForm):
             'district': 'الحي/المنطقة',
             'features': 'المميزات الموجودة',
             'is_published': 'نشر العقار',
+            'latitude': 'خط العرض (Latitude)', # تسمية الحقل
+            'longitude': 'خط الطول (Longitude)', # تسمية الحقل
         }
         widgets = {
             'title': forms.TextInput(attrs={'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}),
@@ -59,6 +60,9 @@ class PropertyForm(forms.ModelForm):
             'district': forms.TextInput(attrs={'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'}),
             'features': forms.CheckboxSelectMultiple(attrs={'class': 'mt-1'}),
             'is_published': forms.CheckboxInput(attrs={'class': 'form-checkbox h-5 w-5 text-blue-600'}),
+            # جعل حقول Latitude و Longitude مخفية لأنها ستُملأ بواسطة الخريطة
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):

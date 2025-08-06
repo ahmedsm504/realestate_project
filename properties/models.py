@@ -3,6 +3,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model # عشان نجيب نموذج المستخدم الافتراضي
 from django.utils import timezone # عشان نستخدم الوقت الحالي في التاريخ
+from django.template.defaultfilters import slugify # تأكد من استيراد slugify
+from django.urls import reverse # تأكد من استيراد reverse
 
 
 User = get_user_model() # ده بيجيب نموذج المستخدم اللي Django بيستخدمه (سواء الافتراضي أو المخصص)
@@ -38,8 +40,11 @@ class Property(models.Model):
     # معلومات الموقع
     location_address = models.CharField(max_length=255, verbose_name='العنوان بالتفصيل')
     city = models.CharField(max_length=100, verbose_name='المدينة')
-    district = models.CharField(max_length=100, blank=True, null=True, verbose_name='الحي/المنطقة') # ممكن تكون اختيارية
-    # ممكن نضيف حقل لخريطة Google Maps لو احتجنا بعدين
+    district = models.CharField(max_length=100, blank=True, null=True, verbose_name='الحي/المنطقة')
+
+    # تم تعديل حقلي خطوط الطول والعرض هنا ليتوافق مع دقة عالية جداً
+    latitude = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True, verbose_name='خط العرض')
+    longitude = models.DecimalField(max_digits=22, decimal_places=16, blank=True, null=True, verbose_name='خط الطول')
 
     # تاريخ الإضافة والتحديث
     published_date = models.DateTimeField(default=timezone.now, verbose_name='تاريخ النشر')
@@ -49,8 +54,23 @@ class Property(models.Model):
     # مميزات إضافية (علاقة ManyToMany)
     features = models.ManyToManyField('Feature', blank=True, related_name='properties', verbose_name='المميزات')
 
+    # حقل slug لإنشاء روابط لطيفة (SEO-friendly URLs)
+    slug = models.SlugField(unique=True, max_length=255, blank=True, null=True, verbose_name='الرابط اللطيف')
+
     def __str__(self):
         return self.title
+
+    # دالة لحفظ الـ slug تلقائياً عند حفظ العقار
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+    # دالة للحصول على رابط العقار بعد الحفظ
+    def get_absolute_url(self):
+        # هنا استخدمنا 'slug' بدلاً من 'pk' لإنشاء رابط لطيف
+        return reverse('properties:property_detail', kwargs={'slug': self.slug})
+
 
     class Meta:
         verbose_name = 'عقار'
@@ -82,13 +102,6 @@ class Feature(models.Model):
         verbose_name_plural = 'مميزات'
 
 
-# users/models.py
-# (كود النموذج CustomUser الخاص بك)
-from django.db import models
-from django.contrib.auth import get_user_model
-
-# ... (باقي نماذجك) ...
-
 # نموذج لربط المستخدمين بالعقارات المفضلة لديهم
 class FavoriteProperty(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='favorites')
@@ -103,4 +116,3 @@ class FavoriteProperty(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.property.title}'
-

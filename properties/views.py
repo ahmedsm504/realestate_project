@@ -5,17 +5,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import Property, PropertyImage, Feature
+from django.http import JsonResponse
+from .models import Property, PropertyImage, Feature, FavoriteProperty
 from .forms import PropertyForm
+
 
 class PropertyListView(ListView):
     model = Property
     template_name = 'properties/property_list.html'
-    context_object_name = 'properties'
+    context_object_name = 'properties' # سيتم تغيير هذا لاحقاً في get_context_data
     paginate_by = 6
 
     def get_queryset(self):
         queryset = Property.objects.filter(is_published=True).order_by('-published_date')
+        
+        # فلترة البحث العام
         query = self.request.GET.get('q')
         if query:
             queryset = queryset.filter(
@@ -25,18 +29,50 @@ class PropertyListView(ListView):
                 Q(city__icontains=query) |
                 Q(district__icontains=query)
             )
+        
+        # فلترة نوع العقار
         property_type = self.request.GET.get('property_type')
         if property_type:
             queryset = queryset.filter(property_type=property_type)
+        
+        # فلترة حالة العقار (للبيع أو للإيجار)
         status = self.request.GET.get('status')
         if status:
             queryset = queryset.filter(status=status)
+            
+        # فلترة السعر الأقصى (أقل من أو يساوي)
+        max_price = self.request.GET.get('max_price')
+        if max_price and max_price.isdigit(): # تأكد أنه رقم
+            queryset = queryset.filter(price__lte=float(max_price)) # أقل من أو يساوي
+            
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # إضافة خيارات الفلترة إلى السياق
         context['property_type_choices'] = Property.PROPERTY_TYPES
         context['property_status_choices'] = Property.PROPERTY_STATUS
+        
+        # تجهيز العقارات مع مسار الصورة المعروضة لتجنب أخطاء القالب
+        properties_with_display_image = []
+        for prop in context['object_list']: # object_list يحتوي على العقارات للصفحة الحالية
+            display_image_url = "https://placehold.co/600x336/E5E7EB/4B5563?text=لا+توجد+صورة" # صورة افتراضية
+
+            # حاول الحصول على الصورة الرئيسية أولاً
+            main_image = prop.images.filter(is_main=True).first()
+            if main_image:
+                display_image_url = main_image.image.url
+            elif prop.images.first(): # إذا لم توجد صورة رئيسية، احصل على أول صورة متاحة
+                display_image_url = prop.images.first().image.url
+            
+            properties_with_display_image.append({
+                'property': prop,
+                'display_image_url': display_image_url
+            })
+        
+        context['properties'] = properties_with_display_image # استبدال properties بالقائمة الجديدة
+        
         return context
 
 class PropertyDetailView(DetailView):
@@ -48,9 +84,19 @@ class PropertyDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # تجهيز الصور للقالب
+        
         context['main_image'] = self.object.images.filter(is_main=True).first()
         context['extra_images'] = self.object.images.filter(is_main=False)
+        
+        is_favorite = False
+        if self.request.user.is_authenticated and not self.request.user.is_realtor:
+            is_favorite = FavoriteProperty.objects.filter(
+                user=self.request.user, 
+                property=self.object
+            ).exists()
+        
+        context['is_favorite'] = is_favorite
+        
         return context
 
 class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -64,31 +110,22 @@ class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # تجهيز قائمة المميزات
         context['all_features'] = Feature.objects.all()
         return context
 
     def form_valid(self, form):
-        # 1. ربط العقار بالمستخدم
         form.instance.owner = self.request.user
-        
-        # 2. نطلب من الكلاس الأب أن يقوم بحفظ الفورم وتوجيهنا إلى صفحة النجاح
-        # هذا السطر مهم جداً لأنه يقوم بحفظ العقار ويضع الكائن في self.object
         response = super().form_valid(form)
 
-        # 3. الآن بعد أن تم حفظ العقار، يمكننا التعامل مع الصور والمميزات
         property_obj = self.object
 
-        # التعامل مع الصورة الرئيسية
         main_image_file = self.request.FILES.get('main_image')
         if main_image_file:
             PropertyImage.objects.create(property=property_obj, image=main_image_file, is_main=True)
 
-        # التعامل مع الصور الإضافية
         for image_file in self.request.FILES.getlist('images'):
             PropertyImage.objects.create(property=property_obj, image=image_file)
 
-        # التعامل مع المميزات الجديدة
         new_features_str = form.cleaned_data.get('new_features')
         if new_features_str:
             new_features_list = [f.strip() for f in new_features_str.split(',') if f.strip()]
@@ -113,33 +150,23 @@ class PropertyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # تجهيز الصور للقالب
         context['main_image'] = self.object.images.filter(is_main=True).first()
         context['extra_images'] = self.object.images.filter(is_main=False)
         return context
 
     def form_valid(self, form):
-        # 1. نطلب من الكلاس الأب أن يقوم بحفظ الفورم وتوجيهنا إلى صفحة النجاح
-        # هذا السطر مهم جداً لأنه يقوم بحفظ التحديثات ويضع الكائن في self.object
         response = super().form_valid(form)
-        
-        # 2. الآن بعد أن تم تحديث العقار، يمكننا التعامل مع الصور والمميزات
         property_obj = self.object
 
-        # التعامل مع الصورة الرئيسية (تحديثها)
         main_image_file = self.request.FILES.get('main_image')
         if main_image_file:
-            # حذف الصورة الرئيسية القديمة
             PropertyImage.objects.filter(property=property_obj, is_main=True).delete()
-            # إنشاء صورة رئيسية جديدة
             PropertyImage.objects.create(property=property_obj, image=main_image_file, is_main=True)
             messages.info(self.request, 'تم تحديث الصورة الرئيسية بنجاح.')
 
-        # التعامل مع الصور الإضافية
         for image_file in self.request.FILES.getlist('images'):
             PropertyImage.objects.create(property=property_obj, image=image_file)
 
-        # التعامل مع المميزات الجديدة
         new_features_str = form.cleaned_data.get('new_features')
         if new_features_str:
             new_features_list = [f.strip() for f in new_features_str.split(',') if f.strip()]
@@ -184,50 +211,26 @@ class PropertyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 @login_required
 @user_passes_test(lambda u: u.is_realtor)
 def my_properties_view(request):
-    my_properties = Property.objects.filter(owner=request.user)
-    context = {'my_properties': my_properties}
+    my_properties = Property.objects.filter(owner=request.user).prefetch_related('images')
+
+    properties_with_display_image = []
+    for prop in my_properties:
+        display_image_url = "https://placehold.co/600x336/E5E7EB/4B5563?text=لا+توجد+صورة"
+
+        main_image = prop.images.filter(is_main=True).first()
+        if main_image:
+            display_image_url = main_image.image.url
+        elif prop.images.first():
+            display_image_url = prop.images.first().image.url
+        
+        properties_with_display_image.append({
+            'property': prop,
+            'display_image_url': display_image_url
+        })
+
+    context = {'my_properties_with_images': properties_with_display_image}
     return render(request, 'properties/my_properties.html', context)
 
-
-# properties/views.py
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import DetailView
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.contrib.auth import get_user_model
-from .models import Property, FavoriteProperty
-
-# تأكد من أنك تستخدم هذا الـ View في urls.py
-class PropertyDetailView(DetailView):
-    model = Property
-    template_name = 'properties/property_detail.html'
-    context_object_name = 'property'
-
-    def get_context_data(self, **kwargs):
-        # استدعاء الدالة الأصلية للحصول على السياق
-        context = super().get_context_data(**kwargs)
-        
-        # تهيئة متغير is_favorite
-        is_favorite = False
-        
-        # الحصول على كائن العقار الحالي من الـ View
-        current_property = self.get_object()
-
-        # التحقق من أن المستخدم مسجل دخوله وليس مسوق عقاري
-        if self.request.user.is_authenticated and not self.request.user.is_realtor:
-            # التحقق من وجود العقار في قائمة المفضلة للمستخدم
-            is_favorite = FavoriteProperty.objects.filter(
-                user=self.request.user, 
-                property=current_property
-            ).exists()
-        
-        # إضافة حالة المفضلة إلى سياق القالب
-        context['is_favorite'] = is_favorite
-        
-        return context
-
-# باقي الدوال (add_remove_favorite, favorite_list) تبقى كما هي
 @login_required
 def add_remove_favorite(request, pk):
     if request.method == 'POST':

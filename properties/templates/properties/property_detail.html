@@ -97,9 +97,6 @@
                 صاحب العقار: <span class="font-bold">{{ property.owner.username }}</span>
             </p>
             
-            {% comment %}
-                التحقق مما إذا كان المالك مسوق عقاري، ثم عرض رقم الهاتف
-            {% endcomment %}
             {% if property.owner.is_realtor and property.owner.phone_number %}
             <p class="text-gray-800 text-lg mb-4">
                 رقم الهاتف: <span class="font-bold">{{ property.owner.phone_number }}</span>
@@ -118,11 +115,26 @@
                 <p class="text-center text-gray-500 mt-4">هذا هو عقارك الخاص، لا يمكنك إرسال استفسار.</p>
             {% endif %}
         </div>
+
+        {# قسم الخريطة الجديد لعرض الموقع #}
+        {% if property.latitude and property.longitude %}
+        <div class="mt-8 p-6 bg-white rounded-lg shadow-md">
+            <h3 class="text-2xl font-bold text-blue-700 border-b pb-2 mb-4">موقع العقار على الخريطة</h3>
+            <div id="map" class="w-full h-96 rounded-lg shadow-inner"></div>
+        </div>
+        {% else %}
+        <div class="mt-8 p-6 bg-white rounded-lg shadow-md text-center text-gray-500">
+            <p>لا تتوفر معلومات عن موقع هذا العقار على الخريطة.</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 
+{# هذا هو الجزء الذي تم تعديله #}
+{% if property.latitude and property.longitude %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // كود معرض الصور (يبقى كما هو)
         const mainImage = document.getElementById('main-property-image');
         const thumbnails = document.querySelectorAll('.thumbnail-images img');
 
@@ -138,6 +150,7 @@
             thumbnails[0].classList.add('ring-4', 'ring-blue-500');
         }
 
+        // كود JavaScript الخاص بالمفضلة (يبقى كما هو)
         const favoriteBtn = document.getElementById('favorite-btn');
         if (favoriteBtn) {
             favoriteBtn.addEventListener('click', function() {
@@ -176,8 +189,37 @@
                 .catch(error => console.error('Fetch Error:', error));
             });
         }
+
+        // كود JavaScript لخرائط Google
+        // هذه الدالة ستُستدعى عندما يتم تحميل Google Maps API
+        // يجب أن تكون متاحة عالميا عبر window.initMap
+        window.initMap = function() {
+            const propertyLocation = { 
+                lat: parseFloat("{{ property.latitude|default:'0.0' }}"), 
+                lng: parseFloat("{{ property.longitude|default:'0.0' }}") 
+            };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15, 
+                center: propertyLocation, 
+            });
+
+            new google.maps.Marker({
+                position: propertyLocation,
+                map: map,
+                title: "{{ property.title }}",
+            });
+        };
+
+        // تحميل Google Maps API بشكل ديناميكي
+        const script = document.createElement('script');
+        // تم استبدال YOUR_GOOGLE_MAPS_API_KEY بمفتاح الـ API الخاص بك
+        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDi2h_LfSOIBW8eR-t7afim7HZc0E1JVyQ&callback=initMap";
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
     });
 
+    // دالة للحصول على CSRF token (تبقى كما هي)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -193,4 +235,5 @@
         return cookieValue;
     }
 </script>
+{% endif %} {# هذا هو الـ {% endif %} الذي يغلق شرط Django الذي يحيط بالسكريبت #}
 {% endblock %}
