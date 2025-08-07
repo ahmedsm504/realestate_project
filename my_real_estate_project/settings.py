@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     'properties',
     'inquiries',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

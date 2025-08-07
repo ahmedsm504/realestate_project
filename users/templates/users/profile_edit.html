@@ -4,37 +4,106 @@
 {% block title %}تعديل الملف الشخصي{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg my-8">
-    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">تعديل الملف الشخصي</h1>
+<div class="min-h-screen p-4 md:p-8 bg-gradient-to-br from-gray-100 to-blue-50 flex items-center justify-center">
+    <div class="max-w-2xl mx-auto w-full p-8 bg-white/60 backdrop-blur-md rounded-3xl shadow-2xl my-8">
+        <h1 class="text-4xl font-extrabold text-center text-blue-800 mb-2 drop-shadow-sm">تعديل الملف الشخصي</h1>
+        <p class="text-center text-gray-700 mb-8 text-lg">قم بتحديث معلوماتك الشخصية هنا.</p>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="bg-green-100 border-r-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg" role="alert">
-                <p>{{ message }}</p>
-            </div>
-        {% endfor %}
-    {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="bg-green-100/70 backdrop-blur-sm border-r-4 border-green-500 text-green-800 p-4 mb-6 rounded-xl shadow-md" role="alert">
+                    <p class="font-medium">{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
 
-    <form method="post" enctype="multipart/form-data" class="space-y-6">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-            <div class="mt-1">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}" class="block text-gray-800 font-bold mb-2">{{ field.label }}</label>
                 {{ field }}
+                {% for error in field.errors %}<p class="text-red-500 text-sm mt-1">{{ error }}</p>{% endfor %}
             </div>
-            {% for error in field.errors %}<p class="text-red-500 text-sm mt-1">{{ error }}</p>{% endfor %}
-        </div>
-        {% endfor %}
-        
-        <div class="flex justify-center gap-4 mt-8">
-            <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300">
-                حفظ التغييرات
-            </button>
-            <a href="{% url 'users:profile' %}" class="bg-gray-300 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-400 transition duration-300">
-                إلغاء
-            </a>
-        </div>
-    </form>
+            {% endfor %}
+            
+            <div class="flex justify-center gap-6 mt-12">
+                <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-3 px-10 rounded-2xl shadow-xl hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-105">
+                    حفظ التغييرات
+                </button>
+                <a href="{% url 'users:profile' %}" class="bg-gray-300 text-gray-800 font-bold py-3 px-10 rounded-2xl shadow-lg hover:bg-gray-400 transition-all duration-300 transform hover:scale-105">
+                    إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<style>
+    /* تطبيق التنسيق على حقول النموذج */
+    .form-group input:not([type="checkbox"]),
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+    }
+
+    .form-group input:not([type="checkbox"]):focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* تنسيق خاص لحقل الوصف */
+    textarea {
+        resize: vertical;
+    }
+    
+    /* تنسيق حقل الصورة الشخصية */
+    [type="file"] {
+        display: block;
+        width: 100%;
+        font-size: 0.875rem;
+        color: #4b5563;
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(8px);
+        border-radius: 0.75rem;
+        border: 1px solid #d1d5db;
+        cursor: pointer;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        padding: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    /* تنسيق زر اختيار الملف داخل حقل الصورة */
+    [type="file"]::file-selector-button {
+        padding: 0.5rem 1rem;
+        border: 0;
+        border-radius: 0.75rem;
+        background-color: #2563eb;
+        color: #fff;
+        transition: background-color 0.2s;
+        cursor: pointer;
+    }
+
+    /* تأثيرات التفاعل عند التركيز والتمرير */
+    [type="file"]::file-selector-button:hover {
+        background-color: #1e40af;
+    }
+
+    [type="file"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        border-color: #3b82f6;
+    }
+</style>
 {% endblock %}
