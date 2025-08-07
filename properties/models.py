@@ -55,7 +55,7 @@ class Property(models.Model):
     features = models.ManyToManyField('Feature', blank=True, related_name='properties', verbose_name='المميزات')
 
     # حقل slug لإنشاء روابط لطيفة (SEO-friendly URLs)
-    slug = models.SlugField(unique=True, max_length=255, blank=True, null=True, verbose_name='الرابط اللطيف')
+    slug = models.SlugField(unique=False, max_length=255, blank=True, null=True, verbose_name=' ')
 
     def __str__(self):
         return self.title
