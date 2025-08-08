@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'properties',
     'inquiries',
     'widget_tweaks',
+    'django.contrib.sitemaps',
+
 ]
 
 MIDDLEWARE = [

@@ -4,6 +4,35 @@
 {% block title %}{{ property.title }}{% endblock %}
 
 {% block content %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Offer",
+  "itemOffered": {
+    "@type": "Apartment",
+    "name": "{{ property.title }}",
+    "description": "{{ property.description|truncatechars:160 }}",
+    "image": "{% if property.images.first %}{{ property.images.first.image.url }}{% endif %}",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "{{ property.location_address }}",
+      "addressLocality": "{{ property.city }}",
+      "addressRegion": "{{ property.district }}",
+      "addressCountry": "EG"
+    },
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": "{{ property.area }}",
+      "unitCode": "MTR"
+    },
+    "numberOfRooms": "{{ property.bedrooms }}"
+  },
+  "price": "{{ property.price }}",
+  "priceCurrency": "EGP",
+  "availability": "https://schema.org/InStock"
+}
+</script>
+
 <div class="max-w-6xl mx-auto my-8 bg-white rounded-lg shadow-lg overflow-hidden">
     <!-- الصورة الرئيسية وصور المعرض -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">

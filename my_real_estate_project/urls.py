@@ -17,3 +17,15 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+from django.contrib.sitemaps.views import sitemap
+from properties.sitemaps import PropertySitemap, StaticViewSitemap
+
+sitemaps = {
+    'properties': PropertySitemap,
+    'static': StaticViewSitemap,
+}
+
+urlpatterns += [
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+]
