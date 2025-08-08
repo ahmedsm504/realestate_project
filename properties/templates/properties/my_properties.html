@@ -45,11 +45,11 @@
                 </div>
                 <div class="mt-5 flex justify-end gap-3">
                     {# رابط التعديل يستخدم pk #}
-                    <a href="{% url 'properties:update_property' property.pk %}" class="bg-yellow-500 text-white py-2.5 px-6 rounded-lg text-base font-semibold hover:bg-yellow-600 transition duration-300 shadow-md hover:shadow-lg">
+                    <a href="{% url 'properties:update_property' property.slug %}" class="bg-yellow-500 text-white py-2.5 px-6 rounded-lg text-base font-semibold hover:bg-yellow-600 transition duration-300 shadow-md hover:shadow-lg">
                         تعديل
                     </a>
                     {# رابط الحذف يستخدم pk #}
-                    <a href="{% url 'properties:delete_property' property.pk %}" class="bg-red-600 text-white py-2.5 px-6 rounded-lg text-base font-semibold hover:bg-red-700 transition duration-300 shadow-md hover:shadow-lg" onclick="return confirm('هل أنت متأكد من حذف هذا العقار؟ لا يمكن التراجع عن هذا الإجراء.');">
+                    <a href="{% url 'properties:delete_property' property.slug %}" class="bg-red-600 text-white py-2.5 px-6 rounded-lg text-base font-semibold hover:bg-red-700 transition duration-300 shadow-md hover:shadow-lg" onclick="return confirm('هل أنت متأكد من حذف هذا العقار؟ لا يمكن التراجع عن هذا الإجراء.');">
                         حذف
                     </a>
                 </div>

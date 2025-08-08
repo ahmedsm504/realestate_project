@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model # عشان نجيب نموذج ا
 from django.utils import timezone # عشان نستخدم الوقت الحالي في التاريخ
 from django.template.defaultfilters import slugify # تأكد من استيراد slugify
 from django.urls import reverse # تأكد من استيراد reverse
-
+import uuid
 
 User = get_user_model() # ده بيجيب نموذج المستخدم اللي Django بيستخدمه (سواء الافتراضي أو المخصص)
 
@@ -15,7 +15,7 @@ class Property(models.Model):
         ('apartment', 'شقة'),
         ('villa', 'فيلا'),
         ('land', 'أرض'),
-        ('commercial', 'محل/مكت'),
+        ('commercial', 'محل/مكتب'),
         ('chalet', 'شاليه'),
         ('other', 'أخرى'),
     )
@@ -54,23 +54,72 @@ class Property(models.Model):
     # مميزات إضافية (علاقة ManyToMany)
     features = models.ManyToManyField('Feature', blank=True, related_name='properties', verbose_name='المميزات')
 
-    # حقل slug لإنشاء روابط لطيفة (SEO-friendly URLs)
-    slug = models.SlugField(unique=False, max_length=255, blank=True, null=True, verbose_name=' ')
+    # حقل slug محسن لإنشاء روابط لطيفة (SEO-friendly URLs)
+    slug = models.SlugField(unique=True, max_length=255, blank=True, verbose_name='الرابط المخصص')
 
     def __str__(self):
         return self.title
 
+    def generate_unique_slug(self):
+        """
+        إنشاء slug فريد يحتوي على معلومات مفيدة للـ SEO
+        """
+        # تحويل نوع العقار والمدينة للإنجليزي للـ SEO
+        property_type_map = {
+            'apartment': 'apartment',
+            'villa': 'villa',
+            'land': 'land',
+            'commercial': 'commercial',
+            'chalet': 'chalet',
+            'other': 'property'
+        }
+        
+        status_map = {
+            'for_sale': 'for-sale',
+            'for_rent': 'for-rent'
+        }
+        
+        # إنشاء slug أساسي من العنوان
+        base_slug = slugify(self.title)
+        if not base_slug:  # لو العنوان عربي محض
+            base_slug = f"{property_type_map.get(self.property_type, 'property')}-{status_map.get(self.status, 'property')}"
+        
+        # إضافة معلومات مفيدة للـ SEO
+        slug_parts = [
+            base_slug,
+            property_type_map.get(self.property_type, 'property'),
+            slugify(self.city) if slugify(self.city) else 'egypt',
+            f"{int(self.area)}m" if self.area else None
+        ]
+        
+        # إزالة الأجزاء الفارغة
+        slug_parts = [part for part in slug_parts if part]
+        base_final_slug = '-'.join(slug_parts)
+        
+        # التأكد من أن الـ slug فريد
+        slug = base_final_slug
+        counter = 1
+        
+        while Property.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            slug = f"{base_final_slug}-{counter}"
+            counter += 1
+            
+        return slug
+
     # دالة لحفظ الـ slug تلقائياً عند حفظ العقار
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
+        # إنشاء slug فقط لو مش موجود أو لو العنوان اتغير
+        if not self.slug or (self.pk and Property.objects.get(pk=self.pk).title != self.title):
+            self.slug = self.generate_unique_slug()
         super().save(*args, **kwargs)
 
-    # دالة للحصول على رابط العقار بعد الحفظ
+    # دالة للحصول على رابط العقار
     def get_absolute_url(self):
-        # هنا استخدمنا 'slug' بدلاً من 'pk' لإنشاء رابط لطيف
         return reverse('properties:property_detail', kwargs={'slug': self.slug})
-
+    
+    # دالة للحصول على رابط بالـ ID (للـ backward compatibility)
+    def get_absolute_url_by_id(self):
+        return reverse('properties:property_detail_by_id', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'عقار'

@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponsePermanentRedirect
 from .models import Property, PropertyImage, Feature, FavoriteProperty
 from .forms import PropertyForm
 
@@ -75,12 +75,32 @@ class PropertyListView(ListView):
         
         return context
 
+
 class PropertyDetailView(DetailView):
     model = Property
     template_name = 'properties/property_detail.html'
     context_object_name = 'property'
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
+
+    def get_object(self, queryset=None):
+        """
+        Get object by slug or pk, with redirect from old ID URLs to new slug URLs
+        """
+        if 'slug' in self.kwargs:
+            # Access by slug (new way)
+            return get_object_or_404(Property, slug=self.kwargs['slug'], is_published=True)
+        elif 'pk' in self.kwargs:
+            # Access by ID (old way) - redirect to slug URL for SEO
+            property_obj = get_object_or_404(Property, pk=self.kwargs['pk'], is_published=True)
+            return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
+        else:
+            return super().get_object(queryset)
+    
+    def get(self, request, *args, **kwargs):
+        """Handle redirects from ID-based URLs to slug-based URLs"""
+        if 'pk' in self.kwargs:
+            property_obj = get_object_or_404(Property, pk=self.kwargs['pk'], is_published=True)
+            return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,6 +118,7 @@ class PropertyDetailView(DetailView):
         context['is_favorite'] = is_favorite
         
         return context
+
 
 class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Property
@@ -136,13 +157,21 @@ class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         messages.success(self.request, 'تم إضافة العقار بنجاح!')
         return response
 
+
 class PropertyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Property
     form_class = PropertyForm
     template_name = 'properties/property_form.html'
     success_url = reverse_lazy('properties:my_properties')
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
+
+    def get_object(self, queryset=None):
+        """Get object by slug or pk"""
+        if 'slug' in self.kwargs:
+            return get_object_or_404(Property, slug=self.kwargs['slug'])
+        elif 'pk' in self.kwargs:
+            return get_object_or_404(Property, pk=self.kwargs['pk'])
+        else:
+            return super().get_object(queryset)
 
     def test_func(self):
         property_obj = self.get_object()
@@ -193,12 +222,20 @@ class PropertyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         
         return super().post(request, *args, **kwargs)
 
+
 class PropertyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Property
     template_name = 'properties/property_confirm_delete.html'
     success_url = reverse_lazy('properties:my_properties')
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
+
+    def get_object(self, queryset=None):
+        """Get object by slug or pk"""
+        if 'slug' in self.kwargs:
+            return get_object_or_404(Property, slug=self.kwargs['slug'])
+        elif 'pk' in self.kwargs:
+            return get_object_or_404(Property, pk=self.kwargs['pk'])
+        else:
+            return super().get_object(queryset)
 
     def test_func(self):
         property_obj = self.get_object()
@@ -207,6 +244,7 @@ class PropertyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'تم حذف العقار بنجاح!')
         return super().delete(request, *args, **kwargs)
+
 
 @login_required
 @user_passes_test(lambda u: u.is_realtor)
@@ -231,6 +269,7 @@ def my_properties_view(request):
     context = {'my_properties_with_images': properties_with_display_image}
     return render(request, 'properties/my_properties.html', context)
 
+
 @login_required
 def add_remove_favorite(request, pk):
     if request.method == 'POST':
@@ -252,6 +291,7 @@ def add_remove_favorite(request, pk):
     
     return JsonResponse({'status': 'error', 'message': 'طريقة الطلب غير صالحة'}, status=400)
 
+
 @login_required
 def favorite_list(request):
     if request.user.is_realtor:
@@ -260,3 +300,13 @@ def favorite_list(request):
     
     favorites = FavoriteProperty.objects.filter(user=request.user).select_related('property')
     return render(request, 'properties/favorite_list.html', {'favorites': favorites})
+
+from django.conf import settings
+
+from django.conf import settings
+from django.shortcuts import render
+
+def my_map_view(request):
+    return render(request, "map_page.html", {
+        "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY
+    })

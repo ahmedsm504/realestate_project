@@ -185,13 +185,17 @@
                 });
             };
 
-            // تحميل Google Maps API بشكل ديناميكي
-            const script = document.createElement('script');
-            // تم استبدال YOUR_GOOGLE_MAPS_API_KEY بمفتاح الـ API الخاص بك
-            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDi2h_LfSOIBW8eR-t7afim7HZc0E1JVyQ&callback=initMapPicker";
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
+
+    const GOOGLE_MAPS_API_KEY = "{{ GOOGLE_MAPS_API_KEY }}";
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMapPicker`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+
+
         }
     });
 </script>

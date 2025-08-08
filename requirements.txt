@@ -2,3 +2,4 @@ Django~=5.2.4
 Pillow
 django-tailwind
 django-widget-tweaks
+python-dotenv
