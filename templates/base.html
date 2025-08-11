@@ -61,6 +61,29 @@
         }
     </style>
 </head>
+
+{% load socialaccount %} {# تأكد من تحميل socialaccount tag إذا كنت تستخدم allauth social accounts #}
+
+<div class="user-password-status-message">
+    {% if user.is_authenticated %}
+        {# التحقق مما إذا كان المستخدم لديه كلمة مرور قابلة للاستخدام (غير None أو فارغة) #}
+        {# user.has_usable_password() هي دالة من Django User model للتحقق من هذا #}
+        {% if not user.has_usable_password %}
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded-md shadow-sm" role="alert">
+                <div class="flex items-center">
+                    <svg class="h-6 w-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div>
+                        <p class="font-bold">تنبيه:</p>
+                        <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
+                        <p class="mt-2 text-sm">
+                            <a href="{% url 'account_set_password' %}" class="font-semibold text-yellow-800 hover:text-yellow-900 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
 <body class="flex flex-col min-h-screen">
 
     <!-- شريط التنقل -->

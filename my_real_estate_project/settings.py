@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# my_real_estate_project/settings.py
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,19 +40,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
-    'properties',
-    'inquiries',
-    'widget_tweaks',
-    'django.contrib.sitemaps',
-    'django.contrib.sites',
-
+    'django.contrib.sites', # For allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google', # If you're using Google login
 
+    # Crispy Forms and its Tailwind template pack
+    'crispy_forms',      # MUST be before crispy_tailwind
+    'crispy_tailwind',   # MUST be after crispy_forms
+
+    # Your custom apps
+    'users',
+    'properties',
+    'inquiries',
+    # ... any other apps
 ]
+
 # settings.py
 
 
@@ -60,13 +66,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/tmp/django_cache',
-    }
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -175,30 +174,79 @@ GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # my_real_estate_project/settings.py
 
-# URL الذي يجب على Django أن يعيد التوجيه إليه لتسجيل الدخول
-LOGIN_URL = 'users:login'
-SITE_ID = 1
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-SOCIALACCOUNT_AUTO_SIGNUP = True  # تسجيل تلقائي بدون صفحة signup
-SOCIALACCOUNT_LOGIN_ON_GET = True
-
-LOGIN_REDIRECT_URL = '/'  # بعد تسجيل الدخول
-LOGOUT_REDIRECT_URL = '/'
-
-# نلغي أي تحويل لصفحات allauth
-ACCOUNT_SIGNUP_REDIRECT_URL = '/'  # تجاهل مسار /signup/
-ACCOUNT_LOGIN_REDIRECT_URL = '/users/login/'
-ACCOUNT_SIGNUP_VIEW = None
-
+# ... (other existing settings, like BASE_DIR, etc.)
+import os # Make sure this is at the top if not already there
 
 # my_real_estate_project/settings.py
+
+# ... (other existing settings, like BASE_DIR, etc.)
+
+# my_real_estate_project/settings.py
+
+# my_real_estate_project/settings.py
+
+# ... (other existing settings)
+
+# my_real_estate_project/settings.py
+
+# ... (باقي إعداداتك)
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
+# --- Core Django Authentication Settings ---
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# --- django-allauth Specific Settings (النهائية) ---
+SITE_ID = 1
+
+# طرق تسجيل الدخول: السماح بتسجيل الدخول باسم المستخدم أو البريد الإلكتروني
+ACCOUNT_LOGIN_METHODS = ['username', 'email'] 
+
+# الحقول المطلوبة عند التسجيل: 
+# هنا نحدد الحقول التي يجب على المستخدم إدخالها.
+# بما أن ACCOUNT_LOGIN_METHODS تتضمن 'email'، فغالباً allauth سيتوقع وجوده.
+# لذا، سنقوم بتبسيط ACCOUNT_SIGNUP_FIELDS لـ 'username' فقط،
+# مع العلم أن 'email' سيظل مطلوباً إذا تم تضمينه في ACCOUNT_LOGIN_METHODS أو إذا كان التحقق إلزامياً.
+ACCOUNT_SIGNUP_FIELDS = ['username'] # <--- هذا هو التغيير الرئيسي هنا
+
+# تفعيل التحقق من البريد الإلكتروني: 'mandatory', 'optional', 'none'
+ACCOUNT_EMAIL_VERIFICATION = "none" # لا يوجد تحقق من البريد الإلكتروني
+
+# تأكد أن هذا السطر غير موجود أو معلق، حيث تم إهماله و 'email' مطلوب بواسطة ACCOUNT_LOGIN_METHODS
+# ACCOUNT_EMAIL_REQUIRED = True 
+
+ACCOUNT_UNIQUE_EMAIL = True # تأكد أن البريد الإلكتروني فريد
+
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter' 
+ACCOUNT_PRESERVE_USERNAME_FAILS = True
+
+# إعدادات الحسابات الاجتماعية
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+# مسارات إعادة التوجيه الخاصة بـ allauth
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'
+ACCOUNT_LOGIN_REDIRECT_URL = '/'
+
+# ... (باقي إعداداتك، وتأكد أنك أزلت كل الإعدادات القديمة والمكررة الأخرى)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_data'), # Absolute path for cache
+    }
+}
+
+# ... (rest of your settings)
+
 
 # my_real_estate_project/settings.py
+
+# ... (below INSTALLED_APPS, or at the end of the file)
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+CRISPY_TEMPLATE_PACK = "tailwind"
 
 # ... (باقي الإعدادات) ...
 

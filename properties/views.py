@@ -310,3 +310,26 @@ def my_map_view(request):
     return render(request, "map_page.html", {
         "GOOGLE_MAPS_API_KEY": settings.GOOGLE_MAPS_API_KEY
     })
+
+
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model() # Get your custom user model
+
+class OwnerPropertyListView(ListView):
+    model = Property
+    template_name = 'properties/owner_properties.html' # You'll need to create this template
+    context_object_name = 'owner_properties'
+    paginate_by = 10 # Optional: add pagination
+
+    def get_queryset(self):
+        # Get the owner based on the username from the URL
+        owner = get_object_or_404(User, username=self.kwargs['username'])
+        # Filter properties published by this owner and order by 'published_date'
+        return Property.objects.filter(owner=owner, is_published=True).order_by('-published_date') # FIXED LINE
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['owner'] = get_object_or_404(User, username=self.kwargs['username'])
+        return context

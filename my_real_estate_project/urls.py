@@ -8,6 +8,7 @@ from django.conf.urls.static import static # لاستخدام MEDIA_URL في ا�
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('allauth.urls')),
+    
     path('', include('properties.urls', namespace='properties')),
     path('users/', include('users.urls')),          # روابط تطبيق المستخدمين
     path('inquiries/', include('inquiries.urls')),  # روابط تطبيق الاستفسارات

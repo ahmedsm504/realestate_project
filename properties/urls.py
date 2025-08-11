@@ -29,6 +29,7 @@ urlpatterns = [
     path('my-properties/', views.my_properties_view, name='my_properties'),
     path('favorites/', views.favorite_list, name='favorite_list'),
     path('favorite/<int:pk>/', views.add_remove_favorite, name='add_remove_favorite'),
+    path('owner/<str:username>/', views.OwnerPropertyListView.as_view(), name='owner_properties'),
 
     # الروابط القديمة بالـ ID
     path('id/<int:pk>/', PropertyDetailView.as_view(), name='property_detail_by_id'),
