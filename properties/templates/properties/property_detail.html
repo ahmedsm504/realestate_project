@@ -65,9 +65,9 @@
                     زر المفضلة سيظهر فقط للمستخدمين العاديين المسجلين دخولهم
                 {% endcomment %}
                 {% if user.is_authenticated and not user.is_realtor %}
-                <button id="favorite-btn" 
-                        data-pk="{{ property.pk }}" 
-                        data-is-favorite="{{ is_favorite|lower }}" 
+                <button id="favorite-btn" type="button"
+                        data-pk="{{ property.pk }}"
+                        data-is-favorite="{{ is_favorite|lower }}"
                         class="p-2 rounded-full transition-colors duration-300 {% if is_favorite %}text-red-500 hover:text-red-600 bg-red-100{% else %}text-gray-400 hover:text-red-500 bg-gray-100{% endif %}">
                     <svg id="favorite-icon" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
@@ -159,110 +159,145 @@
     </div>
 </div>
 
-{# هذا هو الجزء الذي تم تعديله #}
+{# سكريپت عام للصفحة - يعمل دائماً #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page scripts loaded');
+
+    // دالة للحصول على CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // كود معرض الصور
+    const mainImage = document.getElementById('main-property-image');
+    const thumbnails = document.querySelectorAll('.thumbnail-images img[data-full-image]');
+
+    thumbnails.forEach(function(thumbnail) {
+        thumbnail.addEventListener('click', function() {
+            const fullImageUrl = this.dataset.fullImage;
+            if (fullImageUrl && mainImage) {
+                mainImage.src = fullImageUrl;
+                // إزالة التحديد من الصور الأخرى
+                thumbnails.forEach(function(t) {
+                    t.classList.remove('ring-4', 'ring-blue-500');
+                });
+                // إضافة التحديد للصورة المختارة
+                this.classList.add('ring-4', 'ring-blue-500');
+            }
+        });
+    });
+
+    // تحديد الصورة الأولى بشكل افتراضي
+    if (thumbnails.length > 0) {
+        thumbnails[0].classList.add('ring-4', 'ring-blue-500');
+    }
+
+    // كود زر المفضلة (تم دمجه وتصحيح مسار الـ URL)
+    const favoriteBtn = document.getElementById('favorite-btn');
+    if (favoriteBtn) {
+        console.log('Favorite button found:', favoriteBtn.dataset);
+        
+        favoriteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Favorite button clicked');
+
+            const propertyId = this.dataset.pk;
+            if (!propertyId) {
+                console.error('Property ID not found');
+                return;
+            }
+
+            // استخدام مسار صحيح بناءً على ما هو موجود في urls.py
+            const url = "{% url 'properties:add_remove_favorite' property.pk %}".replace('{{ property.pk }}', propertyId);
+            console.log('Making request to:', url);
+
+            const csrftoken = getCookie('csrftoken');
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken || ''
+                },
+                credentials: 'same-origin'
+            })
+            .then(function(response) {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Response data:', data);
+                if (data.status === 'success') {
+                    // تحديث شكل الزر
+                    if (data.is_favorite) {
+                        favoriteBtn.classList.add('text-red-500', 'hover:text-red-600', 'bg-red-100');
+                        favoriteBtn.classList.remove('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
+                        favoriteBtn.dataset.isFavorite = 'true';
+                        console.log('Added to favorites');
+                    } else {
+                        favoriteBtn.classList.remove('text-red-500', 'hover:text-red-600', 'bg-red-100');
+                        favoriteBtn.classList.add('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
+                        favoriteBtn.dataset.isFavorite = 'false';
+                        console.log('Removed from favorites');
+                    }
+                } else {
+                    console.error('Server error:', data.message);
+                    alert('خطأ: ' + (data.message || 'حدث خطأ غير متوقع'));
+                }
+            })
+            .catch(function(error) {
+                console.error('Fetch error:', error);
+                alert('خطأ في الاتصال: ' + error.message);
+            });
+        });
+    } else {
+        console.log('Favorite button not found - user may not be logged in or is a realtor');
+    }
+});
+</script>
+
+{# سكريپت الخريطة - فقط إذا كانت الإحداثيات موجودة #}
 {% if property.latitude and property.longitude %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // كود معرض الصور (يبقى كما هو)
-        const mainImage = document.getElementById('main-property-image');
-        const thumbnails = document.querySelectorAll('.thumbnail-images img');
+    var map;
+    var marker;
 
-        thumbnails.forEach(thumbnail => {
-            thumbnail.addEventListener('click', function() {
-                mainImage.src = this.dataset.fullImage;
-                thumbnails.forEach(t => t.classList.remove('ring-4', 'ring-blue-500'));
-                this.classList.add('ring-4', 'ring-blue-500');
-            });
+    function initMap() {
+        var latitude = parseFloat("{{ property.latitude }}");
+        var longitude = parseFloat("{{ property.longitude }}");
+        
+        var location = { lat: latitude, lng: longitude };
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: location,
         });
 
-        if (thumbnails.length > 0) {
-            thumbnails[0].classList.add('ring-4', 'ring-blue-500');
-        }
-
-        // كود JavaScript الخاص بالمفضلة (يبقى كما هو)
-        const favoriteBtn = document.getElementById('favorite-btn');
-        if (favoriteBtn) {
-            favoriteBtn.addEventListener('click', function() {
-                const propertyId = this.dataset.pk;
-                const url = `{% url 'properties:add_remove_favorite' pk=property.pk %}`;
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        console.error('Network response was not ok:', response.statusText);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    if (data.status === 'success') {
-                        if (data.is_favorite) {
-                            favoriteBtn.classList.add('text-red-500', 'hover:text-red-600', 'bg-red-100');
-                            favoriteBtn.classList.remove('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
-                            favoriteBtn.dataset.isFavorite = 'true';
-                        } else {
-                            favoriteBtn.classList.remove('text-red-500', 'hover:text-red-600', 'bg-red-100');
-                            favoriteBtn.classList.add('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
-                            favoriteBtn.dataset.isFavorite = 'false';
-                        }
-                    } else {
-                        console.error('Error from server:', data.message);
-                    }
-                })
-                .catch(error => console.error('Fetch Error:', error));
-            });
-        }
-
-        // كود JavaScript لخرائط Google
-        // هذه الدالة ستُستدعى عندما يتم تحميل Google Maps API
-        // يجب أن تكون متاحة عالميا عبر window.initMap
-        window.initMap = function() {
-            const propertyLocation = { 
-                lat: parseFloat("{{ property.latitude|default:'0.0' }}"), 
-                lng: parseFloat("{{ property.longitude|default:'0.0' }}") 
-            };
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 15, 
-                center: propertyLocation, 
-            });
-
-            new google.maps.Marker({
-                position: propertyLocation,
-                map: map,
-                title: "{{ property.title }}",
-            });
-        };
-
-        // تحميل Google Maps API بشكل ديناميكي
-        const script = document.createElement('script');
-        // تم استبدال YOUR_GOOGLE_MAPS_API_KEY بمفتاح الـ API الخاص بك
-        script.src = `https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-    });
-
-    // دالة للحصول على CSRF token (تبقى كما هي)
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
+        marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            title: "{{ property.title }}"
+        });
     }
 </script>
-{% endif %} {# هذا هو الـ {% endif %} الذي يغلق شرط Django الذي يحيط بالسكريبت #}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ Maps_API_KEY }}&callback=initMap">
+</script>
+{% endif %}
+
 {% endblock %}
+```

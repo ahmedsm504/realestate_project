@@ -43,8 +43,30 @@ INSTALLED_APPS = [
     'inquiries',
     'widget_tweaks',
     'django.contrib.sitemaps',
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 
 ]
+# settings.py
+
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp/django_cache',
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +74,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # ← أضف ده هنا
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -153,6 +177,21 @@ GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # URL الذي يجب على Django أن يعيد التوجيه إليه لتسجيل الدخول
 LOGIN_URL = 'users:login'
+SITE_ID = 1
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+SOCIALACCOUNT_AUTO_SIGNUP = True  # تسجيل تلقائي بدون صفحة signup
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+LOGIN_REDIRECT_URL = '/'  # بعد تسجيل الدخول
+LOGOUT_REDIRECT_URL = '/'
+
+# نلغي أي تحويل لصفحات allauth
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'  # تجاهل مسار /signup/
+ACCOUNT_LOGIN_REDIRECT_URL = '/users/login/'
+ACCOUNT_SIGNUP_VIEW = None
+
 
 # my_real_estate_project/settings.py
 

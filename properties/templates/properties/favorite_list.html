@@ -11,10 +11,11 @@
         {% if favorites %}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for favorite in favorites %}
-            <a href="{% url 'properties:property_detail' pk=favorite.property.pk %}" class="block bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            {# Corrected URL to use 'slug' instead of 'pk' for property_detail #}
+            <a href="{% url 'properties:property_detail' slug=favorite.property.slug %}" class="block bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 <img src="{% if favorite.property.images.first %}{{ favorite.property.images.first.image.url }}{% else %}https://placehold.co/600x400/E5E7EB/4B5563?text=لا+توجد+صورة{% endif %}" 
-                        alt="{{ favorite.property.title }}" 
-                        class="w-full h-48 object-cover rounded-t-2xl">
+                            alt="{{ favorite.property.title }}" 
+                            class="w-full h-48 object-cover rounded-t-2xl">
                 <div class="p-4">
                     <h3 class="text-xl font-bold text-gray-800 truncate">{{ favorite.property.title }}</h3>
                     <p class="text-sm text-gray-600 mt-1">{{ favorite.property.city }}</p>
@@ -24,12 +25,12 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="flex flex-col items-center justify-center text-center my-8 p-6 bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-dashed border-gray-300">
+        <div class="flex flex-col items-center justify-center text-center my-8 p-6 bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
-            <p class="text-xl font-semibold text-gray-600">لا توجد عقارات في قائمة المفضلة حتى الآن.</p>
-            <p class="text-md text-gray-400 mt-2">انقر على أيقونة القلب في صفحة أي عقار لإضافته إلى المفضلة.</p>
+            <p class="text-xl font-semibold text-gray-600">لا توجد عقارات في قائمة المفضلة حتى الآن. 😔</p>
+            <p class="text-md text-gray-400 mt-2">انقر على أيقونة القلب في صفحة أي عقار لإضافته إلى المفضلة. ❤️</p>
         </div>
         {% endif %}
     </div>
