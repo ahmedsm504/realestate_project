@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google', # If you're using Google login
-
+    'widget_tweaks',
     # Crispy Forms and its Tailwind template pack
     'crispy_forms',      # MUST be before crispy_tailwind
     'crispy_tailwind',   # MUST be after crispy_forms
