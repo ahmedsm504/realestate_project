@@ -62,9 +62,13 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
+# my_real_estate_project/settings.py
+
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    # Required for allauth to work properly
     'allauth.account.auth_backends.AuthenticationBackend',
+    # Django's default ModelBackend for admin and custom user models
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [

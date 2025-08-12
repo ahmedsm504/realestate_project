@@ -16,28 +16,31 @@ from .forms import CustomUserCreationForm, UserProfileUpdateForm # تأكد من
 
 User = get_user_model() # للحصول على نموذج المستخدم المخصص
 
-# 1. View لتسجيل مستخدم جديد
 def register_view(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES) # استقبل الملفات أيضاً
+        form = CustomUserCreationForm(request.POST, request.FILES) # Accept files for profile picture, etc.
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            
+            # --- The crucial fix for ValueError ---
+            # Explicitly specify the allauth backend for login
+            login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
+            # --- End of fix ---
+
             messages.success(request, 'تم إنشاء حسابك بنجاح وتسجيل دخولك!')
-            return redirect('properties:property_list')
+            return redirect('properties:property_list') # Redirect to your desired page after login
         else:
-            # رسائل خطأ مخصصة
+            # Display specific field errors
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{form.fields[field].label}: {error}')
+            # Display non-field errors (e.g., password mismatch)
             if form.non_field_errors():
                 for error in form.non_field_errors():
                     messages.error(request, error)
     else:
         form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
-
-
 # 2. View لتسجيل دخول المستخدمين
 def login_view(request):
     if request.method == 'POST':
