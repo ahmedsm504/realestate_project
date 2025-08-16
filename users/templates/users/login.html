@@ -1,91 +1,373 @@
-{% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
 {% load socialaccount %}
 
-{% block title %}تسجيل الدخول{% endblock %}
+{% block title %}<h1 style="text-align: center; color: aliceblue;">Sign In</h1>{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/log.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-md bg-white bg-opacity-70 rounded-3xl shadow-2xl p-8 backdrop-blur-sm transform transition-all duration-300">
-        <div class="text-center mb-8">
-            <h1 class="text-5xl font-extrabold text-blue-900 drop-shadow-md">أهلاً بك!</h1>
-            <p class="mt-2 text-gray-800 text-lg">سجل الدخول إلى حسابك</p>
+<div class="reg_body">
+    <div class="reg_container">
+        <div class="reg_header">
+
+<div class="container">
+    <div class="auth-wrapper">
+        <!-- Header Section -->
+        <div class="form-header">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+            </div>
+            <h1 class="form-title">أهلاً بك!</h1>
+            <p class="form-subtitle">سجل الدخول إلى حسابك</p>
         </div>
 
-        <!-- رسائل الخطأ والتحذير -->
+        <!-- Error Messages -->
         {% if form.errors or messages %}
-            <div class="bg-red-100 bg-opacity-80 border-r-4 border-red-500 text-red-700 p-4 mb-4 rounded-xl shadow-lg backdrop-blur-sm" role="alert">
-                <p class="font-bold">حدث خطأ!</p>
-                <ul>
-                    {% if form.non_field_errors %}
-                        {% for error in form.non_field_errors %}
-                            <li class="text-sm mt-1">{{ error }}</li>
-                        {% endfor %}
-                    {% endif %}
-                    {% for message in messages %}
-                        {% if message.tags == 'error' %}
-                            <li class="text-sm mt-1">{{ message }}</li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+            <div class="error-container">
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <p class="error-title">حدث خطأ!</p>
+                        <ul class="error-list">
+                            {% if form.non_field_errors %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endif %}
+                            {% for message in messages %}
+                                {% if message.tags == 'error' %}
+                                    <li>{{ message }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         {% endif %}
 
-        <form method="post" class="space-y-6">
+        <!-- Success Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="success-container">
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <p class="success-title">نجح!</p>
+                                <p>{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- Login Form -->
+        <form class="auth-form" method="post">
             {% csrf_token %}
-            <div>
-                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">اسم المستخدم</label>
-                <div class="mt-1">
-                    {{ form.username|add_class:"w-full p-3 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-colors duration-200" }}
+            
+            <div class="form-content">
+                <!-- Username Field -->
+                <div class="input-group">
+                    <label for="{{ form.username.id_for_label }}" class="input-label">
+                        <i class="fas fa-user"></i>
+                        اسم المستخدم أو البريد الإلكتروني
+                    </label>
+                    {{ form.username|add_class:"input-field"|attr:"placeholder:أدخل اسم المستخدم أو البريد الإلكتروني" }}
                 </div>
-            </div>
 
-            <div>
-                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">كلمة المرور</label>
-                <div class="mt-1">
-                    {{ form.password|add_class:"w-full p-3 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-colors duration-200" }}
+                <!-- Password Field -->
+                <div class="input-group">
+                    <label for="{{ form.password.id_for_label }}" class="input-label">
+                        <i class="fas fa-lock"></i>
+                        كلمة المرور
+                    </label>
+                    <div class="password-input">
+                        {{ form.password|add_class:"input-field"|attr:"placeholder:أدخل كلمة المرور" }}
+                        <button type="button" class="password-toggle" data-target="{{ form.password.id_for_label }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center justify-between">
-                <div class="text-sm">
-                    <a href="{% url 'users:password_reset' %}" class="font-medium text-blue-700 hover:text-blue-500 transition-colors duration-200">
+                <!-- Remember Me & Forgot Password -->
+                <div class="form-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember_me" name="remember_me" class="checkbox-input">
+                        <label for="remember_me" class="checkbox-label">
+                            <span class="checkbox-custom">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span class="checkbox-text">تذكرني</span>
+                        </label>
+                    </div>
+                    <a href="{% url 'users:password_reset' %}" class="forgot-password">
+                        <i class="fas fa-key"></i>
                         هل نسيت كلمة المرور؟
                     </a>
                 </div>
-            </div>
 
-            <div>
-                <button type="submit"
-                        class="w-full flex justify-center py-3.5 px-4 rounded-3xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105">
+                <!-- Login Button -->
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i>
                     تسجيل الدخول
+                    <div class="btn-overlay"></div>
                 </button>
-            </div>
 
-            <!-- تسجيل الدخول بجوجل -->
-            <div class="mt-4">
-                <div class="mt-6">
-                    <a href="{% provider_login_url 'google' %}?process=login"
-                    class="w-full flex justify-center py-3.5 px-4 rounded-3xl shadow-lg text-lg font-bold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:scale-105">
-                        <img src="{% static 'img/google-icon.png' %}" alt="Google" class="w-6 h-6 mr-2">
-                        تسجيل الدخول باستخدام Google
+                <!-- Divider -->
+                <div class="divider">
+                    <span class="divider-text">أو</span>
+                </div>
+
+                <!-- Social Login -->
+                <div class="social-login">
+                    <a href="{% provider_login_url 'google' %}?process=login" class="social-btn google-btn">
+                        <div class="social-icon">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <span>تسجيل الدخول باستخدام Google</span>
+                        <div class="btn-overlay"></div>
                     </a>
                 </div>
 
-
+                <!-- Registration Link -->
+                <div class="auth-switch">
+                    <p>ليس لديك حساب؟ 
+                        <a href="{% url 'users:register' %}" class="link-primary">إنشاء حساب جديد</a>
+                    </p>
+                </div>
             </div>
-
         </form>
+    </div>
 
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
-                ليس لديك حساب؟
-                <a href="{% url 'users:register' %}" class="font-bold text-blue-700 hover:text-blue-500 transition-colors duration-200">
-                    إنشاء حساب جديد
-                </a>
-            </p>
+    <!-- Background Elements -->
+    <div class="bg-elements">
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+        <div class="bg-circle bg-circle-3"></div>
+    </div>
+</div>
+
+<!-- Demo User Accounts -->
+<div class="demo-accounts">
+    <div class="demo-header">
+        <i class="fas fa-info-circle"></i>
+        <span>حسابات تجريبية</span>
+    </div>
+    <div class="demo-list">
+        <div class="demo-item" data-username="ahmed22" data-password="gojo1234">
+            <div class="demo-role">بائع</div>
+            <div class="demo-credentials">ahmed22 / gojo1234</div>
+        </div>
+        <div class="demo-item" data-username="samir" data-password="gojo1234">
+            <div class="demo-role">بائع</div>
+            <div class="demo-credentials">samir / gojo1234</div>
         </div>
     </div>
 </div>
+
+<style>
+/* Demo Accounts Styling */
+.demo-accounts {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 200px;
+    z-index: 1000;
+}
+
+.demo-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+.demo-header i {
+    color: #667eea;
+}
+
+.demo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.demo-item {
+    padding: 8px 12px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.demo-item:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.demo-role {
+    font-weight: 600;
+    color: #667eea;
+    font-size: 0.8rem;
+}
+
+.demo-credentials {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 2px;
+}
+
+/* Mobile responsiveness for demo */
+@media (max-width: 768px) {
+    .demo-accounts {
+        display: none;
+    }
+}
+
+/* Success State */
+.success-container {
+    margin-bottom: 24px;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+    border: 1px solid #48bb78;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.success-message i {
+    color: #38a169;
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.success-title {
+    font-weight: 600;
+    color: #2f855a;
+    margin-bottom: 8px;
+}
+
+.success-message p {
+    color: #2f855a;
+    margin: 0;
+}
+
+/* Form loading state */
+.form-loading::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+}
+
+.form-loading::after {
+    content: "جاري تسجيل الدخول...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    font-weight: 600;
+    color: #4a5568;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/log.js' %}"></script>
+
+<!-- Django-specific JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Demo account functionality
+    const demoItems = document.querySelectorAll('.demo-item');
+    demoItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const username = this.getAttribute('data-username');
+            const password = this.getAttribute('data-password');
+            
+            document.getElementById('{{ form.username.id_for_label }}').value = username;
+            document.getElementById('{{ form.password.id_for_label }}').value = password;
+            
+            // Add visual feedback
+            this.style.background = 'rgba(72, 187, 120, 0.2)';
+            this.style.borderColor = '#48bb78';
+            
+            setTimeout(() => {
+                this.style.background = 'rgba(102, 126, 234, 0.1)';
+                this.style.borderColor = 'transparent';
+            }, 1000);
+        });
+    });
+
+    // Django form submission with loading state
+    const form = document.querySelector('.auth-form');
+    
+    form.addEventListener('submit', function(e) {
+        // Add loading class
+        this.classList.add('form-loading');
+        
+        // Show loading button state
+        const submitBtn = this.querySelector('.submit-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
+        
+        // Let Django handle the actual submission
+    });
+
+    // Auto-scroll to errors on page load
+    const errorFields = document.querySelectorAll('.input-field.is-invalid, .input-field[aria-invalid="true"]');
+    if (errorFields.length > 0) {
+        setTimeout(() => {
+            errorFields[0].scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 500);
+    }
+
+    // Enhanced keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.target.matches('.input-field')) {
+            e.preventDefault();
+            const inputs = Array.from(document.querySelectorAll('.input-field'));
+            const currentIndex = inputs.indexOf(e.target);
+            
+            if (currentIndex !== -1 && currentIndex < inputs.length - 1) {
+                inputs[currentIndex + 1].focus();
+            } else {
+                document.querySelector('.submit-btn').focus();
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

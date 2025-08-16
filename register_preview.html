@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form Preview</title>
+    <link rel="stylesheet" href="users/static/users/css/register.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <h1 class="register-title">انضم إلينا!</h1>
+                <p class="register-subtitle">قم بإنشاء حسابك الجديد</p>
+            </div>
+
+            <!-- رسائل الخطأ والتحذير -->
+            <div class="error-container" role="alert">
+                <div class="error-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    حدث خطأ!
+                </div>
+                <ul class="error-list">
+                    <li>اسم المستخدم مطلوب</li>
+                    <li>كلمة المرور قصيرة جداً</li>
+                </ul>
+            </div>
+
+            <form class="register-form">
+                <!-- Column 1: Personal Information -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label class="form-label">اسم المستخدم</label>
+                        <input type="text" class="form-input" placeholder="أدخل اسم المستخدم">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" placeholder="أدخل البريد الإلكتروني">
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox-input" id="is_realtor">
+                            <label for="is_realtor" class="checkbox-label">
+                                هل أنت تاجر عقارات؟
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Additional Information -->
+                <div class="form-column">
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-input" placeholder="أدخل كلمة المرور">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">تأكيد كلمة المرور</label>
+                        <input type="password" class="form-input" placeholder="أعد إدخال كلمة المرور">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">صورة الملف الشخصي</label>
+                        <div class="file-upload-group">
+                            <input type="file" class="hidden" id="profile_picture">
+                            <label for="profile_picture" class="file-upload-button">
+                                <svg class="file-upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                <span>اختر صورة لملفك الشخصي</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full-width submit button -->
+                <div class="form-group full-width">
+                    <button type="submit" class="submit-button">
+                        إنشاء حساب
+                    </button>
+                </div>
+            </form>
+
+            <div class="login-link-container">
+                <p class="login-link-text">
+                    لديك حساب بالفعل؟
+                    <a href="#" class="login-link">
+                        تسجيل الدخول
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // File upload functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('profile_picture');
+            const fileLabel = fileInput.nextElementSibling.querySelector('span');
+
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileLabel.textContent = this.files[0].name;
+                } else {
+                    fileLabel.textContent = 'اختر صورة لملفك الشخصي';
+                }
+            });
+
+            // Form submission
+            const form = document.querySelector('.register-form');
+            const submitButton = document.querySelector('.submit-button');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitButton.classList.add('loading');
+                submitButton.textContent = 'جاري إنشاء الحساب...';
+                
+                // Simulate form submission
+                setTimeout(() => {
+                    submitButton.classList.remove('loading');
+                    submitButton.textContent = 'إنشاء حساب';
+                    alert('تم إرسال النموذج بنجاح!');
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

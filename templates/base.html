@@ -1,187 +1,213 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <!-- تحسين محركات البحث SEO -->
-<meta name="description" content="مشروع العقارات - اكتشف أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك بسهولة وسرعة.">
-<meta name="keywords" content="عقارات, شقق للبيع, شقق للإيجار, عقارات مصر, منازل, فلل, مشروع العقارات">
-<meta name="author" content="مشروع العقارات">
+    <meta name="description" content="مشروع العقارات - اكتشف أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك بسهولة وسرعة.">
+    <meta name="keywords" content="عقارات, شقق للبيع, شقق للإيجار, عقارات مصر, منازل, فلل, مشروع العقارات">
+    <meta name="author" content="مشروع العقارات">
 
-<!-- تحسين عرض الموقع على السوشيال ميديا -->
-<meta property="og:title" content="مشروع العقارات - أفضل العقارات في مصر">
-<meta property="og:description" content="ابحث عن أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك.">
-<meta property="og:image" content="{% static 'img/realestate.jfif' %}">
-<meta property="og:type" content="website">
+    <!-- تحسين عرض الموقع على السوشيال ميديا -->
+    <meta property="og:title" content="مشروع العقارات - أفضل العقارات في مصر">
+    <meta property="og:description" content="ابحث عن أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك.">
+    <meta property="og:image" content="{% static 'img/realestate.jfif' %}">
+    <meta property="og:type" content="website">
 
-<!-- أيقونة الموقع (Favicon) -->
-
-<!-- ملف الخريطة Sitemap -->
-
-<!-- دعم محركات البحث للغة -->
-<meta name="robots" content="index, follow">
-<meta http-equiv="Content-Language" content="ar">
+    <!-- دعم محركات البحث للغة -->
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Language" content="ar">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}مشروع العقارات{% endblock %}</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/property_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/log.css' %}">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-        
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-image: url('{% static "img/realestate.jfif" %}');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            position: relative;
-            min-height: 100vh;
-            background-color: #f0f4f8;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: -1;
-        }
-
-        .container {
-            direction: rtl;
-            text-align: right;
-        }
-        
-        nav, main, footer {
-            position: relative;
-            z-index: 1;
-        }
-    </style>
+    
+    <!-- Extra CSS block for child templates -->
+    {% block extra_css %}{% endblock %}
 </head>
 
-{% load socialaccount %} {# تأكد من تحميل socialaccount tag إذا كنت تستخدم allauth social accounts #}
+<body class="flex flex-col min-h-screen">
+    {% load socialaccount %}
 
-<div class="user-password-status-message">
-    {% if user.is_authenticated %}
-        {# التحقق مما إذا كان المستخدم لديه كلمة مرور قابلة للاستخدام (غير None أو فارغة) #}
-        {# user.has_usable_password() هي دالة من Django User model للتحقق من هذا #}
-        {% if not user.has_usable_password %}
-            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded-md shadow-sm" role="alert">
-                <div class="flex items-center">
-                    <svg class="h-6 w-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <div>
-                        <p class="font-bold">تنبيه:</p>
-                        <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
-                        <p class="mt-2 text-sm">
-                            <a href="{% url 'account_set_password' %}" class="font-semibold text-yellow-800 hover:text-yellow-900 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
-                        </p>
+    <!-- Password Status Message -->
+    <div class="user-password-status-message">
+        {% if user.is_authenticated %}
+            {% if not user.has_usable_password %}
+                <div class="bg-amber-50 border-r-4 border-amber-400 text-amber-800 p-4 mb-4 rounded-lg shadow-sm mx-4 mt-4" role="alert">
+                    <div class="flex items-center">
+                        <svg class="h-6 w-6 text-amber-600 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <p class="font-bold">تنبيه:</p>
+                            <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
+                            <p class="mt-2 text-sm">
+                                <a href="{% url 'account_set_password' %}" class="font-semibold text-amber-900 hover:text-amber-950 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         {% endif %}
-    {% endif %}
-</div>
-<body class="flex flex-col min-h-screen">
+    </div>
 
-    <!-- شريط التنقل -->
-    <nav class="bg-transparent text-white p-4">
-        <div class="container mx-auto flex items-center justify-between">
-            <a href="{% url 'properties:property_list' %}" class="text-3xl font-extrabold text-white hover:text-gray-200 transition-colors duration-300">
-                مشروع العقارات
-            </a>
+    <!-- Enhanced Navigation Bar -->
+    <!-- Enhanced Navbar with your CSS -->
+<nav class="navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <div class="container">
+        <div class="navbar-content">
             
-            <!-- زر القائمة للجوال -->
-            <button id="mobile-menu-button" class="block lg:hidden text-white focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
-            
-            <!-- قائمة التنقل للكمبيوتر -->
-            <div class="hidden lg:flex lg:items-center space-x-6 space-x-reverse">
+            <!-- Sign Out Section (Left) -->
+            <div class="sign-out-section">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:logout' %}" class="nav-button nav-button-danger">تسجيل الخروج</a>
+                {% else %}
+                    <a href="{% url 'users:register' %}" class="nav-link">تسجيل حساب</a>
+                {% endif %}
+            </div>
+
+            <!-- Center Navigation -->
+            <div class="center-nav">
+                <a href="{% url 'properties:property_list' %}" class="nav-link">الرئيسية</a>
                 {% if user.is_authenticated %}
                     {% if user.is_realtor %}
-                        {# الرابط الجديد لصفحة عقاراتي - أضفناه هنا #}
-                        <a href="{% url 'properties:my_properties' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">عقاراتي</a>
-                        <a href="{% url 'properties:add_property' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">إضافة عقار</a>
-                        <a href="{% url 'inquiries:realtor_inquiries' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">استفسارات عقاراتي</a>
+                        <a href="{% url 'properties:my_properties' %}" class="nav-link">عقاراتي</a>
+                        <a href="{% url 'properties:add_property' %}" class="nav-link">إضافة عقار</a>
+                        <a href="{% url 'inquiries:realtor_inquiries' %}" class="nav-link">استفسارات عقاراتي</a>
                     {% else %}
-                        <a href="{% url 'inquiries:user_inquiries' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">استفساراتي المرسلة</a>
+                        <a href="{% url 'inquiries:user_inquiries' %}" class="nav-link">استفساراتي المرسلة</a>
                     {% endif %}
                     {% if not user.is_realtor %}
-                        <a href="{% url 'properties:favorite_list' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">مفضلاتي</a>
+                        <a href="{% url 'properties:favorite_list' %}" class="nav-link">مفضلاتي</a>
                     {% endif %}
-                    <a href="{% url 'users:profile' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">ملفي الشخصي</a>
-                    <a href="{% url 'users:logout' %}" class="px-4 py-2 rounded-full bg-red-600 border border-red-600 hover:bg-red-700 transition-all duration-300">تسجيل الخروج</a>
-                {% else %}
-                    <a href="{% url 'users:register' %}" class="px-4 py-2 rounded-full border border-white hover:bg-white hover:text-blue-800 transition-all duration-300">تسجيل حساب</a>
-                    <a href="{% url 'users:login' %}" class="px-4 py-2 rounded-full bg-blue-600 border border-blue-600 hover:bg-blue-700 transition-all duration-300">تسجيل الدخول</a>
+                    <a href="{% url 'users:profile' %}" class="nav-link">ملفي الشخصي</a>
                 {% endif %}
             </div>
+
+            <!-- Logo Section (Right) -->
+            <div class="logo-section">
+                <a href="{% url 'properties:property_list' %}" class="logo-container">
+                    <img src="{% static 'img/2.png' %}" alt="مشروع العقارات" class="logo">
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="mobile-menu-btn">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
         </div>
-        
-        <!-- قائمة التنقل للجوال (مخفية افتراضياً) -->
-        <div id="mobile-menu" class="hidden lg:hidden mt-4 bg-gray-900 bg-opacity-80 rounded-lg p-4 space-y-4">
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div id="mobile-menu" class="mobile-nav">
+        <div class="mobile-nav-content">
+            <a href="{% url 'properties:property_list' %}" class="mobile-nav-link">الرئيسية</a>
             {% if user.is_authenticated %}
                 {% if user.is_realtor %}
-                    {# الرابط الجديد لصفحة عقاراتي - أضفناه هنا #}
-                    <a href="{% url 'properties:my_properties' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">عقاراتي</a>
-                    <a href="{% url 'properties:add_property' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">إضافة عقار</a>
-                    <a href="{% url 'inquiries:realtor_inquiries' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">استفسارات عقاراتي</a>
+                    <a href="{% url 'properties:my_properties' %}" class="mobile-nav-link">عقاراتي</a>
+                    <a href="{% url 'properties:add_property' %}" class="mobile-nav-link">إضافة عقار</a>
+                    <a href="{% url 'inquiries:realtor_inquiries' %}" class="mobile-nav-link">استفسارات عقاراتي</a>
                 {% else %}
-                    <a href="{% url 'inquiries:user_inquiries' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">استفساراتي المرسلة</a>
+                    <a href="{% url 'inquiries:user_inquiries' %}" class="mobile-nav-link">استفساراتي المرسلة</a>
                 {% endif %}
                 {% if not user.is_realtor %}
-                    <a href="{% url 'properties:favorite_list' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">مفضلاتي</a>
+                    <a href="{% url 'properties:favorite_list' %}" class="mobile-nav-link">مفضلاتي</a>
                 {% endif %}
-                <a href="{% url 'users:profile' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">ملفي الشخصي</a>
-                <a href="{% url 'users:logout' %}" class="block px-4 py-2 rounded-full text-red-400 hover:text-red-300 transition-colors duration-300">تسجيل الخروج</a>
+                <a href="{% url 'users:profile' %}" class="mobile-nav-link">ملفي الشخصي</a>
+                <a href="{% url 'users:logout' %}" class="mobile-nav-link danger">تسجيل الخروج</a>
             {% else %}
-                <a href="{% url 'users:register' %}" class="block px-4 py-2 rounded-full text-white hover:bg-gray-700 transition-colors duration-300">تسجيل حساب</a>
-                <a href="{% url 'users:login' %}" class="block px-4 py-2 rounded-full text-blue-400 hover:text-blue-300 transition-colors duration-300">تسجيل الدخول</a>
+                <a href="{% url 'users:register' %}" class="mobile-nav-link">تسجيل حساب</a>
+                <a href="{% url 'users:login' %}" class="mobile-nav-link primary">تسجيل الدخول</a>
             {% endif %}
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- رسائل النظام -->
-    <div class="messages fixed top-4 right-4 z-50 max-w-sm">
+    <!-- Search Section -->
+
+
+    <!-- System Messages -->
+    <div class="messages-container">
         {% if messages %}
             {% for message in messages %}
-                <div class="p-4 rounded-md mb-2 shadow-lg {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% elif message.tags == 'info' %}bg-blue-100 text-blue-700{% endif %}" role="alert">
-                    {{ message }}
+                <div class="message-item message-{{ message.tags }}" role="alert">
+                    <div class="message-content">
+                        <svg class="message-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {% if message.tags == 'success' %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            {% elif message.tags == 'error' %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            {% else %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            {% endif %}
+                        </svg>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button class="message-close" onclick="this.parentElement.remove()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
             {% endfor %}
         {% endif %}
     </div>
 
-    <main class="flex-grow container mx-auto p-6">
-        {% block content %}{% endblock %}
+    <!-- Main Content -->
+    <main class="main-content" id="search-section">
+        <div class="container mx-auto px-6">
+            {% block content %}
+            <!-- Default content when no block is provided -->
+            <section class="features-section">
+                <h2 class="section-title">لماذا تختار مشروع العقارات؟</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🏠</div>
+                        <h3 class="feature-title">عقارات متنوعة</h3>
+                        <p class="feature-description">مجموعة واسعة من الشقق والفلل والعقارات التجارية</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3 class="feature-title">أسعار تنافسية</h3>
+                        <p class="feature-description">أفضل الأسعار في السوق مع إمكانية التفاوض</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3 class="feature-title">تقنية متطورة</h3>
+                        <p class="feature-description">منصة سهلة الاستخدام مع أحدث التقنيات</p>
+                    </div>
+                </div>
+            </section>
+            {% endblock %}
+        </div>
     </main>
 
-    <footer class="footer text-center p-4 mt-8 bg-gray-800 text-gray-300">
-        <p>&copy; 2024 مشروع العقارات. جميع الحقوق محفوظة.</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container mx-auto px-6 text-center">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="{% static 'img/1.png' %}" alt="مشروع العقارات" class="footer-logo-img">
+                    <span class="footer-logo-text">مشروع العقارات</span>
+                </div>
+                <p class="footer-text">&copy; 2024 مشروع العقارات. جميع الحقوق محفوظة.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">الخصوصية</a>
+                    <a href="#" class="footer-link">الشروط والأحكام</a>
+                    <a href="#" class="footer-link">اتصل بنا</a>
+                </div>
+            </div>
+        </div>
     </footer>
+    <script src="{% static 'js/main.js' %}"></script>
 
-    <script>
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // إخفاء الرسائل بعد 5 ثواني
-        document.addEventListener('DOMContentLoaded', () => {
-            const messages = document.querySelectorAll('.messages div');
-            messages.forEach(message => {
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 5000);
-            });
-        });
-    </script>
 </body>
 </html>

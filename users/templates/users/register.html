@@ -1,131 +1,390 @@
-{% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
 
-{% block title %}تسجيل حساب جديد{% endblock %}
+{% block title %}<h1 style="text-align: center; color: aliceblue;">Registration</h1>{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'users/css/log.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-md bg-white bg-opacity-70 rounded-[3rem] shadow-2xl p-10 backdrop-blur-sm transform transition-all duration-300">
-        <div class="text-center mb-8">
-            <h1 class="text-5xl font-extrabold text-blue-900 drop-shadow-md">انضم إلينا!</h1>
-            <p class="mt-2 text-gray-800 text-lg">قم بإنشاء حسابك الجديد</p>
+
+<body class="reg_body">
+<div class="reg_container">
+    <div class="registration-wrapper">
+        <!-- Header Section -->
+        <div class="form-header">
+            <div class="logo">
+                <i class="fas fa-home"></i>
+            </div>
+            <h1 class="form-title">انضم إلينا!</h1>
+            <p class="form-subtitle">قم بإنشاء حسابك الجديد للبدء</p>
         </div>
 
-        <!-- رسائل الخطأ والتحذير -->
+        <!-- Error Messages -->
         {% if form.errors or messages %}
-            <div class="bg-red-100 bg-opacity-80 border-r-4 border-red-500 text-red-700 p-4 mb-4 rounded-xl shadow-lg backdrop-blur-sm" role="alert">
-                <p class="font-bold">حدث خطأ!</p>
-                <ul>
-                    {% if form.non_field_errors %}
-                        {% for error in form.non_field_errors %}
-                            <li class="text-sm mt-1">{{ error }}</li>
-                        {% endfor %}
-                    {% endif %}
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li class="text-sm mt-1">{{ field.label }}: {{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
+            <div class="error-container">
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <p class="error-title">حدث خطأ!</p>
+                        <ul class="error-list">
+                            {% if form.non_field_errors %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endif %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         {% endif %}
 
-        <form method="post" class="space-y-6" enctype="multipart/form-data">
+        <!-- Success Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <div class="success-container">
+                        <div class="success-message">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                <p class="success-title">نجح!</p>
+                                <p>{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <!-- Registration Form -->
+        <form class="registration-form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {% for field in form %}
-                <div>
-                    <!-- تنسيق خاص لحقل "is_realtor" (مربع الاختيار) -->
-                    {% if field.name == 'is_realtor' %}
-                        <div class="flex items-center space-x-2 space-x-reverse">
-                            <!-- الحقل الأصلي المخفي -->
-                            {{ field|add_class:"peer sr-only" }}
-                            <!-- العنصر المرئي المخصص -->
-                            <label
-                                for="{{ field.id_for_label }}"
-                                class="relative flex h-6 w-6 cursor-pointer items-center justify-center rounded-md border-2 border-gray-400 bg-white transition-all duration-300 peer-checked:border-blue-600 peer-checked:bg-blue-600 peer-hover:border-blue-500"
-                            >
-                                <!-- علامة الصح التي تظهر عند التحديد -->
-                                <svg
-                                    class="h-4 w-4 text-white opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <polyline points="20 6 9 17 4 12" />
-                                </svg>
-                            </label>
-                            <!-- نص التسمية -->
-                            <label
-                                for="{{ field.id_for_label }}"
-                                class="cursor-pointer text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200"
-                            >
-                                هل أنت تاجر عقارات؟
-                            </label>
+            
+            <div class="form-grid">
+                <!-- Left Column -->
+                <div class="form-column">
+
+                <!-- Username -->
+                    {% if form.username %}
+                    <div class="input-group">
+                        <label for="{{ form.username.id_for_label }}" class="input-label">
+                            <i class="fas fa-at"></i>
+                            {{ form.username.label }}
+                        </label>
+                        {{ form.username|add_class:"input-field"|attr:"placeholder:اختر اسم مستخدم مميز" }}
+                    </div>
+                    {% endif %}
+
+
+                    <!-- Password -->
+                    {% if form.password1 %}
+                    <div class="input-group">
+                        <label for="{{ form.password1.id_for_label }}" class="input-label">
+                            <i class="fas fa-lock"></i>
+                            {{ form.password1.label }}
+                        </label>
+                        <div class="password-input">
+                            {{ form.password1|add_class:"input-field"|attr:"placeholder:أدخل كلمة مرور قوية" }}
+                            <button type="button" class="password-toggle" data-target="{{ form.password1.id_for_label }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                    <!-- تنسيق خاص لحقل الصورة -->
-                    {% elif field.name == 'profile_picture' %}
-                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                        <div class="relative mt-1 w-full">
-                            <!-- حقل إدخال الملف الأصلي (مخفي) -->
-                            {{ field|add_class:"hidden" }}
-                            <!-- زر مخصص لاختيار الملف -->
-                            <label for="{{ field.id_for_label }}" class="cursor-pointer w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl bg-gray-100 text-gray-700 font-semibold shadow-sm transition-all duration-200 hover:bg-gray-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                                <span id="file-label-{{ field.id_for_label }}">اختر صورة لملفك الشخصي</span>
-                            </label>
+                    </div>
+                    {% endif %}
+
+                    <!-- Confirm Password -->
+                    {% if form.password2 %}
+                    <div class="input-group">
+                        <label for="{{ form.password2.id_for_label }}" class="input-label">
+                            <i class="fas fa-lock"></i>
+                            {{ form.password2.label }}
+                        </label>
+                        <div class="password-input">
+                            {{ form.password2|add_class:"input-field"|attr:"placeholder:أعد إدخال كلمة المرور" }}
+                            <button type="button" class="password-toggle" data-target="{{ form.password2.id_for_label }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                    <!-- تنسيق عام لكل الحقول الأخرى -->
-                    {% else %}
-                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                        <div class="mt-1">
-                            {{ field|add_class:"w-full p-3 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-colors duration-200" }}
-                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Phone -->
+                    {% if form.phone %}
+                    <div class="input-group">
+                        <label for="{{ form.phone.id_for_label }}" class="input-label">
+                            <i class="fas fa-phone"></i>
+                            {{ form.phone.label }}
+                        </label>
+                        {{ form.phone|add_class:"input-field"|attr:"placeholder:+20 123 456 7890" }}
+                    </div>
                     {% endif %}
                 </div>
-            {% endfor %}
 
-            <div>
-                <button type="submit"
-                        class="w-full flex justify-center py-3.5 px-4 rounded-3xl shadow-lg text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105">
-                    إنشاء حساب
+                <!-- Right Column -->
+                <div class="form-column">
+                    <!-- Last Name -->
+                    {% if form.last_name %}
+                    <div class="input-group">
+                        <label for="{{ form.last_name.id_for_label }}" class="input-label">
+                            <i class="fas fa-user"></i>
+                            {{ form.last_name.label }}
+                        </label>
+                        {{ form.last_name|add_class:"input-field"|attr:"placeholder:أدخل اسم عائلتك" }}
+                    </div>
+                    {% endif %}
+
+
+
+        
+
+                    <!-- Profile Picture -->
+                    {% if form.profile_picture %}
+                    <div class="input-group">
+                        <label for="{{ form.profile_picture.id_for_label }}" class="input-label">
+                            <i class="fas fa-camera"></i>
+                            {{ form.profile_picture.label }}
+                        </label>
+                        <div class="file-input-wrapper">
+                            {{ form.profile_picture|add_class:"file-input"|attr:"accept:image/*" }}
+                            <label for="{{ form.profile_picture.id_for_label }}" class="file-input-label">
+                                <i class="fas fa-upload"></i>
+                                <span class="file-text">اختر صورة شخصية</span>
+                            </label>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Additional Fields -->
+                    {% for field in form %}
+                        {% if field.name not in "first_name,last_name,username,email,password1,password2,phone,profile_picture,is_realtor" %}
+                        <div class="input-group">
+                            <label for="{{ field.id_for_label }}" class="input-label">
+                                <i class="fas fa-info-circle"></i>
+                                {{ field.label }}
+                            </label>
+                            {{ field|add_class:"input-field" }}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Full Width Elements -->
+            <div class="form-full-width">
+                <!-- Realtor Checkbox -->
+                {% if form.is_realtor %}
+                <div class="checkbox-group">
+                    {{ form.is_realtor|add_class:"checkbox-input" }}
+                    <label for="{{ form.is_realtor.id_for_label }}" class="checkbox-label">
+                        <span class="checkbox-custom">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="checkbox-text">
+                            <i class="fas fa-building"></i>
+                            {{ form.is_realtor.label }}
+                        </span>
+                    </label>
+                </div>
+                {% endif %}
+
+                <!-- Terms Agreement -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" class="checkbox-input" required>
+                    <label for="terms" class="checkbox-label">
+                        <span class="checkbox-custom">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="checkbox-text">
+                            أوافق على <a href="#" class="link1">الشروط والأحكام</a> و <a href="#" class="link2">سياسة الخصوصية</a>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-plus"></i>
+                    إنشاء حساب جديد
+                    <div class="btn-overlay"></div>
                 </button>
+
+                <!-- Login Link -->
+                <div class="login-link">
+                    <p>لديك حساب بالفعل؟ 
+                        <a href="{% url 'users:login' %}" class="link-primary">تسجيل الدخول</a>
+                    </p>
+                </div>
             </div>
         </form>
-
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
-                لديك حساب بالفعل؟
-                <a href="{% url 'users:login' %}" class="font-bold text-blue-700 hover:text-blue-500 transition-colors duration-200">
-                    تسجيل الدخول
-                </a>
-            </p>
-        </div>
     </div>
 </div>
 
-<!-- JavaScript لتحديث نص زر الصورة -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // نستخدم معرف حقل الصورة المخصص من Django
-        const fileInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
-        const fileLabel = document.getElementById('file-label-{{ form.profile_picture.id_for_label }}');
+<!-- Additional CSS for Django integration -->
+<style>
+.success-container {
+    margin-bottom: 24px;
+}
 
-        if (fileInput && fileLabel) {
-            fileInput.addEventListener('change', function() {
-                if (this.files && this.files.length > 0) {
-                    fileLabel.textContent = this.files[0].name;
-                } else {
-                    fileLabel.textContent = 'اختر صورة لملفك الشخصي';
-                }
-            });
+.success-message {
+    background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+    border: 1px solid #48bb78;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.success-message i {
+    color: #38a169;
+    font-size: 20px;
+    margin-top: 2px;
+}
+
+.success-title {
+    font-weight: 600;
+    color: #2f855a;
+    margin-bottom: 8px;
+}
+
+.success-message p {
+    color: #2f855a;
+    margin: 0;
+}
+
+/* Django form field error styling */
+.input-field.is-invalid,
+.input-field[aria-invalid="true"] {
+    border-color: #f56565;
+    box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
+}
+
+/* Help text styling */
+.helptext {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Form field requirements */
+.required-field .input-label::after {
+    content: " *";
+    color: #f56565;
+}
+
+/* Loading overlay for form submission */
+.form-loading::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+}
+
+.form-loading::after {
+    content: "جاري المعالجة...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    font-weight: 600;
+    color: #4a5568;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/log.js' %}"></script>
+
+
+<!-- Django-specific JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mark required fields
+    const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredFields.forEach(field => {
+        const inputGroup = field.closest('.input-group');
+        if (inputGroup) {
+            inputGroup.classList.add('required-field');
         }
     });
+
+    // Django form submission with loading state
+    const form = document.querySelector('.registration-form');
+    const originalSubmitHandler = form.onsubmit;
+    
+    form.addEventListener('submit', function(e) {
+        // Add loading class
+        this.classList.add('form-loading');
+        
+        // Show loading button state
+        const submitBtn = this.querySelector('.submit-btn');
+        submitBtn.classList.add('loading');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+        
+        // Let Django handle the actual submission
+        // The loading state will be cleared when the page reloads or redirects
+    });
+
+    // File input enhancement for Django
+    const fileInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
+    const fileLabel = document.querySelector('.file-text');
+    
+    if (fileInput && fileLabel) {
+        // Check if file was previously selected (for form validation errors)
+        if (fileInput.value) {
+            fileLabel.textContent = 'تم اختيار ملف';
+            const wrapper = fileInput.closest('.file-input-wrapper');
+            wrapper.querySelector('.file-input-label').style.borderColor = '#48bb78';
+            wrapper.querySelector('.file-input-label').style.background = 'rgba(72, 187, 120, 0.1)';
+        }
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                const fileName = this.files[0].name;
+                fileLabel.textContent = fileName;
+                
+                // Add success styling
+                const wrapper = this.closest('.file-input-wrapper');
+                wrapper.querySelector('.file-input-label').style.borderColor = '#48bb78';
+                wrapper.querySelector('.file-input-label').style.background = 'rgba(72, 187, 120, 0.1)';
+            } else {
+                fileLabel.textContent = 'اختر صورة شخصية';
+                const wrapper = this.closest('.file-input-wrapper');
+                wrapper.querySelector('.file-input-label').style.borderColor = '#cbd5e0';
+                wrapper.querySelector('.file-input-label').style.background = 'rgba(247, 250, 252, 0.8)';
+            }
+        });
+    }
+
+    // Auto-scroll to errors on page load
+    const errorFields = document.querySelectorAll('.input-field.is-invalid, .input-field[aria-invalid="true"]');
+    if (errorFields.length > 0) {
+        setTimeout(() => {
+            errorFields[0].scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 500);
+    }
+});
 </script>
+
+</body>
 {% endblock %}
