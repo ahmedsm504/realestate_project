@@ -76,6 +76,7 @@ class PropertyListView(ListView):
         return context
 
 
+
 class PropertyDetailView(DetailView):
     model = Property
     template_name = 'properties/property_detail.html'
@@ -83,23 +84,40 @@ class PropertyDetailView(DetailView):
 
     def get_object(self, queryset=None):
         """
-        Get object by slug or pk, with redirect from old ID URLs to new slug URLs
+        Get object by slug or pk, with redirect from old ID URLs to new slug URLs.
+        Crucially, this method gets the object but doesn't handle the view count increment
+        when it's a redirect, because the actual page isn't served yet.
         """
         if 'slug' in self.kwargs:
             # Access by slug (new way)
-            return get_object_or_404(Property, slug=self.kwargs['slug'], is_published=True)
+            obj = get_object_or_404(Property, slug=self.kwargs['slug'], is_published=True)
+            
+            # 🌟🌟 زياده عدد المشاهدات هنا فقط إذا تم الوصول للصفحة بالـ slug 🌟🌟
+            # نستخدم .update() لتجنب مشكلة الـ race condition البسيطة ولعدم استدعاء save() الكامله
+            obj.views_count += 1
+            obj.save(update_fields=['views_count']) 
+            
+            return obj
         elif 'pk' in self.kwargs:
             # Access by ID (old way) - redirect to slug URL for SEO
             property_obj = get_object_or_404(Property, pk=self.kwargs['pk'], is_published=True)
+            # هنا لا نزود العداد لأننا سنقوم بإعادة التوجيه
             return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
         else:
+            # Fallback (shouldn't typically be reached if URLs are configured correctly)
             return super().get_object(queryset)
     
+    # دالة get() دي مسؤولة عن معالجة طلبات GET، وهنا بنستخدمها للتعامل مع الـ redirects
     def get(self, request, *args, **kwargs):
         """Handle redirects from ID-based URLs to slug-based URLs"""
+        # إذا كان الطلب جاء بمعرف (pk)، نقوم بإعادة توجيهه إلى الرابط المستند إلى slug
         if 'pk' in self.kwargs:
             property_obj = get_object_or_404(Property, pk=self.kwargs['pk'], is_published=True)
             return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
+        
+        # إذا لم يكن هناك pk، فهذا يعني أننا وصلنا للصفحة بالـ slug (أو طريقة أخرى غير الـ pk)
+        # هنا سنقوم باستدعاء السلوك الافتراضي لـ DetailView الذي سيقوم باستدعاء get_object()
+        # ومن ثم عرض القالب. الـ view_count سيتم زيادته في get_object() كما هو موضح أعلاه.
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -118,7 +136,6 @@ class PropertyDetailView(DetailView):
         context['is_favorite'] = is_favorite
         
         return context
-
 
 class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Property

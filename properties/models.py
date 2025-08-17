@@ -32,7 +32,7 @@ class Property(models.Model):
     description = models.TextField(verbose_name='الوصف')
     property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES, verbose_name='نوع العقار')
     status = models.CharField(max_length=50, choices=PROPERTY_STATUS, verbose_name='الحالة')
-    price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='السعر') # DecimalField للأرقام العشرية زي الأسعار
+    price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='السعر')
     area = models.DecimalField(max_digits=10, decimal_places=2, help_text='بالمتر المربع', verbose_name='المساحة')
     bedrooms = models.IntegerField(default=0, verbose_name='عدد غرف النوم')
     bathrooms = models.IntegerField(default=0, verbose_name='عدد الحمامات')
@@ -57,6 +57,9 @@ class Property(models.Model):
     # حقل slug محسن لإنشاء روابط لطيفة (SEO-friendly URLs)
     slug = models.SlugField(unique=True, max_length=255, blank=True, verbose_name='الرابط المخصص')
 
+    # 🌟🌟 الحقل الجديد لعدد المشاهدات 🌟🌟
+    views_count = models.PositiveIntegerField(default=0, verbose_name='عدد المشاهدات')
+
     def __str__(self):
         return self.title
 
@@ -64,7 +67,6 @@ class Property(models.Model):
         """
         إنشاء slug فريد يحتوي على معلومات مفيدة للـ SEO
         """
-        # تحويل نوع العقار والمدينة للإنجليزي للـ SEO
         property_type_map = {
             'apartment': 'apartment',
             'villa': 'villa',
@@ -79,12 +81,10 @@ class Property(models.Model):
             'for_rent': 'for-rent'
         }
         
-        # إنشاء slug أساسي من العنوان
         base_slug = slugify(self.title)
-        if not base_slug:  # لو العنوان عربي محض
+        if not base_slug:
             base_slug = f"{property_type_map.get(self.property_type, 'property')}-{status_map.get(self.status, 'property')}"
         
-        # إضافة معلومات مفيدة للـ SEO
         slug_parts = [
             base_slug,
             property_type_map.get(self.property_type, 'property'),
@@ -92,11 +92,9 @@ class Property(models.Model):
             f"{int(self.area)}m" if self.area else None
         ]
         
-        # إزالة الأجزاء الفارغة
         slug_parts = [part for part in slug_parts if part]
         base_final_slug = '-'.join(slug_parts)
         
-        # التأكد من أن الـ slug فريد
         slug = base_final_slug
         counter = 1
         
@@ -106,26 +104,29 @@ class Property(models.Model):
             
         return slug
 
-    # دالة لحفظ الـ slug تلقائياً عند حفظ العقار
+    # 🌟🌟 دالة save() المدمجة والمصححة 🌟🌟
     def save(self, *args, **kwargs):
-        # إنشاء slug فقط لو مش موجود أو لو العنوان اتغير
+        # جزء الـ slug: إنشاء/تحديث الـ slug فقط لو مش موجود أو لو العنوان اتغير
         if not self.slug or (self.pk and Property.objects.get(pk=self.pk).title != self.title):
             self.slug = self.generate_unique_slug()
+            
+        # استدعاء دالة save الأصلية للموديل
         super().save(*args, **kwargs)
 
-    # دالة للحصول على رابط العقار
+    # دالة للحصول على رابط العقار (موصى بها للـ SEO)
     def get_absolute_url(self):
+        # تأكد إن عندك URL pattern باسم 'property_detail' بيقبل 'slug'
         return reverse('properties:property_detail', kwargs={'slug': self.slug})
     
-    # دالة للحصول على رابط بالـ ID (للـ backward compatibility)
+    # دالة للحصول على رابط بالـ ID (لو لسه محتاجها، لكن حاول تعتمد على الـ slug)
     def get_absolute_url_by_id(self):
+        # تأكد إن عندك URL pattern باسم 'property_detail_by_id' بيقبل 'pk'
         return reverse('properties:property_detail_by_id', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'عقار'
         verbose_name_plural = 'عقارات'
         ordering = ['-published_date'] # ترتيب العقارات تنازلياً حسب تاريخ النشر
-
 
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images', verbose_name='العقار')

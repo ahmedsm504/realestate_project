@@ -10,11 +10,10 @@
 
 {% block content %}
 <div class="property-container">
-    <!-- Hero Header Section -->
     <div class="hero-header">
         <div class="hero-content">
             <h1 class="hero-title">
-                🏡 اكتشف أفضل المنازل  
+                🏡 اكتشف أفضل المنازل
             </h1>
             <p class="hero-subtitle">
                 ابحث في آلاف العقارات المميزة واعثر على منزلك القادم
@@ -25,7 +24,6 @@
         </div>
     </div>
 
-    <!-- Main Search Section -->
     <div class="main-search-section">
         <div class="search-container">
             <div class="search-box">
@@ -34,11 +32,11 @@
                         <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
-                <input type="text" 
-                       id="main-search" 
-                       class="main-search-input" 
-                       placeholder="ابحث عن عقار، مدينة، أو منطقة..."
-                       autocomplete="off">
+                <input type="text"
+                               id="main-search"
+                               class="main-search-input"
+                               placeholder="ابحث عن عقار، مدينة، أو منطقة..."
+                               autocomplete="off">
                 <div id="search-suggestions" class="search-suggestions"></div>
             </div>
             <button type="button" id="search-btn" class="search-button">
@@ -50,7 +48,6 @@
         </div>
     </div>
 
-    <!-- Advanced Filters Section -->
     <div class="filters-section">
         <div class="filters-header">
             <h2 class="filters-title">فلاتر متقدمة</h2>
@@ -61,11 +58,10 @@
                 </svg>
             </button>
         </div>
-        
+
         <div class="filters-content" id="filters-content">
             <form method="GET" action="{% url 'properties:property_list' %}" id="filters-form">
                 <div class="filters-grid">
-                    <!-- City Search -->
                     <div class="filter-group">
                         <label for="city_search" class="filter-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -73,16 +69,15 @@
                             </svg>
                             المدينة
                         </label>
-                        <input type="text" 
-                               name="city_search" 
-                               id="city_search" 
+                        <input type="text"
+                               name="city_search"
+                               id="city_search"
                                placeholder="اختر المدينة..."
-                               value="{{ request.GET.city_search }}" 
+                               value="{{ request.GET.city_search }}"
                                class="filter-input city-input">
                         <div id="city-dropdown" class="city-dropdown"></div>
                     </div>
 
-                    <!-- Property Type -->
                     <div class="filter-group">
                         <label for="property_type" class="filter-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -98,7 +93,6 @@
                         </select>
                     </div>
 
-                    <!-- Status -->
                     <div class="filter-group">
                         <label for="status" class="filter-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -114,7 +108,6 @@
                         </select>
                     </div>
 
-                    <!-- Price Range -->
                     <div class="filter-group">
                         <label for="price_range" class="filter-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -123,21 +116,20 @@
                             نطاق السعر
                         </label>
                         <div class="price-range-inputs">
-                            <input type="number" 
-                                   name="min_price" 
-                                   placeholder="من" 
-                                   value="{{ request.GET.min_price }}" 
-                                   class="price-input">
+                            <input type="number"
+                                           name="min_price"
+                                           placeholder="من"
+                                           value="{{ request.GET.min_price }}"
+                                           class="price-input">
                             <span class="price-separator">-</span>
-                            <input type="number" 
-                                   name="max_price" 
-                                   placeholder="إلى" 
-                                   value="{{ request.GET.max_price }}" 
-                                   class="price-input">
+                            <input type="number"
+                                           name="max_price"
+                                           placeholder="إلى"
+                                           value="{{ request.GET.max_price }}"
+                                           class="price-input">
                         </div>
                     </div>
 
-                    <!-- Bedrooms -->
                     <div class="filter-group">
                         <label for="bedrooms" class="filter-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -154,7 +146,6 @@
                         </select>
                     </div>
 
-                    <!-- Area -->
                     <div class="filter-group">
                         <label for="area" class="filter-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -163,17 +154,17 @@
                             المساحة
                         </label>
                         <div class="area-range-inputs">
-                            <input type="number" 
-                                   name="min_area" 
-                                   placeholder="من" 
-                                   value="{{ request.GET.min_area }}" 
-                                   class="area-input">
+                            <input type="number"
+                                           name="min_area"
+                                           placeholder="من"
+                                           value="{{ request.GET.min_area }}"
+                                           class="area-input">
                             <span class="area-separator">-</span>
-                            <input type="number" 
-                                   name="max_area" 
-                                   placeholder="إلى" 
-                                   value="{{ request.GET.max_area }}" 
-                                   class="area-input">
+                            <input type="number"
+                                           name="max_area"
+                                           placeholder="إلى"
+                                           value="{{ request.GET.max_area }}"
+                                           class="area-input">
                         </div>
                     </div>
                 </div>
@@ -196,7 +187,6 @@
         </div>
     </div>
 
-    <!-- Results Section -->
     <div class="results-section" id="results-section">
         <div class="results-header">
             <div class="results-info">
@@ -229,22 +219,21 @@
             </div>
         </div>
 
-        <!-- Properties Grid -->
         {% if properties %}
         <div id="property-results" class="property-grid">
             {% for item in properties %}
             {% with property=item.property %}
-            <article class="property-card fade-in" 
-                     data-city="{{ property.city|lower }}" 
-                     data-search="{{ property.title|lower }} {{ property.city|lower }} {{ property.location_address|lower }}"
-                     data-price="{{ property.price }}"
-                     data-type="{{ property.property_type }}"
-                     data-status="{{ property.status }}">
+            <article class="property-card fade-in"
+                             data-city="{{ property.city|lower }}"
+                             data-search="{{ property.title|lower }} {{ property.city|lower }} {{ property.location_address|lower }}"
+                             data-price="{{ property.price }}"
+                             data-type="{{ property.property_type }}"
+                             data-status="{{ property.status }}">
                 <div class="property-image-container">
                     <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}">
-                        <img src="{{ item.display_image_url }}" 
-                             alt="{{ property.title }}" 
-                             class="property-image" 
+                        <img src="{{ item.display_image_url }}"
+                             alt="{{ property.title }}"
+                             class="property-image"
                              loading="lazy">
                     </a>
                     <div class="property-badges">
@@ -268,10 +257,10 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="property-content">
                     <div class="property-header-info">
-                        <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}" 
+                        <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}"
                            class="property-name">
                             {{ property.title }}
                         </a>
@@ -279,32 +268,40 @@
                             {{ property.price|floatformat:"0" }} ج.م
                         </div>
                     </div>
-                    
+
                     <div class="property-location">
                         <svg class="location-icon" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
                         </svg>
                         <span>{{ property.location_address|truncatechars:40 }}, {{ property.city }}</span>
                     </div>
-                    
+
                     <div class="property-features">
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H7M3 7V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V7M3 7H7M7 3V7M7 7H21M7 7V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span>3 غرف</span>
+                            <span>3 غرف</span> {# Assuming this comes from property.bedrooms #}
                         </div>
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span>2 حمام</span>
+                            <span>2 حمام</span> {# Assuming this comes from property.bathrooms #}
                         </div>
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 16V8C21 7.46957 20.7893 6.96086 20.4142 6.58579C20.0391 6.21071 19.5304 6 19 6H5C4.46957 6 3.96086 6.21071 3.58579 6.58579C3.21071 6.96086 3 7.46957 3 8V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H19C19.5304 18 20.0391 17.7893 20.4142 17.4142C20.7893 17.0391 21 16.5304 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span>150م²</span>
+                            <span>150م²</span> {# Assuming this comes from property.area #}
+                        </div>
+                        {# Added Views Count Feature #}
+                        <div class="feature">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <span>{{ property.views_count|default:"0" }} مشاهدة</span>
                         </div>
                     </div>
                 </div>
@@ -313,13 +310,12 @@
             {% endfor %}
         </div>
 
-        <!-- Pagination -->
         {% if page_obj.paginator.num_pages > 1 %}
         <div class="pagination-container">
             <nav class="pagination" role="navigation" aria-label="صفحات النتائج">
                 {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}&city_search={{ request.GET.city_search|urlencode }}&property_type={{ request.GET.property_type|urlencode }}&status={{ request.GET.status|urlencode }}&min_price={{ request.GET.min_price|urlencode }}&max_price={{ request.GET.max_price|urlencode }}&bedrooms={{ request.GET.bedrooms|urlencode }}&min_area={{ request.GET.min_area|urlencode }}&max_area={{ request.GET.max_area|urlencode }}" 
-                       class="pagination-link" 
+                    <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}&city_search={{ request.GET.city_search|urlencode }}&property_type={{ request.GET.property_type|urlencode }}&status={{ request.GET.status|urlencode }}&min_price={{ request.GET.min_price|urlencode }}&max_price={{ request.GET.max_price|urlencode }}&bedrooms={{ request.GET.bedrooms|urlencode }}&min_area={{ request.GET.min_area|urlencode }}&max_area={{ request.GET.max_area|urlencode }}"
+                       class="pagination-link"
                        aria-label="الصفحة السابقة">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -327,13 +323,13 @@
                         السابق
                     </a>
                 {% endif %}
-                
+
                 <span class="pagination-current" aria-current="page">
                     صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
                 </span>
-                
+
                 {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}&city_search={{ request.GET.city_search|urlencode }}&property_type={{ request.GET.property_type|urlencode }}&status={{ request.GET.status|urlencode }}&min_price={{ request.GET.min_price|urlencode }}&max_price={{ request.GET.max_price|urlencode }}&bedrooms={{ request.GET.bedrooms|urlencode }}&min_area={{ request.GET.min_area|urlencode }}&max_area={{ request.GET.max_area|urlencode }}" 
+                    <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}&city_search={{ request.GET.city_search|urlencode }}&property_type={{ request.GET.property_type|urlencode }}&status={{ request.GET.status|urlencode }}&min_price={{ request.GET.min_price|urlencode }}&max_price={{ request.GET.max_price|urlencode }}&bedrooms={{ request.GET.bedrooms|urlencode }}&min_area={{ request.GET.min_area|urlencode }}&max_area={{ request.GET.max_area|urlencode }}"
                        class="pagination-link"
                        aria-label="الصفحة التالية">
                         التالي
@@ -347,22 +343,21 @@
         {% endif %}
 
         {% else %}
-        <!-- Empty State -->
         <div class="empty-state">
             <div class="empty-state-icon">
                 <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
                     <path d="M19 21V5A2 2 0 00 17 3H7A2 2 0 00 5 5V21M19 21H21M19 21H15M5 21H3M5 21H9M9 7H10M9 11H10M15 7H16M15 11H16M9 15H10M15 15H16M9 19H10M15 19H16" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            
+
             <h3 class="empty-state-title">
                 😔 لا توجد عقارات مطابقة
             </h3>
-            
+
             <p class="empty-state-subtitle">
                 حاول تغيير معايير البحث أو مسح الفلاتر للعثور على عقارات أخرى.
             </p>
-            
+
             <div class="empty-state-actions">
                 <a href="{% url 'properties:property_list' %}" class="btn btn-primary">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -376,7 +371,6 @@
     </div>
 </div>
 
-<!-- Loading Overlay -->
 <div id="loading-overlay" class="loading-overlay" style="display: none;">
     <div class="loading-spinner">
         <div class="spinner-ring"></div>
@@ -384,7 +378,6 @@
     </div>
 </div>
 
-<!-- Enhanced JavaScript -->
 <script>
 // Modern Real Estate Search with Enhanced UX
 document.addEventListener('DOMContentLoaded', function() {
@@ -395,37 +388,37 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollToTop();
     initViewToggle();
     initSmoothScrolling();
-    
+
     // Main search functionality
     function initMainSearch() {
         const mainSearch = document.getElementById('main-search');
         const searchBtn = document.getElementById('search-btn');
         const searchSuggestions = document.getElementById('search-suggestions');
-        
+
         if (!mainSearch) return;
-        
+
         // Get all searchable content
         const searchableData = Array.from(document.querySelectorAll('.property-card')).map(card => ({
             title: card.dataset.search,
             city: card.dataset.city,
             element: card
         }));
-        
+
         mainSearch.addEventListener('input', debounce(function(e) {
             const query = e.target.value.toLowerCase().trim();
-            
+
             if (query.length < 2) {
                 hideSearchSuggestions();
                 return;
             }
-            
-            const results = searchableData.filter(item => 
+
+            const results = searchableData.filter(item =>
                 item.title.includes(query) || item.city.includes(query)
             );
-            
+
             showSearchSuggestions(results, query);
         }, 300));
-        
+
         // Search button click
         searchBtn.addEventListener('click', function() {
             const query = mainSearch.value.trim();
@@ -433,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 performSearch(query);
             }
         });
-        
+
         // Enter key in search
         mainSearch.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -444,26 +437,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     function showSearchSuggestions(results, query) {
         const searchSuggestions = document.getElementById('search-suggestions');
         if (!searchSuggestions) return;
-        
+
         if (results.length === 0) {
             hideSearchSuggestions();
             return;
         }
-        
+
         const suggestionsHTML = results.slice(0, 5).map(result => {
-            const highlightedTitle = result.title.replace(new RegExp(query, 'gi'), 
+            const highlightedTitle = result.title.replace(new RegExp(query, 'gi'),
                 `<mark class="search-highlight">${query}</mark>`
             );
             return `<div class="search-suggestion" data-index="${searchableData.indexOf(result)}">${highlightedTitle}</div>`;
         }).join('');
-        
+
         searchSuggestions.innerHTML = suggestionsHTML;
         searchSuggestions.style.display = 'block';
-        
+
         // Add click handlers
         searchSuggestions.querySelectorAll('.search-suggestion').forEach(suggestion => {
             suggestion.addEventListener('click', function() {
@@ -475,39 +468,39 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     function hideSearchSuggestions() {
         const searchSuggestions = document.getElementById('search-suggestions');
         if (searchSuggestions) {
             searchSuggestions.style.display = 'none';
         }
     }
-    
+
     function performSearch(query) {
         // Highlight matching properties
-        const matchingCards = Array.from(document.querySelectorAll('.property-card')).filter(card => 
-            card.dataset.search.includes(query.toLowerCase()) || 
+        const matchingCards = Array.from(document.querySelectorAll('.property-card')).filter(card =>
+            card.dataset.search.includes(query.toLowerCase()) ||
             card.dataset.city.includes(query.toLowerCase())
         );
-        
+
         if (matchingCards.length > 0) {
             // Highlight and scroll to first match
             matchingCards.forEach(card => {
                 card.classList.add('search-highlighted');
                 setTimeout(() => card.classList.remove('search-highlighted'), 2000);
             });
-            
+
             scrollToProperty(matchingCards[0]);
         }
     }
-    
+
     function scrollToProperty(propertyElement) {
         const resultsSection = document.getElementById('results-section');
         const propertyTop = propertyElement.offsetTop - 200;
-        
+
         // Smooth scroll to results section first
         resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        
+
         // Then scroll to specific property
         setTimeout(() => {
             window.scrollTo({
@@ -516,18 +509,18 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }, 500);
     }
-    
+
     // Filters functionality
     function initFilters() {
         const toggleBtn = document.getElementById('toggle-filters');
         const filtersContent = document.getElementById('filters-content');
         const cityInput = document.getElementById('city_search');
         const cityDropdown = document.getElementById('city-dropdown');
-        
+
         if (toggleBtn && filtersContent) {
             toggleBtn.addEventListener('click', function() {
                 const isVisible = filtersContent.classList.contains('show');
-                
+
                 if (isVisible) {
                     filtersContent.classList.remove('show');
                     toggleBtn.querySelector('span').textContent = 'إظهار الفلاتر';
@@ -539,202 +532,188 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
-        
+
         // City dropdown functionality
         if (cityInput && cityDropdown) {
-            const cities = [...new Set(Array.from(document.querySelectorAll('.property-card')).map(card => 
+            const cities = [...new Set(Array.from(document.querySelectorAll('.property-card')).map(card =>
                 card.dataset.city
             ))].filter(Boolean);
-            
+
             cityInput.addEventListener('input', debounce(function(e) {
                 const query = e.target.value.toLowerCase().trim();
-                
+
                 if (query.length < 2) {
                     hideCityDropdown();
                     return;
                 }
-                
-                const filteredCities = cities.filter(city => 
+
+                const filteredCities = cities.filter(city =>
                     city.includes(query)
                 );
-                
+
                 showCityDropdown(filteredCities, query);
             }, 300));
+
+            // Added remaining city dropdown JavaScript:
+            function showCityDropdown(cities, query) {
+                const cityDropdown = document.getElementById('city-dropdown');
+                if (!cityDropdown) return;
+
+                if (cities.length === 0) {
+                    hideCityDropdown();
+                    return;
+                }
+
+                const dropdownHTML = cities.map(city => {
+                    const highlightedCity = city.replace(new RegExp(query, 'gi'),
+                        `<mark class="city-highlight">${query}</mark>`
+                    );
+                    return `<div class="city-suggestion" data-city-name="${city}">${highlightedCity}</div>`;
+                }).join('');
+
+                cityDropdown.innerHTML = dropdownHTML;
+                cityDropdown.style.display = 'block';
+
+                cityDropdown.querySelectorAll('.city-suggestion').forEach(suggestion => {
+                    suggestion.addEventListener('click', function() {
+                        cityInput.value = this.dataset.cityName;
+                        hideCityDropdown();
+                    });
+                });
+            }
+
+            function hideCityDropdown() {
+                const cityDropdown = document.getElementById('city-dropdown');
+                if (cityDropdown) {
+                    cityDropdown.style.display = 'none';
+                }
+            }
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                if (cityDropdown && !cityInput.contains(event.target) && !cityDropdown.contains(event.target)) {
+                    hideCityDropdown();
+                }
+                if (searchSuggestions && !mainSearch.contains(event.target) && !searchSuggestions.contains(event.target)) {
+                    hideSearchSuggestions();
+                }
+            });
         }
     }
-    
-    function showCityDropdown(cities, query) {
-        const cityDropdown = document.getElementById('city-dropdown');
-        if (!cityDropdown) return;
-        
-        if (cities.length === 0) {
-            hideCityDropdown();
-            return;
-        }
-        
-        const dropdownHTML = cities.map(city => {
-            const highlightedCity = city.replace(new RegExp(query, 'gi'), 
-                `<mark class="search-highlight">${query}</mark>`
-            );
-            return `<div class="city-option" data-city="${city}">${highlightedCity}</div>`;
-        }).join('');
-        
-        cityDropdown.innerHTML = dropdownHTML;
-        cityDropdown.style.display = 'block';
-        
-        // Add click handlers
-        cityDropdown.querySelectorAll('.city-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const selectedCity = this.dataset.city;
-                document.getElementById('city_search').value = selectedCity;
-                hideCityDropdown();
+
+    // Property Card Interactions (Favorites, Shares, etc.)
+    function initPropertyCards() {
+        document.querySelectorAll('.favorite-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const propertyId = this.dataset.propertyId;
+                // Implement favorite toggle logic (e.g., via AJAX)
+                console.log(`Property ${propertyId} favorited/unfavorited!`);
+                this.classList.toggle('favorited'); // Add a class for styling
             });
         });
-    }
-    
-    function hideCityDropdown() {
-        const cityDropdown = document.getElementById('city-dropdown');
-        if (cityDropdown) {
-            cityDropdown.style.display = 'none';
-        }
-    }
-    
-    // Property cards functionality
-    function initPropertyCards() {
-        // Favorite button functionality
-        document.querySelectorAll('.favorite-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.classList.toggle('active');
-                const icon = this.querySelector('svg');
-                if (this.classList.contains('active')) {
-                    icon.style.fill = 'currentColor';
+
+        document.querySelectorAll('.share-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const propertyId = this.dataset.propertyId;
+                const propertyUrl = window.location.origin + `{% url 'properties:property_detail' 0 %}`.replace('0', propertyId); // Example URL, adjust if slugs are used
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'تحقق من هذا العقار!',
+                        text: 'قد يعجبك هذا العقار المعروض للبيع/للإيجار:',
+                        url: propertyUrl,
+                    }).then(() => {
+                        console.log('Thanks for sharing!');
+                    }).catch(console.error);
                 } else {
-                    icon.style.fill = 'none';
+                    // Fallback for browsers that don't support Web Share API
+                    navigator.clipboard.writeText(propertyUrl)
+                        .then(() => {
+                            alert('تم نسخ رابط العقار إلى الحافظة!');
+                        })
+                        .catch(err => {
+                            console.error('فشل نسخ الرابط: ', err);
+                        });
                 }
             });
         });
-        
-        // Share button functionality
-        document.querySelectorAll('.share-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const propertyId = this.dataset.propertyId;
-                // Implement share functionality
-                console.log('Sharing property:', propertyId);
-            });
-        });
     }
-    
-    // Scroll to top functionality
+
+    // Scroll to Top Button
     function initScrollToTop() {
-        const scrollBtn = document.getElementById('scroll-to-top');
-        if (!scrollBtn) return;
-        
-        window.addEventListener('scroll', function() {
-            if (window.pageYOffset > 500) {
-                scrollBtn.style.display = 'flex';
-                scrollBtn.classList.add('show');
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        if (!scrollToTopBtn) return;
+
+        window.addEventListener('scroll', debounce(() => {
+            if (window.scrollY > 300) { // Show button after scrolling down 300px
+                scrollToTopBtn.style.display = 'flex'; // Use flex for centering icon and text
             } else {
-                scrollBtn.classList.remove('show');
-                setTimeout(() => {
-                    if (!scrollBtn.classList.contains('show')) {
-                        scrollBtn.style.display = 'none';
-                    }
-                }, 300);
+                scrollToTopBtn.style.display = 'none';
             }
-        });
-        
-        scrollBtn.addEventListener('click', function() {
+        }, 100));
+
+        scrollToTopBtn.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             });
         });
     }
-    
-    // View toggle functionality
+
+    // View Toggle (Grid/List)
     function initViewToggle() {
-        const viewBtns = document.querySelectorAll('.view-btn');
-        const propertyGrid = document.getElementById('property-results');
-        
-        viewBtns.forEach(btn => {
+        const viewToggleBtns = document.querySelectorAll('.view-toggle .view-btn');
+        const propertyResults = document.getElementById('property-results');
+        if (!viewToggleBtns.length || !propertyResults) return;
+
+        // Load saved view preference
+        const savedView = localStorage.getItem('propertyView') || 'grid';
+        if (savedView === 'list') {
+            propertyResults.classList.add('list-view');
+            document.querySelector('.view-btn[data-view="list"]').classList.add('active');
+            document.querySelector('.view-btn[data-view="grid"]').classList.remove('active');
+        } else {
+            propertyResults.classList.remove('list-view');
+            document.querySelector('.view-btn[data-view="grid"]').classList.add('active');
+            document.querySelector('.view-btn[data-view="list"]').classList.remove('active');
+        }
+
+        viewToggleBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                const view = this.dataset.view;
-                
-                // Update active button
-                viewBtns.forEach(b => b.classList.remove('active'));
+                viewToggleBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                
-                // Update grid layout
-                if (propertyGrid) {
-                    propertyGrid.className = `property-grid view-${view}`;
+                const viewType = this.dataset.view;
+                if (viewType === 'list') {
+                    propertyResults.classList.add('list-view');
+                } else {
+                    propertyResults.classList.remove('list-view');
                 }
+                localStorage.setItem('propertyView', viewType); // Save preference
             });
         });
     }
-    
-    // Smooth scrolling enhancements
+
+    // Smooth Scrolling for anchor links
     function initSmoothScrolling() {
-        // Smooth scroll for all internal links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
             });
         });
-        
-        // Form submission smooth scroll
-        const filtersForm = document.getElementById('filters-form');
-        if (filtersForm) {
-            filtersForm.addEventListener('submit', function() {
-                setTimeout(() => {
-                    const resultsSection = document.getElementById('results-section');
-                    if (resultsSection) {
-                        resultsSection.scrollIntoView({ 
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }, 500);
-            });
-        }
     }
-    
-    // Utility function for debouncing
-    function debounce(func, wait) {
+
+    // Utility Functions
+    function debounce(func, delay) {
         let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
+        return function(...args) {
+            const context = this;
             clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
+            timeout = setTimeout(() => func.apply(context, args), delay);
         };
     }
-    
-    // Global click handler to close dropdowns
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.search-box')) {
-            hideSearchSuggestions();
-        }
-        if (!e.target.closest('.filter-group')) {
-            hideCityDropdown();
-        }
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            hideSearchSuggestions();
-            hideCityDropdown();
-        }
-    });
 });
 </script>
 {% endblock %}

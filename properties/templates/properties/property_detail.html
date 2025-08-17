@@ -34,7 +34,6 @@
 </script>
 
 <div class="max-w-6xl mx-auto my-8 bg-white rounded-lg shadow-lg overflow-hidden">
-    <!-- الصورة الرئيسية وصور المعرض -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
         <div class="main-image">
             {% if property.images.first %}
@@ -54,12 +53,22 @@
         </div>
     </div>
     
-    <!-- تفاصيل العقار -->
     <div class="p-6">
         <div class="flex items-center justify-between mb-4 border-b pb-4">
             <h1 class="text-4xl font-extrabold text-blue-800">{{ property.title }}</h1>
             <div class="flex items-center space-x-4">
                 <span class="text-3xl font-bold text-green-600">{{ property.price|floatformat:"0" }} ج.م</span>
+                
+                {# 🌟🌟 مكان إضافة عداد المشاهدات 🌟🌟 #}
+                <div class="flex items-center text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <span class="font-semibold text-lg">{{ property.views_count }}</span>
+                    <span class="text-sm mr-2">مشاهدة</span>
+                </div>
+                {# 🌟🌟 نهاية مكان إضافة عداد المشاهدات 🌟🌟 #}
                 
                 {% comment %}
                     زر المفضلة سيظهر فقط للمستخدمين العاديين المسجلين دخولهم
@@ -100,7 +109,6 @@
             </div>
         </div>
         
-        <!-- المميزات -->
         <div class="mt-8">
             <h3 class="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">المميزات</h3>
             {% if property.features.all %}
@@ -127,8 +135,8 @@
         <a href="{% url 'properties:owner_properties' username=property.owner.username %}" class="flex items-center gap-3 group">
             {# Owner's Profile Picture #}
             <img src="{% if property.owner.profile_picture %}{{ property.owner.profile_picture.url }}{% else %}{% static 'path/to/default_avatar.png' %}{% endif %}" 
-                 alt="{{ property.owner.username }}" 
-                 class="w-16 h-16 rounded-full object-cover border-2 border-blue-300 group-hover:border-blue-500 transition-colors duration-200 shadow-sm">
+                  alt="{{ property.owner.username }}" 
+                  class="w-16 h-16 rounded-full object-cover border-2 border-blue-300 group-hover:border-blue-500 transition-colors duration-200 shadow-sm">
             
             {# Owner's Username #}
             <p class="text-gray-800 text-xl font-bold group-hover:text-blue-600 transition-colors duration-200">
@@ -172,112 +180,112 @@
 {# سكريپت عام للصفحة - يعمل دائماً #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Page scripts loaded');
+    console.log('Page scripts loaded');
 
-    // دالة للحصول على CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
+    // دالة للحصول على CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
-    // كود معرض الصور
-    const mainImage = document.getElementById('main-property-image');
-    const thumbnails = document.querySelectorAll('.thumbnail-images img[data-full-image]');
+    // كود معرض الصور
+    const mainImage = document.getElementById('main-property-image');
+    const thumbnails = document.querySelectorAll('.thumbnail-images img[data-full-image]');
 
-    thumbnails.forEach(function(thumbnail) {
-        thumbnail.addEventListener('click', function() {
-            const fullImageUrl = this.dataset.fullImage;
-            if (fullImageUrl && mainImage) {
-                mainImage.src = fullImageUrl;
-                // إزالة التحديد من الصور الأخرى
-                thumbnails.forEach(function(t) {
-                    t.classList.remove('ring-4', 'ring-blue-500');
-                });
-                // إضافة التحديد للصورة المختارة
-                this.classList.add('ring-4', 'ring-blue-500');
-            }
-        });
-    });
+    thumbnails.forEach(function(thumbnail) {
+        thumbnail.addEventListener('click', function() {
+            const fullImageUrl = this.dataset.fullImage;
+            if (fullImageUrl && mainImage) {
+                mainImage.src = fullImageUrl;
+                // إزالة التحديد من الصور الأخرى
+                thumbnails.forEach(function(t) {
+                    t.classList.remove('ring-4', 'ring-blue-500');
+                });
+                // إضافة التحديد للصورة المختارة
+                this.classList.add('ring-4', 'ring-blue-500');
+            }
+        });
+    });
 
-    // تحديد الصورة الأولى بشكل افتراضي
-    if (thumbnails.length > 0) {
-        thumbnails[0].classList.add('ring-4', 'ring-blue-500');
-    }
+    // تحديد الصورة الأولى بشكل افتراضي
+    if (thumbnails.length > 0) {
+        thumbnails[0].classList.add('ring-4', 'ring-blue-500');
+    }
 
-    // كود زر المفضلة (تم دمجه وتصحيح مسار الـ URL)
-    const favoriteBtn = document.getElementById('favorite-btn');
-    if (favoriteBtn) {
-        console.log('Favorite button found:', favoriteBtn.dataset);
-        
-        favoriteBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Favorite button clicked');
+    // كود زر المفضلة (تم دمجه وتصحيح مسار الـ URL)
+    const favoriteBtn = document.getElementById('favorite-btn');
+    if (favoriteBtn) {
+        console.log('Favorite button found:', favoriteBtn.dataset);
+        
+        favoriteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Favorite button clicked');
 
-            const propertyId = this.dataset.pk;
-            if (!propertyId) {
-                console.error('Property ID not found');
-                return;
-            }
+            const propertyId = this.dataset.pk;
+            if (!propertyId) {
+                console.error('Property ID not found');
+                return;
+            }
 
-            // استخدام مسار صحيح بناءً على ما هو موجود في urls.py
-            const url = "{% url 'properties:add_remove_favorite' property.pk %}".replace('{{ property.pk }}', propertyId);
-            console.log('Making request to:', url);
+            // استخدام مسار صحيح بناءً على ما هو موجود في urls.py
+            const url = "{% url 'properties:add_remove_favorite' property.pk %}".replace('{{ property.pk }}', propertyId);
+            console.log('Making request to:', url);
 
-            const csrftoken = getCookie('csrftoken');
-            
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken || ''
-                },
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(function(data) {
-                console.log('Response data:', data);
-                if (data.status === 'success') {
-                    // تحديث شكل الزر
-                    if (data.is_favorite) {
-                        favoriteBtn.classList.add('text-red-500', 'hover:text-red-600', 'bg-red-100');
-                        favoriteBtn.classList.remove('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
-                        favoriteBtn.dataset.isFavorite = 'true';
-                        console.log('Added to favorites');
-                    } else {
-                        favoriteBtn.classList.remove('text-red-500', 'hover:text-red-600', 'bg-red-100');
-                        favoriteBtn.classList.add('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
-                        favoriteBtn.dataset.isFavorite = 'false';
-                        console.log('Removed from favorites');
-                    }
-                } else {
-                    console.error('Server error:', data.message);
-                    alert('خطأ: ' + (data.message || 'حدث خطأ غير متوقع'));
-                }
-            })
-            .catch(function(error) {
-                console.error('Fetch error:', error);
-                alert('خطأ في الاتصال: ' + error.message);
-            });
-        });
-    } else {
-        console.log('Favorite button not found - user may not be logged in or is a realtor');
-    }
+            const csrftoken = getCookie('csrftoken');
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken || ''
+                },
+                credentials: 'same-origin'
+            })
+            .then(function(response) {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('Response data:', data);
+                if (data.status === 'success') {
+                    // تحديث شكل الزر
+                    if (data.is_favorite) {
+                        favoriteBtn.classList.add('text-red-500', 'hover:text-red-600', 'bg-red-100');
+                        favoriteBtn.classList.remove('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
+                        favoriteBtn.dataset.isFavorite = 'true';
+                        console.log('Added to favorites');
+                    } else {
+                        favoriteBtn.classList.remove('text-red-500', 'hover:text-red-600', 'bg-red-100');
+                        favoriteBtn.classList.add('text-gray-400', 'hover:text-red-500', 'bg-gray-100');
+                        favoriteBtn.dataset.isFavorite = 'false';
+                        console.log('Removed from favorites');
+                    }
+                } else {
+                    console.error('Server error:', data.message);
+                    alert('خطأ: ' + (data.message || 'حدث خطأ غير متوقع'));
+                }
+            })
+            .catch(function(error) {
+                console.error('Fetch error:', error);
+                alert('خطأ في الاتصال: ' + error.message);
+            });
+        });
+    } else {
+        console.log('Favorite button not found - user may not be logged in or is a realtor');
+    }
 });
 </script>
 
@@ -310,4 +318,3 @@ document.addEventListener('DOMContentLoaded', function() {
 {% endif %}
 
 {% endblock %}
-```
