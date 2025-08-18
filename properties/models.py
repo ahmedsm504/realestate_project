@@ -57,8 +57,11 @@ class Property(models.Model):
     # حقل slug محسن لإنشاء روابط لطيفة (SEO-friendly URLs)
     slug = models.SlugField(unique=True, max_length=255, blank=True, verbose_name='الرابط المخصص')
 
-    # 🌟🌟 الحقل الجديد لعدد المشاهدات 🌟🌟
-    views_count = models.PositiveIntegerField(default=0, verbose_name='عدد المشاهدات')
+    # 🌟🌟 الحقل الجديد لتتبع المستخدمين الذين شاهدوا العقار 🌟🌟
+    viewed_by = models.ManyToManyField(User, related_name='viewed_properties', blank=True, verbose_name='شاهده المستخدمون')
+
+    # 🌟🌟 لا داعي لحقل views_count كحقل منفصل بعد الآن 🌟🌟
+    # views_count = models.PositiveIntegerField(default=0, verbose_name='عدد المشاهدات')
 
     def __str__(self):
         return self.title
@@ -83,12 +86,13 @@ class Property(models.Model):
         
         base_slug = slugify(self.title)
         if not base_slug:
-            base_slug = f"{property_type_map.get(self.property_type, 'property')}-{status_map.get(self.status, 'property')}"
+            # استخدام المدينة ونوع العقار والسعر لتوليد slug أساسي إذا كان العنوان فارغًا
+            base_slug = f"{property_type_map.get(self.property_type, 'property')}-{status_map.get(self.status, 'property')}-{slugify(self.city) if self.city else 'egypt'}-{int(self.price)}"
         
         slug_parts = [
             base_slug,
             property_type_map.get(self.property_type, 'property'),
-            slugify(self.city) if slugify(self.city) else 'egypt',
+            slugify(self.city) if self.city else 'egypt',
             f"{int(self.area)}m" if self.area else None
         ]
         
@@ -104,7 +108,7 @@ class Property(models.Model):
             
         return slug
 
-    # 🌟🌟 دالة save() المدمجة والمصححة 🌟🌟
+    # دالة save() المدمجة والمصححة
     def save(self, *args, **kwargs):
         # جزء الـ slug: إنشاء/تحديث الـ slug فقط لو مش موجود أو لو العنوان اتغير
         if not self.slug or (self.pk and Property.objects.get(pk=self.pk).title != self.title):
@@ -122,6 +126,14 @@ class Property(models.Model):
     def get_absolute_url_by_id(self):
         # تأكد إن عندك URL pattern باسم 'property_detail_by_id' بيقبل 'pk'
         return reverse('properties:property_detail_by_id', kwargs={'pk': self.pk})
+
+    @property
+    def views_count(self):
+        """
+        خاصية لحساب عدد المشاهدات بناءً على عدد المستخدمين في حقل viewed_by.
+        هذا أفضل من حقل views_count منفصل لأنه يضمن الدقة دائمًا.
+        """
+        return self.viewed_by.count()
 
     class Meta:
         verbose_name = 'عقار'

@@ -77,6 +77,7 @@ class PropertyListView(ListView):
 
 
 
+
 class PropertyDetailView(DetailView):
     model = Property
     template_name = 'properties/property_detail.html'
@@ -85,49 +86,54 @@ class PropertyDetailView(DetailView):
     def get_object(self, queryset=None):
         """
         Get object by slug or pk, with redirect from old ID URLs to new slug URLs.
-        Crucially, this method gets the object but doesn't handle the view count increment
-        when it's a redirect, because the actual page isn't served yet.
+        Crucially, this method handles the unique view count increment for logged-in users.
         """
         if 'slug' in self.kwargs:
-            # Access by slug (new way)
-            obj = get_object_or_404(Property, slug=self.kwargs['slug'], is_published=True)
-            
-            # 🌟🌟 زياده عدد المشاهدات هنا فقط إذا تم الوصول للصفحة بالـ slug 🌟🌟
-            # نستخدم .update() لتجنب مشكلة الـ race condition البسيطة ولعدم استدعاء save() الكامله
-            obj.views_count += 1
-            obj.save(update_fields=['views_count']) 
-            
+            # الوصول بواسطة الـ slug (الطريقة الجديدة)
+            obj = get_object_or_404(self.model, slug=self.kwargs['slug'], is_published=True)
+
+            # 🌟🌟 منطق زيادة عدد المشاهدات الفريدة هنا 🌟🌟
+            # نزيد العداد فقط إذا كان المستخدم مسجلاً للدخول ولم يشاهد العقار من قبل
+            if self.request.user.is_authenticated:
+                if not obj.viewed_by.filter(id=self.request.user.id).exists():
+                    obj.viewed_by.add(self.request.user)
+                    # لا داعي لاستدعاء obj.save() هنا بعد add()
+                    # لأن viewed_by هو @property ويحسب القيمة تلقائيًا
+
             return obj
         elif 'pk' in self.kwargs:
-            # Access by ID (old way) - redirect to slug URL for SEO
-            property_obj = get_object_or_404(Property, pk=self.kwargs['pk'], is_published=True)
-            # هنا لا نزود العداد لأننا سنقوم بإعادة التوجيه
+            # الوصول بواسطة الـ ID (الطريقة القديمة) - إعادة توجيه إلى رابط الـ slug لـ SEO
+            property_obj = get_object_or_404(self.model, pk=self.kwargs['pk'], is_published=True)
+            # هنا لا نزيد العداد لأننا سنقوم بإعادة التوجيه (المشاهدة الفعلية ستحدث بعد إعادة التوجيه)
             return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
         else:
-            # Fallback (shouldn't typically be reached if URLs are configured correctly)
+            # حالة احتياطية (لا ينبغي الوصول إليها عادةً إذا كانت عناوين URL مهيأة بشكل صحيح)
             return super().get_object(queryset)
     
-    # دالة get() دي مسؤولة عن معالجة طلبات GET، وهنا بنستخدمها للتعامل مع الـ redirects
+    # دالة get() هذه مسؤولة عن معالجة طلبات GET، وهنا نستخدمها للتعامل مع الـ redirects
     def get(self, request, *args, **kwargs):
         """Handle redirects from ID-based URLs to slug-based URLs"""
         # إذا كان الطلب جاء بمعرف (pk)، نقوم بإعادة توجيهه إلى الرابط المستند إلى slug
         if 'pk' in self.kwargs:
-            property_obj = get_object_or_404(Property, pk=self.kwargs['pk'], is_published=True)
+            property_obj = get_object_or_404(self.model, pk=self.kwargs['pk'], is_published=True)
             return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
         
         # إذا لم يكن هناك pk، فهذا يعني أننا وصلنا للصفحة بالـ slug (أو طريقة أخرى غير الـ pk)
         # هنا سنقوم باستدعاء السلوك الافتراضي لـ DetailView الذي سيقوم باستدعاء get_object()
-        # ومن ثم عرض القالب. الـ view_count سيتم زيادته في get_object() كما هو موضح أعلاه.
+        # ومن ثم عرض القالب. منطق المشاهدات الفريدة سيتم التعامل معه في get_object().
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # تأكد أن 'images' هي related_name لنموذج الصور الخاص بك
         context['main_image'] = self.object.images.filter(is_main=True).first()
         context['extra_images'] = self.object.images.filter(is_main=False)
         
         is_favorite = False
-        if self.request.user.is_authenticated and not self.request.user.is_realtor:
+        # تأكد من أنك تستورد FavoriteProperty إذا لم تكن في نفس models.py
+        # من الأفضل التأكد من وجود is_realtor للمستخدم قبل استخدامه
+        if self.request.user.is_authenticated and not hasattr(self.request.user, 'is_realtor') or not self.request.user.is_realtor:
             is_favorite = FavoriteProperty.objects.filter(
                 user=self.request.user, 
                 property=self.object
@@ -136,7 +142,7 @@ class PropertyDetailView(DetailView):
         context['is_favorite'] = is_favorite
         
         return context
-
+    
 class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Property
     form_class = PropertyForm
