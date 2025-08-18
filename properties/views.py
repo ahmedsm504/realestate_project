@@ -78,66 +78,61 @@ class PropertyListView(ListView):
 
 
 
+from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponsePermanentRedirect
+# Make sure to import Property and FavoriteProperty from your models
+from .models import Property, FavoriteProperty 
+
+
 class PropertyDetailView(DetailView):
     model = Property
     template_name = 'properties/property_detail.html'
     context_object_name = 'property'
 
     def get_object(self, queryset=None):
-        """
-        Get object by slug or pk, with redirect from old ID URLs to new slug URLs.
-        Crucially, this method handles the unique view count increment for logged-in users.
-        """
+        # ... (Your existing get_object method, which is already correct) ...
         if 'slug' in self.kwargs:
-            # الوصول بواسطة الـ slug (الطريقة الجديدة)
             obj = get_object_or_404(self.model, slug=self.kwargs['slug'], is_published=True)
 
-            # 🌟🌟 منطق زيادة عدد المشاهدات الفريدة هنا 🌟🌟
-            # نزيد العداد فقط إذا كان المستخدم مسجلاً للدخول ولم يشاهد العقار من قبل
             if self.request.user.is_authenticated:
                 if not obj.viewed_by.filter(id=self.request.user.id).exists():
                     obj.viewed_by.add(self.request.user)
-                    # لا داعي لاستدعاء obj.save() هنا بعد add()
-                    # لأن viewed_by هو @property ويحسب القيمة تلقائيًا
-
             return obj
         elif 'pk' in self.kwargs:
-            # الوصول بواسطة الـ ID (الطريقة القديمة) - إعادة توجيه إلى رابط الـ slug لـ SEO
             property_obj = get_object_or_404(self.model, pk=self.kwargs['pk'], is_published=True)
-            # هنا لا نزيد العداد لأننا سنقوم بإعادة التوجيه (المشاهدة الفعلية ستحدث بعد إعادة التوجيه)
             return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
         else:
-            # حالة احتياطية (لا ينبغي الوصول إليها عادةً إذا كانت عناوين URL مهيأة بشكل صحيح)
             return super().get_object(queryset)
     
-    # دالة get() هذه مسؤولة عن معالجة طلبات GET، وهنا نستخدمها للتعامل مع الـ redirects
     def get(self, request, *args, **kwargs):
-        """Handle redirects from ID-based URLs to slug-based URLs"""
-        # إذا كان الطلب جاء بمعرف (pk)، نقوم بإعادة توجيهه إلى الرابط المستند إلى slug
+        # ... (Your existing get method, which is already correct) ...
         if 'pk' in self.kwargs:
             property_obj = get_object_or_404(self.model, pk=self.kwargs['pk'], is_published=True)
             return HttpResponsePermanentRedirect(property_obj.get_absolute_url())
-        
-        # إذا لم يكن هناك pk، فهذا يعني أننا وصلنا للصفحة بالـ slug (أو طريقة أخرى غير الـ pk)
-        # هنا سنقوم باستدعاء السلوك الافتراضي لـ DetailView الذي سيقوم باستدعاء get_object()
-        # ومن ثم عرض القالب. منطق المشاهدات الفريدة سيتم التعامل معه في get_object().
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # تأكد أن 'images' هي related_name لنموذج الصور الخاص بك
         context['main_image'] = self.object.images.filter(is_main=True).first()
         context['extra_images'] = self.object.images.filter(is_main=False)
         
         is_favorite = False
-        # تأكد من أنك تستورد FavoriteProperty إذا لم تكن في نفس models.py
-        # من الأفضل التأكد من وجود is_realtor للمستخدم قبل استخدامه
-        if self.request.user.is_authenticated and not hasattr(self.request.user, 'is_realtor') or not self.request.user.is_realtor:
-            is_favorite = FavoriteProperty.objects.filter(
-                user=self.request.user, 
-                property=self.object
-            ).exists()
+        
+        # 🌟🌟 CORRECTED LOGIC HERE 🌟🌟
+        # First, check if the user is authenticated.
+        # Only THEN check for the 'is_realtor' attribute.
+        if self.request.user.is_authenticated:
+            # Check if the user is *not* a realtor.
+            # Use hasattr defensively if 'is_realtor' might not always exist on User model extensions.
+            # If your User model *always* has 'is_realtor', you can simplify.
+            if not hasattr(self.request.user, 'is_realtor') or not self.request.user.is_realtor:
+                is_favorite = FavoriteProperty.objects.filter(
+                    user=self.request.user, 
+                    property=self.object
+                ).exists()
+            # If the user *is* a realtor, is_favorite remains False, which is the default.
         
         context['is_favorite'] = is_favorite
         
