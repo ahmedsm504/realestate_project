@@ -50,7 +50,7 @@
 
     <div class="filters-section">
         <div class="filters-header">
-            <h2 class="filters-title">فلاتر متقدمة</h2>
+            <h2 class="filters-title">فلترة البحث</h2>
             <button type="button" id="toggle-filters" class="toggle-filters-btn">
                 <span>إظهار الفلاتر</span>
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -61,6 +61,7 @@
 
         <div class="filters-content" id="filters-content">
             <form method="GET" action="{% url 'properties:property_list' %}" id="filters-form">
+                <input type="hidden" name="q" id="hidden-q" value="{{ request.GET.q }}">
                 <div class="filters-grid">
                     <div class="filter-group">
                         <label for="city_search" class="filter-label">
@@ -190,7 +191,7 @@
     <div class="results-section" id="results-section">
         <div class="results-header">
             <div class="results-info">
-                <h3 class="results-title">نتائج البحث</h3>
+                <h3 class="results-title">العقارات المتاحة</h3>
                 <p class="results-count">
                     تم العثور على <span id="results-count">{{ properties|length }}</span> عقار
                 </p>
@@ -381,6 +382,10 @@
 <script>
 // Modern Real Estate Search with Enhanced UX
 document.addEventListener('DOMContentLoaded', function() {
+    // Shared state accessible by helper functions in this scope
+    let mainSearchEl = null;
+    let searchSuggestionsEl = null;
+    let searchableData = [];
     // Initialize all components
     initMainSearch();
     initFilters();
@@ -391,20 +396,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Main search functionality
     function initMainSearch() {
-        const mainSearch = document.getElementById('main-search');
+        mainSearchEl = document.getElementById('main-search');
         const searchBtn = document.getElementById('search-btn');
-        const searchSuggestions = document.getElementById('search-suggestions');
+        searchSuggestionsEl = document.getElementById('search-suggestions');
 
-        if (!mainSearch) return;
+        if (!mainSearchEl) return;
 
         // Get all searchable content
-        const searchableData = Array.from(document.querySelectorAll('.property-card')).map(card => ({
+        searchableData = Array.from(document.querySelectorAll('.property-card')).map(card => ({
             title: card.dataset.search,
             city: card.dataset.city,
             element: card
         }));
 
-        mainSearch.addEventListener('input', debounce(function(e) {
+        mainSearchEl.addEventListener('input', debounce(function(e) {
             const query = e.target.value.toLowerCase().trim();
 
             if (query.length < 2) {
@@ -421,16 +426,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Search button click
         searchBtn.addEventListener('click', function() {
-            const query = mainSearch.value.trim();
+            const query = mainSearchEl.value.trim();
             if (query) {
                 performSearch(query);
             }
         });
 
         // Enter key in search
-        mainSearch.addEventListener('keypress', function(e) {
+        mainSearchEl.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const query = mainSearch.value.trim();
+                const query = mainSearchEl.value.trim();
                 if (query) {
                     performSearch(query);
                 }
@@ -439,8 +444,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showSearchSuggestions(results, query) {
-        const searchSuggestions = document.getElementById('search-suggestions');
-        if (!searchSuggestions) return;
+        searchSuggestionsEl = document.getElementById('search-suggestions');
+        if (!searchSuggestionsEl) return;
 
         if (results.length === 0) {
             hideSearchSuggestions();
@@ -454,44 +459,55 @@ document.addEventListener('DOMContentLoaded', function() {
             return `<div class="search-suggestion" data-index="${searchableData.indexOf(result)}">${highlightedTitle}</div>`;
         }).join('');
 
-        searchSuggestions.innerHTML = suggestionsHTML;
-        searchSuggestions.style.display = 'block';
+        searchSuggestionsEl.innerHTML = suggestionsHTML;
+        searchSuggestionsEl.style.display = 'block';
 
         // Add click handlers
-        searchSuggestions.querySelectorAll('.search-suggestion').forEach(suggestion => {
+        searchSuggestionsEl.querySelectorAll('.search-suggestion').forEach(suggestion => {
             suggestion.addEventListener('click', function() {
                 const index = parseInt(this.dataset.index);
                 const result = searchableData[index];
-                mainSearch.value = result.title;
+                const searchValue = (result && result.city) ? result.city : (result && result.title ? result.title : '');
+                if (mainSearchEl) mainSearchEl.value = searchValue;
                 hideSearchSuggestions();
-                scrollToProperty(result.element);
+                // Navigate and filter on server to ensure full, correct results
+                performSearch(searchValue.trim());
             });
         });
     }
 
     function hideSearchSuggestions() {
-        const searchSuggestions = document.getElementById('search-suggestions');
-        if (searchSuggestions) {
-            searchSuggestions.style.display = 'none';
+        searchSuggestionsEl = document.getElementById('search-suggestions');
+        if (searchSuggestionsEl) {
+            searchSuggestionsEl.style.display = 'none';
         }
     }
 
     function performSearch(query) {
-        // Highlight matching properties
-        const matchingCards = Array.from(document.querySelectorAll('.property-card')).filter(card =>
-            card.dataset.search.includes(query.toLowerCase()) ||
-            card.dataset.city.includes(query.toLowerCase())
-        );
+        // Submit via filters form, preserving existing filter fields
+        const form = document.getElementById('filters-form');
+        if (!form) return;
 
-        if (matchingCards.length > 0) {
-            // Highlight and scroll to first match
-            matchingCards.forEach(card => {
-                card.classList.add('search-highlighted');
-                setTimeout(() => card.classList.remove('search-highlighted'), 2000);
-            });
+        const hiddenQ = document.getElementById('hidden-q');
+        const cityInput = document.getElementById('city_search');
 
-            scrollToProperty(matchingCards[0]);
+        // Determine if query matches a known city (case-insensitive)
+        const knownCities = [...new Set(Array.from(document.querySelectorAll('.property-card')).map(card => card.dataset.city).filter(Boolean))];
+        const match = knownCities.find(c => (c || '').toLowerCase() === query.toLowerCase());
+
+        // Reset paging on new search
+        const pageInput = form.querySelector('[name="page"]');
+        if (pageInput) pageInput.remove();
+
+        if (match) {
+            if (cityInput) cityInput.value = match;
+            if (hiddenQ) hiddenQ.value = '';
+        } else {
+            if (cityInput) cityInput.value = '';
+            if (hiddenQ) hiddenQ.value = query;
         }
+
+        form.submit();
     }
 
     function scrollToProperty(propertyElement) {
@@ -594,7 +610,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (cityDropdown && !cityInput.contains(event.target) && !cityDropdown.contains(event.target)) {
                     hideCityDropdown();
                 }
-                if (searchSuggestions && !mainSearch.contains(event.target) && !searchSuggestions.contains(event.target)) {
+                const localMainSearch = document.getElementById('main-search');
+                const localSearchSuggestions = document.getElementById('search-suggestions');
+                if (localSearchSuggestions && localMainSearch && !localMainSearch.contains(event.target) && !localSearchSuggestions.contains(event.target)) {
                     hideSearchSuggestions();
                 }
             });

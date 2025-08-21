@@ -117,10 +117,13 @@
                     <div class="btn-overlay"></div>
                 </button>
 
-                <!-- Divider -->
-                <div class="divider">
-                    <span class="divider-text">أو</span>
-                </div>
+                <a href="{% url 'users:register' %}" type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    إنشاء حساب   
+                    <div class="btn-overlay"></div>
+                </a>
+
+
 
                 <!-- Social Login -->
                 <div class="social-login">
@@ -131,13 +134,6 @@
                         <span>تسجيل الدخول باستخدام Google</span>
                         <div class="btn-overlay"></div>
                     </a>
-                </div>
-
-                <!-- Registration Link -->
-                <div class="auth-switch">
-                    <p>ليس لديك حساب؟ 
-                        <a href="{% url 'users:register' %}" class="link-primary">إنشاء حساب جديد</a>
-                    </p>
                 </div>
             </div>
         </form>

@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse, HttpResponsePermanentRedirect
+from decimal import Decimal, InvalidOperation
 from .models import Property, PropertyImage, Feature, FavoriteProperty
 from .forms import PropertyForm
 
@@ -18,33 +19,80 @@ class PropertyListView(ListView):
 
     def get_queryset(self):
         queryset = Property.objects.filter(is_published=True).order_by('-published_date')
-        
-        # فلترة البحث العام
+
+        # فلترة بالمدينة بشكل صريح
+        city_search = self.request.GET.get('city_search')
         query = self.request.GET.get('q')
-        if query:
-            queryset = queryset.filter(
-                Q(title__icontains=query) |
-                Q(description__icontains=query) |
-                Q(location_address__icontains=query) |
-                Q(city__icontains=query) |
-                Q(district__icontains=query)
-            )
-        
+        if city_search:
+            city_value = city_search.strip()
+            if city_value:
+                queryset = queryset.filter(city__icontains=city_value)
+        elif query:
+            # لو البحث يساوي اسم مدينة أو حي بالضبط، فلتر بالمدينة/الحي فقط لتجنب ظهور مدن أخرى
+            query_value = query.strip()
+            if queryset.filter(city__iexact=query_value).exists():
+                queryset = queryset.filter(city__iexact=query_value)
+            elif queryset.filter(district__iexact=query_value).exists():
+                queryset = queryset.filter(district__iexact=query_value)
+            else:
+                # بحث عام على العنوان والوصف والعنوان التفصيلي والمدينة والحي
+                queryset = queryset.filter(
+                    Q(title__icontains=query)
+                    | Q(description__icontains=query)
+                    | Q(location_address__icontains=query)
+                    | Q(city__icontains=query)
+                    | Q(district__icontains=query)
+                )
+
         # فلترة نوع العقار
         property_type = self.request.GET.get('property_type')
         if property_type:
             queryset = queryset.filter(property_type=property_type)
-        
+
         # فلترة حالة العقار (للبيع أو للإيجار)
         status = self.request.GET.get('status')
         if status:
             queryset = queryset.filter(status=status)
-            
-        # فلترة السعر الأقصى (أقل من أو يساوي)
+
+        # فلترة السعر الأدنى والأقصى
+        min_price = self.request.GET.get('min_price')
+        if min_price:
+            try:
+                queryset = queryset.filter(price__gte=Decimal(min_price))
+            except (InvalidOperation, ValueError):
+                pass
+
         max_price = self.request.GET.get('max_price')
-        if max_price and max_price.isdigit(): # تأكد أنه رقم
-            queryset = queryset.filter(price__lte=float(max_price)) # أقل من أو يساوي
-            
+        if max_price:
+            try:
+                queryset = queryset.filter(price__lte=Decimal(max_price))
+            except (InvalidOperation, ValueError):
+                pass
+
+        # فلترة عدد غرف النوم
+        bedrooms = self.request.GET.get('bedrooms')
+        if bedrooms and bedrooms.isdigit():
+            bedrooms_num = int(bedrooms)
+            if bedrooms_num >= 4:
+                queryset = queryset.filter(bedrooms__gte=4)
+            else:
+                queryset = queryset.filter(bedrooms=bedrooms_num)
+
+        # فلترة المساحة
+        min_area = self.request.GET.get('min_area')
+        if min_area:
+            try:
+                queryset = queryset.filter(area__gte=Decimal(min_area))
+            except (InvalidOperation, ValueError):
+                pass
+
+        max_area = self.request.GET.get('max_area')
+        if max_area:
+            try:
+                queryset = queryset.filter(area__lte=Decimal(max_area))
+            except (InvalidOperation, ValueError):
+                pass
+
         return queryset
 
     def get_context_data(self, **kwargs):

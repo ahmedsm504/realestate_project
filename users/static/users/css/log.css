@@ -7,7 +7,10 @@
 }
 .reg_body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #83a4d4 0%, #b6fbff 100%);
+    background-image: linear-gradient(135deg, #e7e9f17f 0%, #fffefda2 100%), url('/static/users/img/bg3.jpg');
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     color: #141518;
     line-height: 1.6;
     overflow-x: hidden;
@@ -73,13 +76,49 @@
     50% { transform: translateY(-20px) rotate(180deg); }
 }
 
-/* Container */
+
+/* Make the container scroll instead of clipping */
 .container {
-    width: 100%;
-    max-width: 900px;
-    position: relative;
-    z-index: 1;
+  width: 100%;
+  min-height: 100dvh;           /* handles mobile browser chrome correctly */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;          /* let children use full width */
+  justify-content: flex-start;   /* don't center vertically (causes clipping) */
+  gap: 1rem;
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom) + 80px); /* room for last row / fixed bars */
+  box-sizing: border-box;
+  overflow-y: auto;              /* <- crucial so last item can scroll into view */
+  z-index: 1;
 }
+
+/* Prevent children (like button rows) from shrinking out of existence */
+.container > * {
+  flex-shrink: 0;
+}
+
+/* If your buttons are in a row, allow wrapping */
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+/* Make buttons responsive */
+.buttons .button {
+  flex: 1 1 160px;  /* grows, wraps; adjust min width as needed */
+}
+
+/* Small screens: ensure top-start and scrolling */
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom) + 96px);
+  }
+}
+
 
 /* Auth Wrapper */
 .auth-wrapper {
@@ -92,6 +131,7 @@
     max-width: 480px;
     margin: 0 auto;
     position: relative;
+    height: 100vh;
 }
 
 /* Registration Wrapper (for registration form) */
@@ -114,9 +154,8 @@
 .form-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #ebeef3 !important;
     margin-bottom: 8px;
-    background: linear-gradient(135deg, #c8cad4, #ffffff);
+    background: linear-gradient(135deg, #f5d927, #4f4202);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -124,8 +163,8 @@
 
 .form-subtitle {
     font-size: 1.8rem;
-    color: #dde0e4;
-    font-weight: 500;
+    color: #635503;
+    font-weight: 700;
 }
 
 /* Error Container */
@@ -213,12 +252,12 @@
     align-items: center;
     gap: 8px;
     font-weight: 600;
-    color: #e3e3e8 !important;
+    color: #3f3603 !important;
     font-size: 1rem;
 }
 
 .input-label i {
-    color: #f4f5f6;
+    color: #3f3603;
     width: 16px;
 }
 
@@ -235,7 +274,7 @@
 
 .input-field:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #FFD700;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     transform: translateY(-2px);
 }
@@ -378,7 +417,7 @@
     gap: 12px;
     width: 100%;
     padding: 18px 32px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #675804, #FFD700);
     color: white;
     border: none;
     border-radius: 16px;
@@ -387,7 +426,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 32px rgba(234, 216, 102, 0.3);
 }
 
 .submit-btn:hover {

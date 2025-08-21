@@ -35,7 +35,7 @@
   
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   
@@ -87,7 +87,7 @@ body {
 
 /* ===== ENHANCED NAVIGATION STYLES ===== */
         .navbar {
-            background: rgba(229, 236, 252, 0.95);
+            background: rgba(255, 255, 255, 0.749);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -98,10 +98,11 @@ body {
             left: 0;
             right: 0;
             z-index: 50;
+            border-radius: 20px;
         }
 
         .navbar.scrolled {
-            background: rgba(231, 234, 243, 0.98);
+            background: rgba(231, 234, 243, 0.566);
             box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
         }
 
@@ -160,7 +161,7 @@ body {
         }
 
         .logo {
-            height: 6rem;
+            height: 8rem;
             width: auto;
             transition: all var(--transition-fast);
         }
@@ -179,10 +180,10 @@ body {
         .nav-link {
             padding: 0.75rem 1rem;
             border-radius: var(--radius-lg);
-            color: rgba(28, 19, 19, 0.9);
+            color: rgb(74, 60, 2);
             text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9rem;
+            font-weight: 800px;
+            font-size: 1.2rem;
             transition: all var(--transition-fast);
             position: relative;
             white-space: nowrap;
@@ -389,7 +390,7 @@ body {
                 height: 70px;
             }
             .logo {
-                height: 5rem;
+                height: 7rem;
             }
             .logo-text {
                 display: none;
