@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'inquiries',
 ]
 
-SITE_ID = 1
+SITE_ID = 2
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
