@@ -244,10 +244,10 @@ body.reg_body{
 .required-field .input-label::after{ content:" *"; color:var(--danger); }
 
 /* Links */
-a{ color:#1884ff; text-decoration:none; }
+a{ color:var(--brand-600); text-decoration:none; }
 a:hover{ text-decoration:underline; }
-.link-primary{ font-weight:600; color:#1e83f7; }
-.link1,.link2{ color:#28d1eb; }
+.link-primary{ font-weight:600; color:var(--brand-600); }
+.link1,.link2{ color: var(--brand-600); }
 
 /* Buttons (shared) */
 .submit-btn{
