@@ -140,9 +140,9 @@ LOGIN_URL = 'users:login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Django Allauth configuration (Updated for latest version)
+# Django Allauth configuration (Fixed for latest version)
 ACCOUNT_LOGIN_METHODS = ['username', 'email']
-ACCOUNT_SIGNUP_FIELDS = ['username', 'email']
+ACCOUNT_SIGNUP_FIELDS = ['username']  # Fixed conflict
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_MIN_LENGTH = 4
