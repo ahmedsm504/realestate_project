@@ -44,8 +44,12 @@ INSTALLED_APPS = [
     'properties',
     'inquiries',
 ]
+import os
 
-SITE_ID = 2
+# Set SITE_ID from an environment variable, defaulting to 1 for local.
+SITE_ID = int(os.environ.get("DJANGO_SITE_ID", 1))
+
+
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
