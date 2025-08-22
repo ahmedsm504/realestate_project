@@ -5,11 +5,12 @@
 {% block title %}<h1 style="text-align: center; color: aliceblue;">Sign In</h1>{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'users/css/log.css' %}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'users/css/register.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="reg_body">
+<body class="reg_body">
     <div class="reg_container">
         <div class="reg_header">
 
@@ -73,17 +74,15 @@
                 <!-- Username Field -->
                 <div class="input-group">
                     <label for="{{ form.username.id_for_label }}" class="input-label">
-                        <i class="fas fa-user"></i>
-                        اسم المستخدم أو البريد الإلكتروني
                     </label>
                     {{ form.username|add_class:"input-field"|attr:"placeholder:أدخل اسم المستخدم أو البريد الإلكتروني" }}
+                                           
+
                 </div>
 
                 <!-- Password Field -->
                 <div class="input-group">
                     <label for="{{ form.password.id_for_label }}" class="input-label">
-                        <i class="fas fa-lock"></i>
-                        كلمة المرور
                     </label>
                     <div class="password-input">
                         {{ form.password|add_class:"input-field"|attr:"placeholder:أدخل كلمة المرور" }}
@@ -117,7 +116,7 @@
                     <div class="btn-overlay"></div>
                 </button>
 
-                <a href="{% url 'users:register' %}" type="submit" class="submit-btn">
+                <a href="{% url 'users:register' %}" type="submit" class="btn-ghost">
                     <i class="fas fa-sign-in-alt"></i>
                     إنشاء حساب   
                     <div class="btn-overlay"></div>
@@ -165,136 +164,7 @@
     </div>
 </div>
 
-<style>
-/* Demo Accounts Styling */
-.demo-accounts {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    max-width: 200px;
-    z-index: 1000;
-}
 
-.demo-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    color: #4a5568;
-    margin-bottom: 12px;
-    font-size: 0.9rem;
-}
-
-.demo-header i {
-    color: #667eea;
-}
-
-.demo-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.demo-item {
-    padding: 8px 12px;
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
-
-.demo-item:hover {
-    background: rgba(102, 126, 234, 0.2);
-    border-color: #667eea;
-    transform: translateY(-2px);
-}
-
-.demo-role {
-    font-weight: 600;
-    color: #667eea;
-    font-size: 0.8rem;
-}
-
-.demo-credentials {
-    font-size: 0.75rem;
-    color: #718096;
-    margin-top: 2px;
-}
-
-/* Mobile responsiveness for demo */
-@media (max-width: 768px) {
-    .demo-accounts {
-        display: none;
-    }
-}
-
-/* Success State */
-.success-container {
-    margin-bottom: 24px;
-}
-
-.success-message {
-    background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
-    border: 1px solid #48bb78;
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-}
-
-.success-message i {
-    color: #38a169;
-    font-size: 20px;
-    margin-top: 2px;
-}
-
-.success-title {
-    font-weight: 600;
-    color: #2f855a;
-    margin-bottom: 8px;
-}
-
-.success-message p {
-    color: #2f855a;
-    margin: 0;
-}
-
-/* Form loading state */
-.form-loading::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(2px);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 24px;
-}
-
-.form-loading::after {
-    content: "جاري تسجيل الدخول...";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 101;
-    font-weight: 600;
-    color: #4a5568;
-}
-</style>
 {% endblock %}
 
 {% block extra_js %}

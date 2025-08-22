@@ -4,9 +4,8 @@
 {% block title %}
     {% if form.instance.pk %}تعديل عقار{% else %}إضافة عقار جديد{% endif %}
 {% endblock %}
-
 {% block content %}
-<div class="min-h-screen p-4 md:p-8 bg-gradient-to-br from-gray-100 to-blue-50 flex items-center justify-center">
+<div class="min-h-screen p-4 md:p-8 bg-gradient-to-br from-gray-100/50 to-blue-50/50 flex items-center justify-center">
     <div class="max-w-4xl mx-auto w-full p-8 bg-white/60 backdrop-blur-md rounded-3xl shadow-2xl my-8">
         <h1 class="text-4xl font-extrabold text-center text-blue-800 mb-2 drop-shadow-sm">
             {% if form.instance.pk %}تعديل العقار{% else %}أضف عقار جديد{% endif %}
@@ -135,7 +134,7 @@
             <!-- أزرار الإجراءات -->
             <div class="flex justify-center gap-6 mt-12">
                 <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-3 px-10 rounded-2xl shadow-xl hover:from-blue-700 hover:to-blue-900 transition-all duration-300 transform hover:scale-105">
-                    {% if form.instance.pk %}تحديث العقار{% else %}إضافة العقار{% endif %}
+                    {% if form.instance.pk %}تحديث العقار{% else %}إضافة {% endif %}
                 </button>
                 <a href="{% url 'properties:my_properties' %}" class="bg-gray-300 text-gray-800 font-bold py-3 px-10 rounded-2xl shadow-lg hover:bg-gray-400 transition-all duration-300 transform hover:scale-105">
                     إلغاء
@@ -221,7 +220,7 @@
         outline: none;
         border-color: #3b82f6; /* focus:border-blue-500 */
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* focus:ring-blue-500 */
-        background-color: rgba(255, 255, 255, 0.9); /* تصبح أقل شفافية عند التركيز */
+        background-color: rgba(255, 255, 255, 0.178); /* تصبح أقل شفافية عند التركيز */
     }
 
     /* تنسيق خاص لحقل الوصف */
