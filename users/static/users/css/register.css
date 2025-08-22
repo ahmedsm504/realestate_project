@@ -122,7 +122,7 @@ body.reg_body{
 }
 .error-message{
   background:linear-gradient(135deg, rgba(239,68,68,.10), rgba(239,68,68,.05));
-  border-color:rgba(239,68,68,.45);
+  border-color:rgba(213, 190, 190, 0.45);
 }
 .success-message{
   background:linear-gradient(135deg, rgba(34,197,94,.12), rgba(34,197,94,.06));
@@ -131,7 +131,7 @@ body.reg_body{
 .error-message i{ color:var(--danger); }
 .success-message i{ color:var(--brand); }
 .error-title,.success-title{ margin:0 0 4px 0; font-weight:700; }
-.error-list{ margin:0; padding-inline-start:18px; color:#fecaca; }
+.error-list{ margin:0; padding-inline-start:18px; color:#ff0000; }
 
 /* ===========================
    Forms (shared)
@@ -198,7 +198,7 @@ body.reg_body{
 }
 
 /* Help text */
-.helptext{ font-size:.8rem; color:#94a3b8; margin-top:4px; display:block; }
+.helptext{ font-size:.8rem; color:#c02727; margin-top:4px; display:block; }
 
 /* Password + eye */
 .password-input{ position:relative; }
@@ -239,15 +239,15 @@ body.reg_body{
 }
 .checkbox-input:focus-visible{ box-shadow:var(--ring); border-color:var(--focus); }
 .checkbox-input:checked{ background:var(--brand); border-color:var(--brand-600); }
-.checkbox-label{ display:flex; align-items:center; gap:10px; cursor:pointer; color:#098aa8; }
+.checkbox-label{ display:flex; align-items:center; gap:10px; cursor:pointer; color:#0dc7f1; }
 .checkbox-text i{ color:var(--brand); }
 .required-field .input-label::after{ content:" *"; color:var(--danger); }
 
 /* Links */
-a{ color:#2b5585; text-decoration:none; }
+a{ color:#1884ff; text-decoration:none; }
 a:hover{ text-decoration:underline; }
-.link-primary{ font-weight:600; color:#0e2e52; }
-.link1,.link2{ color:#19214e; }
+.link-primary{ font-weight:600; color:#1e83f7; }
+.link1,.link2{ color:#28d1eb; }
 
 /* Buttons (shared) */
 .submit-btn{
@@ -412,7 +412,7 @@ a:hover{ text-decoration:underline; }
 .btn-ghost {
     background-color: transparent;
     border: none;
-    color: #333; /* adjust text color */
+    color: #ef3838; /* adjust text color */
     padding: 0.5rem 1rem;
     cursor: pointer;
     border-radius: 0.5rem;
