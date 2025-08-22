@@ -192,3 +192,40 @@ if not DEBUG:
 
 # Railway specific settings
 PORT = config('PORT', default=8000, cast=int)
+
+
+# اضيف الكود ده في نهاية settings.py أو في ملف منفصل
+
+import os
+import django
+from django.core.management import execute_from_command_line
+
+def create_superuser_if_not_exists():
+    """إنشاء superuser إذا لم يكن موجوداً"""
+    try:
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        username = os.environ.get('SUPERUSER_USERNAME', 'admin')
+        email = os.environ.get('SUPERUSER_EMAIL', 'admin@example.com')
+        password = os.environ.get('SUPERUSER_PASSWORD', 'admin123')
+        
+        if not User.objects.filter(username=username).exists():
+            User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            print(f'✅ Superuser "{username}" created successfully!')
+        else:
+            print(f'ℹ️ Superuser "{username}" already exists!')
+            
+    except Exception as e:
+        print(f'❌ Error creating superuser: {e}')
+
+# استدعاء الدالة في نهاية settings.py
+if os.environ.get('RAILWAY_ENVIRONMENT'):  # تشغل فقط في Railway
+    try:
+        create_superuser_if_not_exists()
+    except:
+        pass  # تجاهل الأخطاء في حالة عدم جاهزية قاعدة البيانات
