@@ -15,14 +15,14 @@ DEBUG = config("DJANGO_DEBUG", default=True, cast=bool)
 # Allowed hosts with Railway support
 ALLOWED_HOSTS = config(
     "DJANGO_ALLOWED_HOSTS", 
-    default="localhost,127.0.0.1,.railway.app"
+    default="localhost,127.0.0.1,.railway.app,aqarutna.com,www.aqarutna.com"
 ).split(",")
 
-# CSRF Trusted Origins for Railway
 CSRF_TRUSTED_ORIGINS = config(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
-    default="https://*.railway.app"
+    default="https://*.railway.app,https://aqarutna.com,https://www.aqarutna.com"
 ).split(",")
+
 
 # Application definition
 INSTALLED_APPS = [
