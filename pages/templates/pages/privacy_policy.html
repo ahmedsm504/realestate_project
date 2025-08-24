@@ -1,0 +1,532 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- تحسين محركات البحث SEO -->
+    <meta name="description" content="سياسة الخصوصية - مشروع العقارات. تعرف على كيفية حماية بياناتك الشخصية واستخدامها في موقعنا.">
+    <meta name="keywords" content="سياسة الخصوصية, حماية البيانات, عقارات, خصوصية المستخدم">
+    <meta name="author" content="مشروع العقارات">
+
+    <!-- تحسين عرض الموقع على السوشيال ميديا -->
+    <meta property="og:title" content="سياسة الخصوصية - مشروع العقارات">
+    <meta property="og:description" content="تعرف على سياسة الخصوصية وحماية البيانات في موقع مشروع العقارات.">
+    <meta property="og:image" content="{% static 'img/realestate.jfif' %}">
+    <meta property="og:type" content="website">
+
+    <!-- دعم محركات البحث للغة -->
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Language" content="ar">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سياسة الخصوصية - مشروع العقارات</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* Privacy Policy Specific Styles */
+        .privacy-hero {
+            background: linear-gradient(135deg, #a4b1e7 0%, #4b88a2 100%);
+            padding: 120px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .privacy-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+
+        .privacy-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .privacy-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            line-height: 1.1;
+        }
+
+        .privacy-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .privacy-content {
+            background: white;
+            margin: -40px auto 60px;
+            max-width: 1000px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .privacy-section {
+            padding: 40px 50px;
+            border-bottom: 1px solid #f3f4f6;
+            position: relative;
+        }
+
+        .privacy-section:last-child {
+            border-bottom: none;
+        }
+
+        .privacy-section::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .privacy-section:hover::before {
+            opacity: 1;
+        }
+
+        .section-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .section-content {
+            color: #4b5563;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .section-content p {
+            margin-bottom: 16px;
+        }
+
+        .section-content ul {
+            margin: 16px 0;
+            padding-right: 20px;
+        }
+
+        .section-content li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .section-content li::before {
+            content: '▸';
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            right: -20px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0284c7;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0284c7, #0ea5e9);
+        }
+
+        .contact-info {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .contact-info h4 {
+            color: #1f2937;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .last-updated {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin: 30px 0;
+            border: 1px solid #fbbf24;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .privacy-title {
+                font-size: 2.5rem;
+            }
+            
+            .privacy-section {
+                padding: 30px 25px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation */
+        .privacy-section {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .privacy-section:nth-child(1) { animation-delay: 0.1s; }
+        .privacy-section:nth-child(2) { animation-delay: 0.2s; }
+        .privacy-section:nth-child(3) { animation-delay: 0.3s; }
+        .privacy-section:nth-child(4) { animation-delay: 0.4s; }
+        .privacy-section:nth-child(5) { animation-delay: 0.5s; }
+        .privacy-section:nth-child(6) { animation-delay: 0.6s; }
+        .privacy-section:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+    {% load socialaccount %}
+
+    <!-- Password Status Message -->
+    <div class="user-password-status-message">
+        {% if user.is_authenticated %}
+            {% if not user.has_usable_password %}
+                <div class="bg-amber-50 border-r-4 border-amber-400 text-amber-800 p-4 mb-4 rounded-lg shadow-sm mx-4 mt-4" role="alert">
+                    <div class="flex items-center">
+                        <svg class="h-6 w-6 text-amber-600 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <p class="font-bold">تنبيه:</p>
+                            <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
+                            <p class="mt-2 text-sm">
+                                <a href="{% url 'account_set_password' %}" class="font-semibold text-amber-900 hover:text-amber-950 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Enhanced Navigation Bar -->
+    <nav class="navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container">
+            <div class="navbar-content">
+                
+                <!-- Sign Out Section (Left) -->
+                <div class="sign-out-section">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'users:logout' %}" class="nav-button nav-button-danger"><i class="fas fa-sign-out-alt"></i></a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+    </a>                {% endif %}
+                </div>
+
+                <!-- Center Navigation -->
+                <div class="center-nav">
+                    <a href="{% url 'properties:property_list' %}" class="nav-link">الرئيسية</a>
+                    {% if user.is_authenticated %}
+                        {% if user.is_realtor %}
+                            <a href="{% url 'properties:my_properties' %}" class="nav-link">عقاراتي</a>
+                            <a href="{% url 'properties:add_property' %}" class="nav-link">إضافة عقار</a>
+                            <a href="{% url 'inquiries:realtor_inquiries' %}" class="nav-link">استفسارات عقاراتي</a>
+                        {% else %}
+                            <a href="{% url 'inquiries:user_inquiries' %}" class="nav-link">استفساراتي المرسلة</a>
+                        {% endif %}
+                        {% if not user.is_realtor %}
+                            <a href="{% url 'properties:favorite_list' %}" class="nav-link">مفضلاتي</a>
+                        {% endif %}
+                        <a href="{% url 'users:profile' %}" class="nav-link">ملفي الشخصي</a>
+                    {% endif %}
+                </div>
+
+                <!-- Logo Section (Right) -->
+                <div class="logo-section">
+                    <a href="{% url 'properties:property_list' %}" class="logo-container">
+                        <img src="{% static 'img/logo.png' %}" alt="مشروع العقارات" class="logo">
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="mobile-menu-btn">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="mobile-nav">
+            <div class="mobile-nav-content">
+                <a href="{% url 'properties:property_list' %}" class="mobile-nav-link">الرئيسية</a>
+                {% if user.is_authenticated %}
+                    {% if user.is_realtor %}
+                        <a href="{% url 'properties:my_properties' %}" class="mobile-nav-link">عقاراتي</a>
+                        <a href="{% url 'properties:add_property' %}" class="mobile-nav-link">إضافة عقار</a>
+                        <a href="{% url 'inquiries:realtor_inquiries' %}" class="mobile-nav-link">استفسارات عقاراتي</a>
+                    {% else %}
+                        <a href="{% url 'inquiries:user_inquiries' %}" class="mobile-nav-link">استفساراتي المرسلة</a>
+                    {% endif %}
+                    {% if not user.is_realtor %}
+                        <a href="{% url 'properties:favorite_list' %}" class="mobile-nav-link">مفضلاتي</a>
+                    {% endif %}
+                    <a href="{% url 'users:profile' %}" class="mobile-nav-link">ملفي الشخصي</a>
+                    <a href="{% url 'users:logout' %}" class="mobile-nav-link danger">تسجيل الخروج</a>
+                {% else %}
+                    <a href="{% url 'users:register' %}" class="mobile-nav-link">تسجيل حساب</a>
+                    <a href="{% url 'users:login' %}" class="mobile-nav-link primary">تسجيل الدخول</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Privacy Policy Hero Section -->
+    <section class="privacy-hero">
+        <div class="privacy-container">
+            <h1 class="privacy-title">سياسة الخصوصية</h1>
+            <p class="privacy-subtitle">نحن ملتزمون بحماية خصوصيتك وأمان بياناتك الشخصية في جميع خدماتنا</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="privacy-content">
+            
+            <div class="last-updated">
+                <i class="fas fa-calendar-alt ml-2"></i>
+                آخر تحديث: 24 أغسطس 2025
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h2 class="section-title">مقدمة</h2>
+                <div class="section-content">
+                    <p>مرحباً بك في موقع عقارتنا. نحن نقدر ثقتك بنا ونلتزم بحماية خصوصيتك. توضح هذه السياسة كيفية جمعنا واستخدامنا وحماية معلوماتك الشخصية عند استخدام موقعنا الإلكتروني وخدماتنا.</p>
+                    <div class="highlight-box">
+                        <strong>التزامنا:</strong> نضمن أعلى معايير الأمان والخصوصية لجميع بياناتك الشخصية والمالية.
+                    </div>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h2 class="section-title">المعلومات التي نجمعها</h2>
+                <div class="section-content">
+                    <p>نقوم بجمع أنواع مختلفة من المعلومات لتحسين خدماتنا وتوفير تجربة أفضل لك:</p>
+                    <ul>
+                        <li><strong>المعلومات الشخصية:</strong> الاسم، البريد الإلكتروني، رقم الهاتف، العنوان</li>
+                        <li><strong>معلومات الحساب:</strong> اسم المستخدم، كلمة المرور، تفضيلات الحساب</li>
+                        <li><strong>معلومات الاستخدام:</strong> صفحات الموقع المُتصفحة، وقت الزيارة، نوع المتصفح</li>
+                        <li><strong>معلومات الجهاز:</strong> عنوان IP، نوع الجهاز، نظام التشغيل</li>
+                        <li><strong>معلومات التفضيلات:</strong> العقارات المفضلة، معايير البحث المحفوظة</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h2 class="section-title">كيف نستخدم معلوماتك</h2>
+                <div class="section-content">
+                    <p>نستخدم المعلومات المجمعة للأغراض التالية:</p>
+                    <ul>
+                        <li>توفير وتطوير خدماتنا العقارية</li>
+                        <li>التواصل معك بشأن العقارات والعروض</li>
+                        <li>تخصيص تجربتك على الموقع</li>
+                        <li>تحسين أمان الموقع ومنع الاحتيال</li>
+                        <li>إرسال تحديثات مهمة حول الخدمة</li>
+                        <li>تحليل استخدام الموقع لتحسين الأداء</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>ملاحظة:</strong> لن نستخدم معلوماتك لأي غرض آخر دون موافقتك الصريحة.
+                    </div>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <h2 class="section-title">مشاركة المعلومات</h2>
+                <div class="section-content">
+                    <p>نحن لا نبيع أو نؤجر معلوماتك الشخصية لأطراف ثالثة. قد نشارك معلوماتك في الحالات التالية فقط:</p>
+                    <ul>
+                        <li><strong>مع مقدمي الخدمات:</strong> شركات الاستضافة والدفع والتحليلات</li>
+                        <li><strong>متطلبات قانونية:</strong> عند طلب السلطات المختصة</li>
+                        <li><strong>حماية حقوقنا:</strong> في حالة انتهاك شروط الاستخدام</li>
+                        <li><strong>بموافقتك:</strong> عند موافقتك الصريحة على المشاركة</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2 class="section-title">حماية المعلومات</h2>
+                <div class="section-content">
+                    <p>نتخذ إجراءات أمنية صارمة لحماية معلوماتك:</p>
+                    <ul>
+                        <li>تشفير SSL لجميع البيانات المرسلة</li>
+                        <li>خوادم آمنة ومحدثة باستمرار</li>
+                        <li>مراقبة أمنية على مدار الساعة</li>
+                        <li>وصول محدود للموظفين المخولين فقط</li>
+                        <li>نسخ احتياطية منتظمة ومشفرة</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>ضمان الأمان:</strong> نستخدم أحدث تقنيات الأمان المتوافقة مع المعايير الدولية.
+                    </div>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h2 class="section-title">حقوقك</h2>
+                <div class="section-content">
+                    <p>لديك الحقوق التالية فيما يتعلق بمعلوماتك الشخصية:</p>
+                    <ul>
+                        <li><strong>الوصول:</strong> طلب نسخة من معلوماتك الشخصية</li>
+                        <li><strong>التصحيح:</strong> تحديث أو تصحيح معلوماتك</li>
+                        <li><strong>الحذف:</strong> طلب حذف حسابك ومعلوماتك</li>
+                        <li><strong>الاعتراض:</strong> منع استخدام معلوماتك لأغراض معينة</li>
+                        <li><strong>النقل:</strong> الحصول على نسخة قابلة للنقل من بياناتك</li>
+                    </ul>
+                    <p>لممارسة أي من هذه الحقوق، يرجى التواصل معنا باستخدام معلومات الاتصال أدناه.</p>
+                </div>
+            </div>
+
+            <div class="privacy-section">
+                <div class="section-icon">
+                    <i class="fas fa-cookie-bite"></i>
+                </div>
+                <h2 class="section-title">ملفات تعريف الارتباط (Cookies)</h2>
+                <div class="section-content">
+                    <p>نستخدم ملفات تعريف الارتباط لتحسين تجربتك:</p>
+                    <ul>
+                        <li><strong>ملفات أساسية:</strong> ضرورية لتشغيل الموقع</li>
+                        <li><strong>ملفات تحليلية:</strong> لفهم كيفية استخدام الموقع</li>
+                        <li><strong>ملفات وظيفية:</strong> لحفظ تفضيلاتك</li>
+                        <li><strong>ملفات إعلانية:</strong> لعرض محتوى مناسب لاهتماماتك</li>
+                    </ul>
+                    <p>يمكنك إدارة إعدادات ملفات تعريف الارتباط من متصفحك.</p>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <h4>للتواصل معنا بخصوص سياسة الخصوصية</h4>
+                <p><i class="fas fa-envelope ml-2"></i> البريد الإلكتروني: privacy@aqaratna.com</p>
+                <p><i class="fas fa-phone ml-2"></i> الهاتف: 01027321774 +20 </p>
+                <p><i class="fas fa-map-marker-alt ml-2"></i> العنوان: القاهرة، مصر</p>
+            </div>
+        </div>
+    </main>
+
+<footer class="footer">
+    <div class="container mx-auto px-6">
+        <div class="footer-content">
+            <!-- Logo Section -->
+            <div class="footer-logo">
+                <img src="{% static 'img/logo.png' %}" alt="مشروع العقارات" class="footer-logo-img">
+            </div>
+
+            <!-- Social Media Links -->
+            <div class="footer-social">
+                <a href="https://www.facebook.com/your-page" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/your-company" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/your-channel" target="_blank" rel="noopener noreferrer" class="social-link youtube" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@your-account" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+
+            <!-- Footer Navigation Links -->
+            <div class="footer-links">
+                <a href="{% url 'about' %}" class="footer-link">من نحن</a>
+                <a href="{% url 'terms' %}" class="footer-link">شروط الخدمة</a>
+                <a href="{% url 'privacy_policy' %}" class="footer-link">سياسة الخصوصية</a>
+            </div>
+
+            <!-- Copyright Text -->
+            <p class="footer-text">&copy; 2025 عقارتنا. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+</footer>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,940 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- تحسين محركات البحث SEO -->
+    <meta name="description" content="من نحن - مشروع العقارات. تعرف على قصتنا ورؤيتنا ومهمتنا في تطوير سوق العقارات المصري.">
+    <meta name="keywords" content="من نحن, عقارتنا, فريق العمل, رؤية الشركة, مهمة الشركة, عقارات مصر">
+    <meta name="author" content="مشروع العقارات">
+
+    <!-- تحسين عرض الموقع على السوشيال ميديا -->
+    <meta property="og:title" content="من نحن - مشروع العقارات">
+    <meta property="og:description" content="تعرف على قصة عقارتنا ورؤيتنا في تطوير سوق العقارات المصري.">
+    <meta property="og:image" content="{% static 'img/realestate.jfif' %}">
+    <meta property="og:type" content="website">
+
+    <!-- دعم محركات البحث للغة -->
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Language" content="ar">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من نحن - مشروع العقارات</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* About Us Specific Styles */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+        }
+
+        .about-hero {
+            background: linear-gradient(135deg, rgba(26, 32, 44, 0.527) 0%, rgba(45, 55, 72, 0.423) 100%),
+            url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(102,126,234,0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(118,75,162,0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 90%, rgba(255,107,107,0.2) 0%, transparent 50%);
+            animation: gradientShift 15s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; }
+            33% { opacity: 0.8; }
+            66% { opacity: 0.6; }
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .hero-content {
+            padding: 40px 0;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+
+        .hero-title {
+            font-size: 3.8rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.7;
+            margin-bottom: 35px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .visual-circle {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-icon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+            animation: orbit 20s linear infinite;
+        }
+
+        .floating-icon:nth-child(1) { top: 10%; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 50%; right: 10%; transform: translateY(-50%); animation-delay: -5s; }
+        .floating-icon:nth-child(3) { bottom: 10%; left: 50%; transform: translateX(-50%); animation-delay: -10s; }
+        .floating-icon:nth-child(4) { top: 50%; left: 10%; transform: translateY(-50%); animation-delay: -15s; }
+
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(200px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(200px) rotate(-360deg); }
+        }
+
+        .central-logo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 15px 35px rgba(255,107,107,0.4);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Content Sections */
+        .content-wrapper {
+            background: white;
+            margin: -100px auto 0;
+            max-width: 1300px;
+            border-radius: 25px 25px 0 0;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .section {
+            padding: 80px 60px;
+            position: relative;
+        }
+
+        .section:nth-child(even) {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+
+        .section-description {
+            font-size: 1.2rem;
+            color: #4a5568;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Vision & Mission Grid */
+        .vision-mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 40px;
+        }
+
+        .vision-card, .mission-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .vision-card:hover, .mission-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .vision-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .vision-card .card-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .mission-card .card-icon {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+        }
+
+        .card-content {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        /* Values Grid */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .value-item {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #ff6b6b, #ee5a52);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .value-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+
+        .value-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: #0284c7;
+        }
+
+        .value-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+
+        .value-description {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .member-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .member-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20v20h20zm20 0c0-11.046-8.954-20-20-20v20h20z'/%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+
+        .member-info {
+            padding: 30px 25px;
+            text-align: center;
+        }
+
+        .member-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .member-role {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .member-description {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Contact CTA */
+        .contact-cta {
+            background: linear-gradient(135deg, #1a202c, #2d3748);
+            color: white;
+            padding: 80px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3Ccircle cx='10' cy='30' r='4'/%3E%3Ccircle cx='50' cy='30' r='4'/%3E%3Ccircle cx='30' cy='10' r='4'/%3E%3Ccircle cx='30' cy='50' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-description {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .cta-button-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+
+            .about-hero {
+                min-height: auto;
+                margin-bottom: 25px;
+                margin-top: 45px;
+            }
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .visual-circle {
+                width: 300px;
+                height: 300px;
+            }
+
+            .section {
+                padding: 50px 30px;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+
+            .vision-mission-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+    {% load socialaccount %}
+
+    <!-- Password Status Message -->
+    <div class="user-password-status-message">
+        {% if user.is_authenticated %}
+            {% if not user.has_usable_password %}
+                <div class="bg-amber-50 border-r-4 border-amber-400 text-amber-800 p-4 mb-4 rounded-lg shadow-sm mx-4 mt-4" role="alert">
+                    <div class="flex items-center">
+                        <svg class="h-6 w-6 text-amber-600 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <p class="font-bold">تنبيه:</p>
+                            <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
+                            <p class="mt-2 text-sm">
+                                <a href="{% url 'account_set_password' %}" class="font-semibold text-amber-900 hover:text-amber-950 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Enhanced Navigation Bar -->
+    <nav class="navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container">
+            <div class="navbar-content">
+                
+                <!-- Sign Out Section (Left) -->
+                <div class="sign-out-section">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'users:logout' %}" class="nav-button nav-button-danger"><i class="fas fa-sign-out-alt"></i></a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i>
+    </a>                {% endif %}
+                </div>
+
+                <!-- Center Navigation -->
+                <div class="center-nav">
+                    <a href="{% url 'properties:property_list' %}" class="nav-link">الرئيسية</a>
+                    {% if user.is_authenticated %}
+                        {% if user.is_realtor %}
+                            <a href="{% url 'properties:my_properties' %}" class="nav-link">عقاراتي</a>
+                            <a href="{% url 'properties:add_property' %}" class="nav-link">إضافة عقار</a>
+                            <a href="{% url 'inquiries:realtor_inquiries' %}" class="nav-link">استفسارات عقاراتي</a>
+                        {% else %}
+                            <a href="{% url 'inquiries:user_inquiries' %}" class="nav-link">استفساراتي المرسلة</a>
+                        {% endif %}
+                        {% if not user.is_realtor %}
+                            <a href="{% url 'properties:favorite_list' %}" class="nav-link">مفضلاتي</a>
+                        {% endif %}
+                        <a href="{% url 'users:profile' %}" class="nav-link">ملفي الشخصي</a>
+                    {% endif %}
+                </div>
+
+                <!-- Logo Section (Right) -->
+                <div class="logo-section">
+                    <a href="{% url 'properties:property_list' %}" class="logo-container">
+                        <img src="{% static 'img/logo.png' %}" alt="مشروع العقارات" class="logo">
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="mobile-menu-btn">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="mobile-nav">
+            <div class="mobile-nav-content">
+                <a href="{% url 'properties:property_list' %}" class="mobile-nav-link">الرئيسية</a>
+                {% if user.is_authenticated %}
+                    {% if user.is_realtor %}
+                        <a href="{% url 'properties:my_properties' %}" class="mobile-nav-link">عقاراتي</a>
+                        <a href="{% url 'properties:add_property' %}" class="mobile-nav-link">إضافة عقار</a>
+                        <a href="{% url 'inquiries:realtor_inquiries' %}" class="mobile-nav-link">استفسارات عقاراتي</a>
+                    {% else %}
+                        <a href="{% url 'inquiries:user_inquiries' %}" class="mobile-nav-link">استفساراتي المرسلة</a>
+                    {% endif %}
+                    {% if not user.is_realtor %}
+                        <a href="{% url 'properties:favorite_list' %}" class="mobile-nav-link">مفضلاتي</a>
+                    {% endif %}
+                    <a href="{% url 'users:profile' %}" class="mobile-nav-link">ملفي الشخصي</a>
+                    <a href="{% url 'users:logout' %}" class="mobile-nav-link danger">تسجيل الخروج</a>
+                {% else %}
+                    <a href="{% url 'users:register' %}" class="mobile-nav-link">تسجيل حساب</a>
+                    <a href="{% url 'users:login' %}" class="mobile-nav-link primary">تسجيل الدخول</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Hero Section -->
+    <section class="about-hero">
+        <div class="hero-container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">🏠 من نحن</div>
+                    <h1 class="hero-title">
+                        نحن <span class="highlight">عقارتنا</span><br>
+                        مستقبل العقارات في مصر
+                    </h1>
+                    <p class="hero-description">
+                        منصة عقارية رائدة تهدف إلى تسهيل عمليات البحث والعرض العقاري في مصر، مع التركيز على الشفافية والجودة والابتكار التقني.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-label">عقار مُدرج</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5+</div>
+                            <div class="stat-label">عميل راضي</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5+</div>
+                            <div class="stat-label">وسيط عقاري</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="visual-circle">
+                        <div class="floating-icons">
+                            <div class="floating-icon"><i class="fas fa-home"></i></div>
+                            <div class="floating-icon"><i class="fas fa-building"></i></div>
+                            <div class="floating-icon"><i class="fas fa-key"></i></div>
+                            <div class="floating-icon"><i class="fas fa-handshake"></i></div>
+                        </div>
+                        <div class="central-logo">
+                            <i class="fas fa-city"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        
+        <!-- Vision & Mission Section -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-badge">رؤيتنا ومهمتنا</div>
+                <h2 class="section-title">ما نسعى إليه</h2>
+                <p class="section-description">
+                    نؤمن بأن العقار هو أساس الاستقرار والنمو، لذلك نعمل على توفير منصة شاملة وموثوقة لجميع احتياجاتك العقارية
+                </p>
+            </div>
+            <div class="vision-mission-grid">
+                <div class="vision-card">
+                    <div class="card-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="card-title">رؤيتنا</h3>
+                    <div class="card-content">
+                        <p>أن نكون المنصة العقارية الرائدة في مصر والشرق الأوسط، حيث نربط بين الباحثين عن العقارات والمالكين بطريقة سهلة وآمنة ومبتكرة.</p>
+                        <p>نسعى لتحويل تجربة البحث عن العقار إلى رحلة ممتعة وفعالة، مع ضمان الشفافية الكاملة في جميع المعاملات.</p>
+                    </div>
+                </div>
+                <div class="mission-card">
+                    <div class="card-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="card-title">مهمتنا</h3>
+                    <div class="card-content">
+                        <p>تقديم منصة عقارية متطورة تجمع بين التكنولوجيا الحديثة والخدمة المتميزة، لتوفير تجربة استثنائية لجميع المستخدمين.</p>
+                        <p>نلتزم بتوفير معلومات دقيقة ومحدثة عن العقارات، مع دعم مستمر لعملائنا في كل خطوة من رحلتهم العقارية.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values Section -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-badge">قيمنا الأساسية</div>
+                <h2 class="section-title">ما نؤمن به</h2>
+                <p class="section-description">
+                    قيم راسخة تقود كل ما نفعله وتضمن تقديم أفضل خدمة لعملائنا
+                </p>
+            </div>
+            <div class="values-grid">
+                <div class="value-item">
+                    <div class="value-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="value-title">الثقة والأمان</h3>
+                    <p class="value-description">نضع الأمان والثقة في المقدمة، مع ضمانات قوية لحماية بيانات المستخدمين ومعاملاتهم.</p>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="value-title">الابتكار</h3>
+                    <p class="value-description">نسعى دائماً لتطوير حلول مبتكرة تسهل عملية البحث والعرض العقاري.</p>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="value-title">خدمة العملاء</h3>
+                    <p class="value-description">نضع احتياجات عملائنا في المقدمة ونقدم دعماً متواصلاً على مدار الساعة.</p>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="value-title">الشفافية</h3>
+                    <p class="value-description">نؤمن بالشفافية الكاملة في جميع المعاملات والمعلومات المقدمة.</p>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3 class="value-title">التميز</h3>
+                    <p class="value-description">نسعى للتميز في كل ما نقدمه، من التكنولوجيا إلى خدمة العملاء.</p>
+                </div>
+                <div class="value-item">
+                    <div class="value-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="value-title">الشراكة</h3>
+                    <p class="value-description">نبني علاقات طويلة الأمد مع عملائنا وشركائنا بناءً على الثقة المتبادلة.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-badge">فريق العمل</div>
+                <h2 class="section-title">تعرف على فريقنا</h2>
+                <p class="section-description">
+                    فريق متخصص ومتنوع من الخبراء في مجال العقارات والتكنولوجيا
+                </p>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">أحمد ربيع</h3>
+                        <p class="member-role">Software engineering</p>
+                        <p class="member-description">full-stack Web Developer and AI expert</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">احمد سمير </h3>
+                        <p class="member-role">Software engineering</p>
+                        <p class="member-description">Full-stack web developer and network administrator</p>
+                    </div>
+                </div>
+                
+
+        <!-- Contact CTA -->
+        <section class="contact-cta">
+            <div class="cta-content">
+                <h2 class="cta-title">هل أنت مستعد للبدء معنا؟</h2>
+                <p class="cta-description">
+                    انضم إلى آلاف العملاء الذين يثقون بنا في رحلتهم العقارية. دعنا نساعدك في العثور على العقار المثالي أو بيع عقارك بأفضل سعر.
+                </p>
+                <div class="cta-buttons">
+                    <a href="{% url 'properties:property_list' %}" class="cta-button cta-button-primary">
+                        <i class="fas fa-search"></i>
+                        ابحث عن عقارك
+                    </a>
+                    <a href="#" class="cta-button cta-button-secondary">
+                        <i class="fas fa-phone"></i>
+                        اتصل بنا
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+     <footer class="footer">
+    <div class="container mx-auto px-6">
+        <div class="footer-content">
+            <!-- Logo Section -->
+            <div class="footer-logo">
+                <img src="{% static 'img/logo.png' %}" alt="مشروع العقارات" class="footer-logo-img">
+            </div>
+
+            <!-- Social Media Links -->
+            <div class="footer-social">
+                <a href="https://www.facebook.com/your-page" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/your-company" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/your-channel" target="_blank" rel="noopener noreferrer" class="social-link youtube" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@your-account" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+
+            <!-- Footer Navigation Links -->
+            <div class="footer-links">
+                <a href="{% url 'about' %}" class="footer-link">من نحن</a>
+                <a href="{% url 'terms' %}" class="footer-link">شروط الخدمة</a>
+                <a href="{% url 'privacy_policy' %}" class="footer-link">سياسة الخصوصية</a>
+            </div>
+
+            <!-- Copyright Text -->
+            <p class="footer-text">&copy; 2025 عقارتنا. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+</footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

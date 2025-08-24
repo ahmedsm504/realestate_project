@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -193,23 +192,47 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container mx-auto px-6 text-center">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="{% static 'img/logo.png' %}" alt="مشروع العقارات" class="footer-logo-img">
-                    <span class="footer-logo-text"> عقارتنا</span>
-                </div>
-                <p class="footer-text">&copy; 2025 عقارتنا. جميع الحقوق محفوظة.</p>
-                <div class="footer-links">
-                    <a href="#" class="footer-link">الخصوصية</a>
-                    <a href="#" class="footer-link">الشروط والأحكام</a>
-                    <a href="#" class="footer-link">اتصل بنا</a>
-                </div>
+
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container mx-auto px-6">
+        <div class="footer-content">
+            <!-- Logo Section -->
+            <div class="footer-logo">
+                <img src="{% static 'img/logo.png' %}" alt="مشروع العقارات" class="footer-logo-img">
             </div>
+
+            <!-- Social Media Links -->
+            <div class="footer-social">
+                <a href="https://www.facebook.com/your-page" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/your-company" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/your-channel" target="_blank" rel="noopener noreferrer" class="social-link youtube" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.tiktok.com/@your-account" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+
+            <!-- Footer Navigation Links -->
+            <div class="footer-links">
+                <a href="{% url 'about' %}" class="footer-link">من نحن</a>
+                <a href="{% url 'terms' %}" class="footer-link">شروط الخدمة</a>
+                <a href="{% url 'privacy_policy' %}" class="footer-link">سياسة الخصوصية</a>
+            </div>
+
+            <!-- Copyright Text -->
+            <p class="footer-text">&copy; 2025 عقارتنا. جميع الحقوق محفوظة.</p>
         </div>
-    </footer>
+    </div>
+</footer>
+   
+
     <script src="{% static 'js/main.js' %}"></script>
 
 </body>
