@@ -1,4 +1,5 @@
 User-agent: *
-Disallow:
-
+Disallow: /admin/
+Disallow: /users/
+Disallow: /account/
 Sitemap: https://aqarutna.com/sitemap.xml
