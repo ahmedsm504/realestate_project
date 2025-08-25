@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'properties',
     'inquiries',
     'pages',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 import os
 
@@ -199,4 +201,13 @@ if not DEBUG:
 # Railway specific settings
 PORT = config('PORT', default=8000, cast=int)
 
+import os
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dxunjx7wa',
+    'API_KEY': '212596131145135',   # هتاخده من Cloudinary
+    'API_SECRET': 'Yx2GQOzMqmwbhPkZPWnH8PcVBbc' # هتاخده من Cloudinary
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
