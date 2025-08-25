@@ -140,12 +140,10 @@ class Property(models.Model):
         verbose_name_plural = 'عقارات'
         ordering = ['-published_date'] # ترتيب العقارات تنازلياً حسب تاريخ النشر
 
-from cloudinary.models import CloudinaryField
-
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images', verbose_name='العقار')
-    image = CloudinaryField('image', verbose_name='صورة')  # سيتم رفع الصور على Cloudinary
-    is_main = models.BooleanField(default=False, verbose_name='الصورة الرئيسية')
+    image = models.ImageField(upload_to='properties/%Y/%m/%d/', verbose_name='صورة') # هيتم رفع الصور في media/properties/السنة/الشهر/اليوم/
+    is_main = models.BooleanField(default=False, verbose_name='الصورة الرئيسية') # لو في صورة رئيسية للعرض
 
     def __str__(self):
         return f"صورة لـ {self.property.title}"
