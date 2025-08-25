@@ -200,17 +200,18 @@ if not DEBUG:
 
 # Railway specific settings
 PORT = config('PORT', default=8000, cast=int)
+# settings.py
 
 import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
+# قم بتثبيت المكتبة: pip install django-cloudinary-storage
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dxunjx7wa',
-    'API_KEY': '212596131145135',   # هتاخده من Cloudinary
-    'API_SECRET': 'Yx2GQOzMqmwbhPkZPWnH8PcVBbc' # هتاخده من Cloudinary
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
