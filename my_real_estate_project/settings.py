@@ -134,7 +134,7 @@ WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
 
 # Media files
-# MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'
 # MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
@@ -202,6 +202,9 @@ if not DEBUG:
 PORT = config('PORT', default=8000, cast=int)
 
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dxunjx7wa',
