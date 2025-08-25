@@ -2,6 +2,7 @@
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 class CustomUser(AbstractUser):
     # حقل جديد لتمييز ما إذا كان المستخدم تاجر عقارات أم لا
@@ -9,7 +10,7 @@ class CustomUser(AbstractUser):
 
     # حقول إضافية للملف الشخصي
     phone_number = models.CharField(max_length=20, blank=True, null=True, verbose_name='رقم الهاتف')
-    profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True, verbose_name='الصورة الشخصية')
+    profile_picture = CloudinaryField(blank=True, null=True, verbose_name='الصورة الشخصية')
     bio = models.TextField(blank=True, null=True, verbose_name='نبذة تعريفية')
 
     class Meta:
