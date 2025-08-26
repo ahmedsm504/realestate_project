@@ -141,19 +141,40 @@ class Property(models.Model):
         ordering = ['-published_date'] # ترتيب العقارات تنازلياً حسب تاريخ النشر
 
 from cloudinary.models import CloudinaryField  # 👈 هذا السطر الجديد والمهم
+from django.db import models
+from cloudinary.models import CloudinaryField
+from cloudinary.utils import cloudinary_url
 
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images', verbose_name='العقار')
     image = CloudinaryField('صورة')
-    is_main = models.BooleanField(default=False, verbose_name='الصورة الرئيسية') # لو في صورة رئيسية للعرض
+    is_main = models.BooleanField(default=False, verbose_name='الصورة الرئيسية')
 
     def __str__(self):
         return f"صورة لـ {self.property.title}"
 
+    def get_optimized_url(self):
+        """
+        تُعيد رابطًا آمنًا ومُحسنًا للصورة من Cloudinary.
+        """
+        if self.image:
+            # هنا يتم تطبيق التحسينات:
+            # - c_fill: لملء المساحة المحددة.
+            # - f_auto: لتحويل الصورة إلى أفضل صيغة (مثل WebP).
+            # - q_auto: لضبط جودة الصورة تلقائيًا.
+            # - w_400: لضبط العرض إلى 400 بكسل.
+            # 'secure=True' يضمن أن الرابط يبدأ بـ HTTPS.
+            return cloudinary_url(self.image.public_id,
+                                  crop="fill",
+                                  format="auto",
+                                  quality="auto",
+                                  width=400,
+                                  secure=True)[0]
+        return None
+
     class Meta:
         verbose_name = 'صورة عقار'
         verbose_name_plural = 'صور عقارات'
-
 
 class Feature(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name='اسم الميزة')
