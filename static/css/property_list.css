@@ -748,6 +748,7 @@ body {
   .filters-actions {
     gap: 1.5rem;
     padding: 2rem 1.5rem 0;
+    margin-bottom: 1.5rem !important;
   }
   
   .filters-actions::before {
