@@ -474,6 +474,12 @@ body {
   opacity: 1;
 }
 
+.area-range-inputs {
+  margin-top: 1rem;
+}
+.area-range-inputs .area-input {
+  flex: 1;
+}
 
 
 @keyframes loading-shimmer {
