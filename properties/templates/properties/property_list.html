@@ -232,10 +232,10 @@
                              data-status="{{ property.status }}">
                 <div class="property-image-container">
                     <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}">
-                        <img src="{{ item.display_image_url }}"
-                             alt="{{ property.title }}"
-                             class="property-image"
-                             loading="lazy">
+                        <img src="{{ item.display_image_url|cloudinary:'w_400,h_250,c_fill,f_auto,q_auto' }}"
+                            alt="{{ property.title }}"
+                            class="property-image"
+                            loading="lazy">
                     </a>
                     <div class="property-badges">
                         <span class="property-type-badge">
