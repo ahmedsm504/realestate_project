@@ -579,13 +579,19 @@ body {
   opacity: 1;
 }
 
-/* Enhanced Filters Actions */
+
+
+@keyframes loading-shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+/* Enhanced Filters Actions - Mobile First Responsive */
 .filters-actions {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 2rem 0 0;
+  padding: 1.5rem 1rem 0;
   border-top: 2px solid var(--border-light);
   position: relative;
 }
@@ -596,7 +602,7 @@ body {
   top: -2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 60px;
+  width: 40px;
   height: 2px;
   background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
   border-radius: 1px;
@@ -606,19 +612,21 @@ body {
 .clear-filters-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 2.5rem;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
   border: none;
   border-radius: var(--radius-xl);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
   text-decoration: none;
-  min-width: 180px;
+  min-width: 140px;
   justify-content: center;
   position: relative;
   overflow: hidden;
+  flex: 1;
+  max-width: 200px;
 }
 
 .apply-filters-btn::before,
@@ -646,7 +654,7 @@ body {
 
 .apply-filters-btn:hover {
   background: linear-gradient(135deg, var(--primary-color), var(--success-color));
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-xl);
 }
 
@@ -660,26 +668,25 @@ body {
 .clear-filters-btn:hover {
   background: var(--bg-tertiary);
   border-color: var(--text-secondary);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
 
-/* Filter Group Special Styling */
+/* Filter Group Special Styling - Base Mobile */
 .filter-group.price-filter,
-.filter-group.area-filter {
+.filter-group.area-filter,
+.filter-group.city-filter {
   background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
   border: 2px solid var(--border-light);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
 }
 
 .filter-group.price-filter:hover,
 .filter-group.area-filter:hover {
   border-color: var(--success-color);
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-}
-
-.filter-group.city-filter {
-  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-  border: 2px solid var(--border-light);
 }
 
 .filter-group.city-filter:hover {
@@ -691,10 +698,10 @@ body {
 .filter-group::before {
   content: '';
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  width: 8px;
-  height: 8px;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--primary-color);
   opacity: 0.3;
@@ -703,15 +710,15 @@ body {
 
 .filter-group:hover::before {
   opacity: 1;
-  transform: scale(1.5);
+  transform: scale(1.3);
 }
 
 /* Active Filter States */
 .filter-group.active {
   border-color: var(--primary-color);
   background: var(--bg-primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
 }
 
 .filter-group.active::before {
@@ -736,100 +743,172 @@ body {
   animation: loading-shimmer 1.5s infinite;
 }
 
+/* Responsive Design - Tablet and up */
+@media (min-width: 768px) {
+  .filters-actions {
+    gap: 1.5rem;
+    padding: 2rem 1.5rem 0;
+  }
+  
+  .filters-actions::before {
+    width: 60px;
+  }
+  
+  .apply-filters-btn,
+  .clear-filters-btn {
+    padding: 1.25rem 2rem;
+    font-size: 1rem;
+    gap: 0.75rem;
+    min-width: 160px;
+    flex: none;
+    max-width: none;
+  }
+  
+  .filter-group::before {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 8px;
+    height: 8px;
+  }
+  
+  .filter-group:hover::before {
+    transform: scale(1.5);
+  }
+  
+  .filter-group.active {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .apply-filters-btn:hover,
+  .clear-filters-btn:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* Desktop and larger screens */
+@media (min-width: 1024px) {
+  .filters-actions {
+    padding: 2rem 0 0;
+  }
+  
+  .apply-filters-btn,
+  .clear-filters-btn {
+    padding: 1.25rem 2.5rem;
+    min-width: 180px;
+  }
+  
+  .filter-group {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .filters-actions {
+    gap: 2rem;
+  }
+  
+  .apply-filters-btn,
+  .clear-filters-btn {
+    padding: 1.5rem 3rem;
+    min-width: 200px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .apply-filters-btn,
+  .clear-filters-btn {
+    padding: 1.25rem 2rem;
+    min-height: 48px; /* Minimum touch target size */
+    font-size: 1rem;
+  }
+  
+  .filter-group {
+    min-height: 48px;
+    padding: 1.25rem;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .apply-filters-btn:hover,
+  .clear-filters-btn:hover,
+  .filter-group:hover {
+    transform: none;
+  }
+  
+  /* Focus states for accessibility */
+  .apply-filters-btn:focus,
+  .clear-filters-btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .filter-group {
+    border-width: 3px;
+  }
+  
+  .filter-group.active {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .apply-filters-btn,
+  .clear-filters-btn,
+  .filter-group,
+  .filter-group::before {
+    transition: none;
+  }
+  
+  .apply-filters-btn::before,
+  .clear-filters-btn::before {
+    animation: none;
+  }
+  
+  .filter-group.loading::after {
+    animation: none;
+  }
+}
+
+/* Very small screens (320px and below) */
+@media (max-width: 320px) {
+  .filters-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 1rem 0.5rem 0;
+  }
+  
+  .apply-filters-btn,
+  .clear-filters-btn {
+    width: 100%;
+    max-width: none;
+    min-width: auto;
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .filter-group {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Loading animation keyframes */
 @keyframes loading-shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-
-/* Filter Validation States */
-.filter-group.error {
-  border-color: var(--danger-color);
-  background: rgba(239, 68, 68, 0.05);
-}
-
-.filter-group.error::before {
-  background: var(--danger-color);
-}
-
-.filter-group.success {
-  border-color: var(--success-color);
-  background: rgba(16, 185, 129, 0.05);
-}
-
-.filter-group.success::before {
-  background: var(--success-color);
-}
-
-/* Filter Group Focus Ring */
-.filter-group:focus-within {
-  animation: focus-pulse 0.6s ease-out;
-}
-
-@keyframes focus-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
-}
-
-/* Enhanced Hover Effects for Filter Groups */
-.filter-group:hover .filter-label {
-  color: var(--primary-color);
-}
-
-.filter-group:hover .filter-label svg {
-  transform: scale(1.1);
-  color: var(--primary-color);
-}
-
-/* Filter Input Enhancements */
-.filter-input:valid,
-.filter-select:valid {
-  border-color: var(--success-color);
-}
-
-.filter-input:invalid:not(:placeholder-shown),
-.filter-select:invalid:not(:placeholder-shown) {
-  border-color: var(--danger-color);
-}
-
-/* Filter Group Counter Badge */
-.filter-group::after {
-  content: attr(data-count);
-  position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  background: var(--primary-color);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-sm);
-  opacity: 0;
-  transform: scale(0.8);
-  transition: var(--transition);
-}
-
-.filter-group[data-count]:not([data-count="0"])::after {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Filter Section Animation */
-.filters-section {
-  animation: slideInUp 0.6s ease-out;
-}
-
-@keyframes slideInUp {
-  from {
-      opacity: 0;
-      transform: translateY(30px);
+  0% {
+    left: -100%;
   }
-  to {
-      opacity: 1;
-      transform: translateY(0);
+  100% {
+    left: 100%;
   }
 }
-
 /* Filter Content Reveal Animation */
 .filters-content.show {
   animation: expandFilters 0.5s ease-out;
