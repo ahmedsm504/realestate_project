@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'pages',
     'cloudinary',
     'cloudinary_storage',
+    'csp',
+
 ]
 import os
 
@@ -63,6 +65,7 @@ AUTHENTICATION_BACKENDS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # مهم لـ Railway
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -189,6 +192,8 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
     
     # Email settings for production (example with Gmail)
     # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
