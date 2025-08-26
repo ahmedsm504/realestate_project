@@ -160,10 +160,9 @@ class PropertyImage(models.Model):
         if self.image:
             # هنا يتم تطبيق التحسينات:
             # - c_fill: لملء المساحة المحددة.
-            # - f_auto: لتحويل الصورة إلى أفضل صيغة (مثل WebP).
             # - q_auto: لضبط جودة الصورة تلقائيًا.
             # - w_400: لضبط العرض إلى 400 بكسل.
-            # 'secure=True' يضمن أن الرابط يبدأ بـ HTTPS.
+            'secure=True' 
             return cloudinary_url(self.image.public_id,
                                   crop="fill",
                                   format="auto",
