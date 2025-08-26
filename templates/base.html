@@ -2,35 +2,31 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+
     <!--favicon-->
-    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" style="width: 96px; height: 96px;">
 
     <!-- تحسين محركات البحث SEO -->
     <meta name="description" content="عقاراتنا - اكتشف أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك بسهولة وسرعة.">
     <meta name="keywords" content="عقارات, شقق للبيع, شقق للإيجار, عقارات مصر, منازل, فلل, عقاراتنا">
     <meta name="author" content="عقاراتنا">
 
-    <!-- Social Media SEO -->
+    <!-- تحسين عرض الموقع على السوشيال ميديا -->
     <meta property="og:title" content="عقاراتنا - أفضل العقارات في مصر">
     <meta property="og:description" content="ابحث عن أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك.">
     <meta property="og:image" content="{% static 'img/realestate.jfif' %}">
     <meta property="og:type" content="website">
 
-    <!-- Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="
-      img-src 'self' data: https:;
-      require-trusted-types-for 'script';
-    ">
-
-    <!-- Google tag (gtag.js) -->
+        <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GK67V6HEYS"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+
       gtag('config', 'G-GK67V6HEYS');
     </script>
-
+    
     <!-- دعم محركات البحث للغة -->
     <meta name="robots" content="index, follow">
     <meta http-equiv="Content-Language" content="ar">
@@ -38,39 +34,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}عقاراتنا{% endblock %}</title>
-
-    <!-- تحسين تحميل الموارد -->
-    <!-- Preconnect للخطوط -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- Preload لملفات CSS الخاصة بالمشروع -->
-    <link rel="preload" href="{% static 'css/style.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{% static 'css/property_list.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{% static 'css/log.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        <link rel="stylesheet" href="{% static 'css/property_list.css' %}">
-        <link rel="stylesheet" href="{% static 'css/log.css' %}">
-    </noscript>
-
-    <!-- Tailwind (يفضل تبنيه محلياً لكن لو CDN استعمل preconnect) -->
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/property_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/log.css' %}">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    <!-- FontAwesome -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    </noscript>
-
+    
     <!-- Extra CSS block for child templates -->
     {% block extra_css %}{% endblock %}
 </head>
-
 
 <body class="flex flex-col min-h-screen">
     {% load socialaccount %}
