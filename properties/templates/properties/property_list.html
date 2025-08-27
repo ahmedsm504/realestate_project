@@ -181,12 +181,9 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="{% static 'js/property_list.js' %}" defer></script>
 
 <script>
-
-
-    // static/js/property_list.js
+// static/js/property_list.js
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Initialize all functionalities ---
@@ -198,43 +195,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /**
  * Handles the logic for showing and hiding the advanced filters section.
+ * This is the corrected and simplified function.
  */
 function initFilterToggle() {
     const toggleBtn = document.getElementById('toggle-filters-btn');
     const filtersContent = document.getElementById('filters-content');
+    const toggleBtnText = toggleBtn.querySelector('span');
 
-    if (!toggleBtn || !filtersContent) return;
+    if (!toggleBtn || !filtersContent || !toggleBtnText) {
+        console.error("Filter toggle button or content area not found!");
+        return;
+    }
 
-    // Check if any filters are active on page load to show the filters by default
+    toggleBtn.addEventListener('click', () => {
+        // Toggle the 'is-open' class on the content area
+        filtersContent.classList.toggle('is-open');
+
+        // Check if the content is now open
+        const isNowOpen = filtersContent.classList.contains('is-open');
+
+        // Update button text and ARIA attribute based on the new state
+        if (isNowOpen) {
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            toggleBtnText.textContent = 'إخفاء الفلاتر';
+        } else {
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            toggleBtnText.textContent = 'إظهار الفلاتر';
+        }
+    });
+
+    // Optional: Check if any filters are active on page load to show the filters by default
     const urlParams = new URLSearchParams(window.location.search);
     const filterKeys = ['city_search', 'property_type', 'status', 'bedrooms', 'min_price', 'max_price', 'min_area', 'max_area'];
     const hasActiveFilters = filterKeys.some(key => urlParams.has(key) && urlParams.get(key) !== '');
 
     if (hasActiveFilters) {
-        toggleFilters(true);
-    }
-    
-    toggleBtn.addEventListener('click', () => {
-        const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-        toggleFilters(!isExpanded);
-    });
-
-    function toggleFilters(show) {
-        if (show) {
-            filtersContent.classList.add('is-open');
-            toggleBtn.setAttribute('aria-expanded', 'true');
-            toggleBtn.querySelector('span').textContent = 'إخفاء الفلاتر';
-        } else {
-            filtersContent.classList.remove('is-open');
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            toggleBtn.querySelector('span').textContent = 'إظهار الفلاتر';
-        }
+        filtersContent.classList.add('is-open');
+        toggleBtn.setAttribute('aria-expanded', 'true');
+        toggleBtnText.textContent = 'إخفاء الفلاتر';
     }
 }
 
+
 /**
  * Handles switching between grid and list view for properties.
- * Saves the user's preference in localStorage.
  */
 function initViewToggle() {
     const viewToggleContainer = document.querySelector('.view-toggle');
@@ -246,11 +250,10 @@ function initViewToggle() {
     const savedView = localStorage.getItem('property_view') || 'grid';
 
     function setView(view) {
+        resultsContainer.className = ''; // Clear existing classes
         if (view === 'list') {
-            resultsContainer.classList.remove('property-grid');
             resultsContainer.classList.add('property-list');
         } else {
-            resultsContainer.classList.remove('property-list');
             resultsContainer.classList.add('property-grid');
         }
 
@@ -267,7 +270,6 @@ function initViewToggle() {
         });
     });
 
-    // Set initial view on page load
     setView(savedView);
 }
 
@@ -288,10 +290,7 @@ function initScrollToTop() {
     });
 
     scrollTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
 
@@ -308,7 +307,6 @@ function initFormSubmissionLoader() {
         loadingOverlay.classList.add('is-visible');
     });
     
-    // Hide loader if user navigates back using browser buttons
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
              loadingOverlay.classList.remove('is-visible');
@@ -316,6 +314,9 @@ function initFormSubmissionLoader() {
     });
 }
 </script>
+
+
+
 
 
 {% endblock %}
