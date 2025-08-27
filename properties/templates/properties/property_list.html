@@ -4,771 +4,182 @@
 {% block title %}قائمة العقارات{% endblock %}
 
 {% block extra_head %}
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/property_list.css' %}" media="all">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/property_list.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="property-container">
-    <div class="hero-header">
+    <header class="hero-header">
         <div class="hero-content">
-            <h1 class="hero-title">
-                🏡 اكتشف أفضل المنازل
-            </h1>
-            <p class="hero-subtitle">
-                ابحث في آلاف العقارات المميزة واعثر على منزلك القادم
-            </p>
+            <h1 class="hero-title">🏡 اكتشف أفضل العقارات</h1>
+            <p class="hero-subtitle">ابحث في آلاف العقارات المميزة واعثر على منزلك القادم.</p>
         </div>
-        <div class="hero-background">
-            <div class="hero-pattern"></div>
-        </div>
-    </div>
+    </header>
 
-    <div class="main-search-section">
-        <div class="search-container">
+    <form method="GET" action="{% url 'properties:property_list' %}" id="filters-form" class="filters-section">
+        <div class="main-search-container">
             <div class="search-box">
-                <div class="search-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <input type="text"
-                               id="main-search"
-                               class="main-search-input"
-                               placeholder="ابحث عن عقار، مدينة، أو منطقة..."
-                               autocomplete="off">
-                <div id="search-suggestions" class="search-suggestions"></div>
+                <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21L16.514 16.506M19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <input type="text" id="main-search-input" name="q" class="main-search-input" placeholder="ابحث بالعنوان، المدينة، أو المنطقة..." value="{{ request.GET.q }}" autocomplete="off">
             </div>
-            <button type="button" id="search-btn" class="search-button">
-                <span>بحث</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
+            <button type="submit" class="search-button">بحث</button>
         </div>
-    </div>
 
-
-<div class="filters-section">
         <div class="filters-header">
-            <h2 class="filters-title">فلترة البحث</h2>
-            <button type="button" id="toggle-filters" class="toggle-filters-btn">
+            <h2 class="filters-title">فلترة متقدمة</h2>
+            <button type="button" id="toggle-filters-btn" class="toggle-filters-btn" aria-expanded="false" aria-controls="filters-content">
                 <span>إظهار الفلاتر</span>
-                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg class="toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
         </div>
 
         <div class="filters-content" id="filters-content">
-            <form method="GET" action="{% url 'properties:property_list' %}" id="filters-form">
-                <input type="hidden" name="q" id="hidden-q" value="{{ request.GET.q }}">
-                <div class="filters-grid">
-                    <div class="filter-group">
-                        <label for="city_search" class="filter-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM12 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
-                            </svg>
-                            المدينة
-                        </label>
-                        <input type="text"
-                               name="city_search"
-                               id="city_search"
-                               placeholder="اختر المدينة..."
-                               value="{{ request.GET.city_search }}"
-                               class="filter-input city-input">
-                        <div id="city-dropdown" class="city-dropdown"></div>
-                    </div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="city_search" class="filter-label">المدينة</label>
+                    <input type="text" name="city_search" id="city_search" placeholder="كل المدن" value="{{ request.GET.city_search }}" class="filter-input">
+                </div>
 
-                    <div class="filter-group">
-                        <label for="property_type" class="filter-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            نوع العقار
-                        </label>
-                        <select name="property_type" id="property_type" class="filter-select">
-                            <option value="">جميع الأنواع</option>
-                            {% for value, text in property_type_choices %}
-                                <option value="{{ value }}" {% if request.GET.property_type == value %}selected{% endif %}>{{ text }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="filter-group">
+                    <label for="property_type" class="filter-label">نوع العقار</label>
+                    <select name="property_type" id="property_type" class="filter-select">
+                        <option value="">جميع الأنواع</option>
+                        {% for value, text in property_type_choices %}
+                            <option value="{{ value }}" {% if request.GET.property_type == value %}selected{% endif %}>{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                    <div class="filter-group">
-                        <label for="status" class="filter-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            الحالة
-                        </label>
-                        <select name="status" id="status" class="filter-select">
-                            <option value="">جميع الحالات</option>
-                            {% for value, text in property_status_choices %}
-                                <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ text }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                <div class="filter-group">
+                    <label for="status" class="filter-label">الحالة</label>
+                    <select name="status" id="status" class="filter-select">
+                        <option value="">جميع الحالات</option>
+                        {% for value, text in property_status_choices %}
+                            <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-                    <div class="filter-group">
-                        <label for="price_range" class="filter-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 1V23M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            نطاق السعر
-                        </label>
-                        <div class="price-range-inputs">
-                            <input type="number"
-                                           name="min_price"
-                                           placeholder="من"
-                                           value="{{ request.GET.min_price }}"
-                                           class="price-input">
-                            <span class="price-separator">-</span>
-                            <input type="number"
-                                           name="max_price"
-                                           placeholder="إلى"
-                                           value="{{ request.GET.max_price }}"
-                                           class="price-input">
-                        </div>
-                    </div>
+                <div class="filter-group">
+                    <label for="bedrooms" class="filter-label">غرف النوم</label>
+                    <select name="bedrooms" id="bedrooms" class="filter-select">
+                        <option value="">أي عدد</option>
+                        <option value="1" {% if request.GET.bedrooms == '1' %}selected{% endif %}>1</option>
+                        <option value="2" {% if request.GET.bedrooms == '2' %}selected{% endif %}>2</option>
+                        <option value="3" {% if request.GET.bedrooms == '3' %}selected{% endif %}>3</option>
+                        <option value="4" {% if request.GET.bedrooms == '4' %}selected{% endif %}>4</option>
+                        <option value="5" {% if request.GET.bedrooms == '5' %}selected{% endif %}>+5</option>
+                    </select>
+                </div>
 
-                    <div class="filter-group">
-                        <label for="bedrooms" class="filter-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H7M3 7V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V7M3 7H7M7 3V7M7 7H21M7 7V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            غرف النوم
-                        </label>
-                        <select name="bedrooms" id="bedrooms" class="filter-select">
-                            <option value="">أي عدد</option>
-                            <option value="1" {% if request.GET.bedrooms == '1' %}selected{% endif %}>1 غرفة</option>
-                            <option value="2" {% if request.GET.bedrooms == '2' %}selected{% endif %}>2 غرف</option>
-                            <option value="3" {% if request.GET.bedrooms == '3' %}selected{% endif %}>3 غرف</option>
-                            <option value="4" {% if request.GET.bedrooms == '4' %}selected{% endif %}>4+ غرف</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-group">
-                        <label for="area" class="filter-label">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M21 16V8C21 7.46957 20.7893 6.96086 20.4142 6.58579C20.0391 6.21071 19.5304 6 19 6H5C4.46957 6 3.96086 6.21071 3.58579 6.58579C3.21071 6.96086 3 7.46957 3 8V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H19C19.5304 18 20.0391 17.7893 20.4142 17.4142C20.7893 17.0391 21 16.5304 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            المساحة
-                        </label>
-                        <div class="area-range-inputs">
-                            <input type="number"
-                                           name="min_area"
-                                           placeholder="من"
-                                           value="{{ request.GET.min_area }}"
-                                           class="area-input">
-                            <span class="area-separator">-</span>
-                            <input type="number"
-                                           name="max_area"
-                                           placeholder="إلى"
-                                           value="{{ request.GET.max_area }}"
-                                           class="area-input">
-                        </div>
+                <div class="filter-group range-filter">
+                    <label class="filter-label">نطاق السعر (ج.م)</label>
+                    <div class="range-inputs">
+                        <input type="number" name="min_price" placeholder="من" value="{{ request.GET.min_price }}" class="filter-input" min="0">
+                        <span>-</span>
+                        <input type="number" name="max_price" placeholder="إلى" value="{{ request.GET.max_price }}" class="filter-input" min="0">
                     </div>
                 </div>
 
-                <div class="filters-actions">
-                    <button type="submit" class="apply-filters-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        تطبيق الفلاتر
-                    </button>
-                    <a href="{% url 'properties:property_list' %}" class="clear-filters-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        مسح الفلاتر
-                    </a>
+                <div class="filter-group range-filter">
+                    <label class="filter-label">المساحة (م²)</label>
+                    <div class="range-inputs">
+                        <input type="number" name="min_area" placeholder="من" value="{{ request.GET.min_area }}" class="filter-input" min="0">
+                        <span>-</span>
+                        <input type="number" name="max_area" placeholder="إلى" value="{{ request.GET.max_area }}" class="filter-input" min="0">
+                    </div>
                 </div>
-            </form>
+            </div>
+            <div class="filters-actions">
+                <button type="submit" class="apply-filters-btn">تطبيق الفلاتر</button>
+                <a href="{% url 'properties:property_list' %}" class="clear-filters-btn">مسح الكل</a>
+            </div>
         </div>
-    </div>
+    </form>
 
-
-    <div class="results-section" id="results-section">
+    <main class="results-section" id="results-section">
         <div class="results-header">
             <div class="results-info">
                 <h3 class="results-title">العقارات المتاحة</h3>
-                <p class="results-count">
-                    تم العثور على <span id="results-count">{{ properties|length }}</span> عقار
-                </p>
+                <p class="results-count">تم العثور على <strong>{{ page_obj.paginator.count }}</strong> عقار</p>
             </div>
-            <div class="results-controls">
-                <div class="view-toggle">
-                    <button type="button" class="view-btn active" data-view="grid">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M4 5C4 4.44772 4.44772 4 5 4H8C8.55228 4 9 4.44772 9 5V8C9 8.55228 8.55228 9 8 9H5C4.44772 9 4 8.55228 4 8V5Z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M15 5C15 4.44772 15.4477 4 16 4H19C19.5523 4 20 4.44772 20 5V8C20 8.55228 19.5523 9 19 9H16C15.4477 9 15 8.55228 15 8V5Z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M4 16C4 15.4477 4.44772 15 5 15H8C8.55228 15 9 15.4477 9 16V19C9 19.5523 8.55228 20 8 20H5C4.44772 20 4 19.5523 4 19V16Z" stroke="currentColor" stroke-width="2"/>
-                            <path d="M15 16C15 15.4477 15.4477 15 16 15H19C19.5523 15 20 15.4477 20 16V19C20 19.5523 19.5523 20 19 20H16C15.4477 20 15 19.5523 15 19V16Z" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                    <button type="button" class="view-btn" data-view="list">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M8 6H21M8 12H21M8 18H21M3 6H3.01M3 12H3.01M3 18H3.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                </div>
-                <button id="scroll-to-top" class="scroll-top-btn" style="display: none;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+            <div class="view-toggle">
+                <button type="button" class="view-btn" data-view="grid" title="عرض شبكي">
+                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 5C4 4.44772 4.44772 4 5 4H8C8.55228 4 9 4.44772 9 5V8C9 8.55228 8.55228 9 8 9H5C4.44772 9 4 8.55228 4 8V5Z" stroke="currentColor" stroke-width="2"/><path d="M15 5C15 4.44772 15.4477 4 16 4H19C19.5523 4 20 4.44772 20 5V8C20 8.55228 19.5523 9 19 9H16C15.4477 9 15 8.55228 15 8V5Z" stroke="currentColor" stroke-width="2"/><path d="M4 16C4 15.4477 4.44772 15 5 15H8C8.55228 15 9 15.4477 9 16V19C9 19.5523 8.55228 20 8 20H5C4.44772 20 4 19.5523 4 19V16Z" stroke="currentColor" stroke-width="2"/><path d="M15 16C15 15.4477 15.4477 15 16 15H19C19.5523 15 20 15.4477 20 16V19C20 19.5523 19.5523 20 19 20H16C15.4477 20 15 19.5523 15 19V16Z" stroke="currentColor" stroke-width="2"/></svg>
+                </button>
+                <button type="button" class="view-btn" data-view="list" title="عرض قائمة">
+                    <svg width="20" height="20" viewBox="0 0 24 24"><path d="M8 6H21M8 12H21M8 18H21M3 6H3.01M3 12H3.01M3 18H3.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
             </div>
         </div>
 
         {% if properties %}
-        <div id="property-results" class="property-grid">
-            {% for item in properties %}
-            {% with property=item.property %}
-            <article class="property-card fade-in"
-                             data-city="{{ property.city|lower }}"
-                             data-search="{{ property.title|lower }} {{ property.city|lower }} {{ property.location_address|lower }}"
-                             data-price="{{ property.price }}"
-                             data-type="{{ property.property_type }}"
-                             data-status="{{ property.status }}">
-                <div class="property-image-container">
-                    <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}">
-                        <img src="{{ item.display_image_url }}"
-                             alt="{{ property.title }}"
-                             class="property-image"
-                             loading="lazy">
-                    </a>
-                    <div class="property-badges">
-                        <span class="property-type-badge">
-                            {{ property.get_property_type_display }}
-                        </span>
-                        <span class="property-status-badge {{ property.status }}">
-                            {{ property.get_status_display }}
-                        </span>
-                    </div>
-                    <div class="property-actions">
-                        <button type="button" class="favorite-btn" data-property-id="{{ property.id }}">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.5783 8.50903 2.9987 7.05 2.9987C5.59096 2.9987 4.19169 3.5783 3.16 4.61C2.1283 5.6417 1.5487 7.04097 1.5487 8.5C1.5487 9.95903 2.1283 11.3583 3.16 12.39L12 21.23L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22249 22.4518 8.5C22.4518 7.77751 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="share-btn" data-property-id="{{ property.id }}">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.12548 15.0077 5.24917 15.0227 5.37061L8.08264 9.26756C7.54305 8.54471 6.8089 8.00001 6 8.00001C4.34315 8.00001 3 9.34315 3 11C3 12.6569 4.34315 14 6 14C6.8089 14 7.54305 13.4553 8.08264 12.7324L15.0227 16.6294C15.0077 16.7508 15 16.8745 15 17C15 18.6569 16.3431 20 18 20C19.6569 20 21 18.6569 21 17C21 15.3431 19.6569 14 18 14C17.1911 14 16.4569 14.5447 15.9174 15.2676L8.97736 11.3706C8.99232 11.2492 9 11.1255 9 11C9 10.8745 8.99232 10.7508 8.97736 10.6294L15.9174 6.73244C16.4569 7.45529 17.1911 8 18 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="property-content">
-                    <div class="property-header-info">
-                        <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}"
-                           class="property-name">
-                            {{ property.title }}
-                        </a>
-                        <div class="property-price">
-                            {{ property.price|floatformat:"0" }} ج.م
+            <div id="property-results" class="property-grid">
+                {% for item in properties %}
+                    {% with property=item.property %}
+                    <article class="property-card">
+                        <div class="property-image-container">
+                            <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}">
+                                <img src="{{ item.display_image_url }}" alt="{{ property.title }}" class="property-image" loading="lazy">
+                            </a>
+                            <div class="property-badges">
+                                <span class="property-type-badge">{{ property.get_property_type_display }}</span>
+                                <span class="property-status-badge {{ property.status }}">{{ property.get_status_display }}</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="property-location">
-                        <svg class="location-icon" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                        </svg>
-                        <span>{{ property.location_address|truncatechars:40 }}, {{ property.city }}</span>
-                    </div>
-
-                    <div class="property-features">
-                        <div class="feature">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H7M3 7V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V7M3 7H7M7 3V7M7 7H21M7 7V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>3 غرف</span> {# Assuming this comes from property.bedrooms #}
+                        <div class="property-content">
+                            <div class="property-header">
+                                <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}" class="property-title">{{ property.title }}</a>
+                                <div class="property-price">{{ property.price|floatformat:"0" }} ج.م</div>
+                            </div>
+                            <div class="property-location">
+                                <svg class="location-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                                <span>{{ property.location_address|truncatechars:40 }}, {{ property.city }}</span>
+                            </div>
+                            <div class="property-features">
+                                <div class="feature">🛏️ <span>{{ property.bedrooms|default:"--" }} غرف</span></div>
+                                <div class="feature">🛁 <span>{{ property.bathrooms|default:"--" }} حمام</span></div>
+                                <div class="feature">🏠 <span>{{ property.area|floatformat:"0"|default:"--" }} م²</span></div>
+                            </div>
                         </div>
-                        <div class="feature">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>2 حمام</span> {# Assuming this comes from property.bathrooms #}
-                        </div>
-                        <div class="feature">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M21 16V8C21 7.46957 20.7893 6.96086 20.4142 6.58579C20.0391 6.21071 19.5304 6 19 6H5C4.46957 6 3.96086 6.21071 3.58579 6.58579C3.21071 6.96086 3 7.46957 3 8V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H19C19.5304 18 20.0391 17.7893 20.4142 17.4142C20.7893 17.0391 21 16.5304 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <span>150م²</span> {# Assuming this comes from property.area #}
-                        </div>
-                        {# Added Views Count Feature #}
-                        <div class="feature">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                            <span>{{ property.views_count|default:"0" }} مشاهدة</span>
-                        </div>
-                    </div>
-                </div>
-            </article>
-            {% endwith %}
-            {% endfor %}
-        </div>
+                    </article>
+                    {% endwith %}
+                {% endfor %}
+            </div>
 
-        {% if page_obj.paginator.num_pages > 1 %}
-        <div class="pagination-container">
-            <nav class="pagination" role="navigation" aria-label="صفحات النتائج">
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q|urlencode }}&city_search={{ request.GET.city_search|urlencode }}&property_type={{ request.GET.property_type|urlencode }}&status={{ request.GET.status|urlencode }}&min_price={{ request.GET.min_price|urlencode }}&max_price={{ request.GET.max_price|urlencode }}&bedrooms={{ request.GET.bedrooms|urlencode }}&min_area={{ request.GET.min_area|urlencode }}&max_area={{ request.GET.max_area|urlencode }}"
-                       class="pagination-link"
-                       aria-label="الصفحة السابقة">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        السابق
-                    </a>
-                {% endif %}
-
-                <span class="pagination-current" aria-current="page">
-                    صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q|urlencode }}&city_search={{ request.GET.city_search|urlencode }}&property_type={{ request.GET.property_type|urlencode }}&status={{ request.GET.status|urlencode }}&min_price={{ request.GET.min_price|urlencode }}&max_price={{ request.GET.max_price|urlencode }}&bedrooms={{ request.GET.bedrooms|urlencode }}&min_area={{ request.GET.min_area|urlencode }}&max_area={{ request.GET.max_area|urlencode }}"
-                       class="pagination-link"
-                       aria-label="الصفحة التالية">
-                        التالي
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                {% endif %}
-            </nav>
-        </div>
-        {% endif %}
+            {% if page_obj.paginator.num_pages > 1 %}
+                <nav class="pagination-container" aria-label="صفحات النتائج">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}" class="pagination-link">السابق</a>
+                    {% endif %}
+                    <span class="pagination-current">صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}" class="pagination-link">التالي</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
 
         {% else %}
-        <div class="empty-state">
-            <div class="empty-state-icon">
-                <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
-                    <path d="M19 21V5A2 2 0 00 17 3H7A2 2 0 00 5 5V21M19 21H21M19 21H15M5 21H3M5 21H9M9 7H10M9 11H10M15 7H16M15 11H16M9 15H10M15 15H16M9 19H10M15 19H16" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+            <div class="empty-state">
+                <div class="empty-state-icon">😔</div>
+                <h3 class="empty-state-title">لا توجد عقارات مطابقة لبحثك</h3>
+                <p class="empty-state-subtitle">حاول تغيير معايير البحث أو مسح الفلاتر.</p>
+                <a href="{% url 'properties:property_list' %}" class="btn-primary">عرض جميع العقارات</a>
             </div>
-
-            <h3 class="empty-state-title">
-                😔 لا توجد عقارات مطابقة
-            </h3>
-
-            <p class="empty-state-subtitle">
-                حاول تغيير معايير البحث أو مسح الفلاتر للعثور على عقارات أخرى.
-            </p>
-
-            <div class="empty-state-actions">
-                <a href="{% url 'properties:property_list' %}" class="btn btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M4 4V5H4.582M15.356 2A8.001 8.001 0 004.582 9M4.582 9H9M11 11V5H11.581M11.581 5A8.003 8.003 0 01-4.357-2M11.581 5H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    عرض جميع العقارات
-                </a>
-            </div>
-        </div>
         {% endif %}
-    </div>
+    </main>
 </div>
 
-<div id="loading-overlay" class="loading-overlay" style="display: none;">
-    <div class="loading-spinner">
-        <div class="spinner-ring"></div>
-        <p class="loading-text">جاري تحميل العقارات...</p>
-    </div>
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
 </div>
 
-<script>
-// Modern Real Estate Search with Enhanced UX
-document.addEventListener('DOMContentLoaded', function() {
-    // Shared state accessible by helper functions in this scope
-    let mainSearchEl = null;
-    let searchSuggestionsEl = null;
-    let searchableData = [];
-    // Initialize all components
-    initMainSearch();
-    initFilters();
-    initPropertyCards();
-    initScrollToTop();
-    initViewToggle();
-    initSmoothScrolling();
+<button id="scroll-to-top" class="scroll-top-btn" title="العودة للأعلى">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+{% endblock %}
 
-    // Main search functionality
-    function initMainSearch() {
-        mainSearchEl = document.getElementById('main-search');
-        const searchBtn = document.getElementById('search-btn');
-        searchSuggestionsEl = document.getElementById('search-suggestions');
-
-        if (!mainSearchEl) return;
-
-        // Get all searchable content
-        searchableData = Array.from(document.querySelectorAll('.property-card')).map(card => ({
-            title: card.dataset.search,
-            city: card.dataset.city,
-            element: card
-        }));
-
-        mainSearchEl.addEventListener('input', debounce(function(e) {
-            const query = e.target.value.toLowerCase().trim();
-
-            if (query.length < 2) {
-                hideSearchSuggestions();
-                return;
-            }
-
-            const results = searchableData.filter(item =>
-                item.title.includes(query) || item.city.includes(query)
-            );
-
-            showSearchSuggestions(results, query);
-        }, 300));
-
-        // Search button click
-        searchBtn.addEventListener('click', function() {
-            const query = mainSearchEl.value.trim();
-            if (query) {
-                performSearch(query);
-            }
-        });
-
-        // Enter key in search
-        mainSearchEl.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const query = mainSearchEl.value.trim();
-                if (query) {
-                    performSearch(query);
-                }
-            }
-        });
-    }
-
-    function showSearchSuggestions(results, query) {
-        searchSuggestionsEl = document.getElementById('search-suggestions');
-        if (!searchSuggestionsEl) return;
-
-        if (results.length === 0) {
-            hideSearchSuggestions();
-            return;
-        }
-
-        const suggestionsHTML = results.slice(0, 5).map(result => {
-            const highlightedTitle = result.title.replace(new RegExp(query, 'gi'),
-                `<mark class="search-highlight">${query}</mark>`
-            );
-            return `<div class="search-suggestion" data-index="${searchableData.indexOf(result)}">${highlightedTitle}</div>`;
-        }).join('');
-
-        searchSuggestionsEl.innerHTML = suggestionsHTML;
-        searchSuggestionsEl.style.display = 'block';
-
-        // Add click handlers
-        searchSuggestionsEl.querySelectorAll('.search-suggestion').forEach(suggestion => {
-            suggestion.addEventListener('click', function() {
-                const index = parseInt(this.dataset.index);
-                const result = searchableData[index];
-                const searchValue = (result && result.city) ? result.city : (result && result.title ? result.title : '');
-                if (mainSearchEl) mainSearchEl.value = searchValue;
-                hideSearchSuggestions();
-                // Navigate and filter on server to ensure full, correct results
-                performSearch(searchValue.trim());
-            });
-        });
-    }
-
-    function hideSearchSuggestions() {
-        searchSuggestionsEl = document.getElementById('search-suggestions');
-        if (searchSuggestionsEl) {
-            searchSuggestionsEl.style.display = 'none';
-        }
-    }
-
-    function performSearch(query) {
-        // Submit via filters form, preserving existing filter fields
-        const form = document.getElementById('filters-form');
-        if (!form) return;
-
-        const hiddenQ = document.getElementById('hidden-q');
-        const cityInput = document.getElementById('city_search');
-
-        // Determine if query matches a known city (case-insensitive)
-        const knownCities = [...new Set(Array.from(document.querySelectorAll('.property-card')).map(card => card.dataset.city).filter(Boolean))];
-        const match = knownCities.find(c => (c || '').toLowerCase() === query.toLowerCase());
-
-        // Reset paging on new search
-        const pageInput = form.querySelector('[name="page"]');
-        if (pageInput) pageInput.remove();
-
-        if (match) {
-            if (cityInput) cityInput.value = match;
-            if (hiddenQ) hiddenQ.value = '';
-        } else {
-            if (cityInput) cityInput.value = '';
-            if (hiddenQ) hiddenQ.value = query;
-        }
-
-        form.submit();
-    }
-
-    function scrollToProperty(propertyElement) {
-        const resultsSection = document.getElementById('results-section');
-        const propertyTop = propertyElement.offsetTop - 200;
-
-        // Smooth scroll to results section first
-        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        // Then scroll to specific property
-        setTimeout(() => {
-            window.scrollTo({
-                top: propertyTop,
-                behavior: 'smooth'
-            });
-        }, 500);
-    }
-
-    // Filters functionality
-    function initFilters() {
-        const toggleBtn = document.getElementById('toggle-filters');
-        const filtersContent = document.getElementById('filters-content');
-        const cityInput = document.getElementById('city_search');
-        const cityDropdown = document.getElementById('city-dropdown');
-
-        if (toggleBtn && filtersContent) {
-            toggleBtn.addEventListener('click', function() {
-                const isVisible = filtersContent.classList.contains('show');
-
-                if (isVisible) {
-                    filtersContent.classList.remove('show');
-                    toggleBtn.querySelector('span').textContent = 'إظهار الفلاتر';
-                    toggleBtn.querySelector('.toggle-icon').style.transform = 'rotate(0deg)';
-                } else {
-                    filtersContent.classList.add('show');
-                    toggleBtn.querySelector('span').textContent = 'إخفاء الفلاتر';
-                    toggleBtn.querySelector('.toggle-icon').style.transform = 'rotate(180deg)';
-                }
-            });
-        }
-
-        // City dropdown functionality
-        if (cityInput && cityDropdown) {
-            const cities = [...new Set(Array.from(document.querySelectorAll('.property-card')).map(card =>
-                card.dataset.city
-            ))].filter(Boolean);
-
-            cityInput.addEventListener('input', debounce(function(e) {
-                const query = e.target.value.toLowerCase().trim();
-
-                if (query.length < 2) {
-                    hideCityDropdown();
-                    return;
-                }
-
-                const filteredCities = cities.filter(city =>
-                    city.includes(query)
-                );
-
-                showCityDropdown(filteredCities, query);
-            }, 300));
-
-            // Added remaining city dropdown JavaScript:
-            function showCityDropdown(cities, query) {
-                const cityDropdown = document.getElementById('city-dropdown');
-                if (!cityDropdown) return;
-
-                if (cities.length === 0) {
-                    hideCityDropdown();
-                    return;
-                }
-
-                const dropdownHTML = cities.map(city => {
-                    const highlightedCity = city.replace(new RegExp(query, 'gi'),
-                        `<mark class="city-highlight">${query}</mark>`
-                    );
-                    return `<div class="city-suggestion" data-city-name="${city}">${highlightedCity}</div>`;
-                }).join('');
-
-                cityDropdown.innerHTML = dropdownHTML;
-                cityDropdown.style.display = 'block';
-
-                cityDropdown.querySelectorAll('.city-suggestion').forEach(suggestion => {
-                    suggestion.addEventListener('click', function() {
-                        cityInput.value = this.dataset.cityName;
-                        hideCityDropdown();
-                    });
-                });
-            }
-
-            function hideCityDropdown() {
-                const cityDropdown = document.getElementById('city-dropdown');
-                if (cityDropdown) {
-                    cityDropdown.style.display = 'none';
-                }
-            }
-
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
-                if (cityDropdown && !cityInput.contains(event.target) && !cityDropdown.contains(event.target)) {
-                    hideCityDropdown();
-                }
-                const localMainSearch = document.getElementById('main-search');
-                const localSearchSuggestions = document.getElementById('search-suggestions');
-                if (localSearchSuggestions && localMainSearch && !localMainSearch.contains(event.target) && !localSearchSuggestions.contains(event.target)) {
-                    hideSearchSuggestions();
-                }
-            });
-        }
-    }
-
-    // Property Card Interactions (Favorites, Shares, etc.)
-    function initPropertyCards() {
-        document.querySelectorAll('.favorite-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const propertyId = this.dataset.propertyId;
-                // Implement favorite toggle logic (e.g., via AJAX)
-                console.log(`Property ${propertyId} favorited/unfavorited!`);
-                this.classList.toggle('favorited'); // Add a class for styling
-            });
-        });
-
-        document.querySelectorAll('.share-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const propertyId = this.dataset.propertyId;
-                const propertyUrl = window.location.origin + `{% url 'properties:property_detail' 0 %}`.replace('0', propertyId); // Example URL, adjust if slugs are used
-                
-                if (navigator.share) {
-                    navigator.share({
-                        title: 'تحقق من هذا العقار!',
-                        text: 'قد يعجبك هذا العقار المعروض للبيع/للإيجار:',
-                        url: propertyUrl,
-                    }).then(() => {
-                        console.log('Thanks for sharing!');
-                    }).catch(console.error);
-                } else {
-                    // Fallback for browsers that don't support Web Share API
-                    navigator.clipboard.writeText(propertyUrl)
-                        .then(() => {
-                            alert('تم نسخ رابط العقار إلى الحافظة!');
-                        })
-                        .catch(err => {
-                            console.error('فشل نسخ الرابط: ', err);
-                        });
-                }
-            });
-        });
-    }
-
-    // Scroll to Top Button
-    function initScrollToTop() {
-        const scrollToTopBtn = document.getElementById('scroll-to-top');
-        if (!scrollToTopBtn) return;
-
-        window.addEventListener('scroll', debounce(() => {
-            if (window.scrollY > 300) { // Show button after scrolling down 300px
-                scrollToTopBtn.style.display = 'flex'; // Use flex for centering icon and text
-            } else {
-                scrollToTopBtn.style.display = 'none';
-            }
-        }, 100));
-
-        scrollToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    }
-
-    // View Toggle (Grid/List)
-    function initViewToggle() {
-        const viewToggleBtns = document.querySelectorAll('.view-toggle .view-btn');
-        const propertyResults = document.getElementById('property-results');
-        if (!viewToggleBtns.length || !propertyResults) return;
-
-        // Load saved view preference
-        const savedView = localStorage.getItem('propertyView') || 'grid';
-        if (savedView === 'list') {
-            propertyResults.classList.add('list-view');
-            document.querySelector('.view-btn[data-view="list"]').classList.add('active');
-            document.querySelector('.view-btn[data-view="grid"]').classList.remove('active');
-        } else {
-            propertyResults.classList.remove('list-view');
-            document.querySelector('.view-btn[data-view="grid"]').classList.add('active');
-            document.querySelector('.view-btn[data-view="list"]').classList.remove('active');
-        }
-
-        viewToggleBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                viewToggleBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const viewType = this.dataset.view;
-                if (viewType === 'list') {
-                    propertyResults.classList.add('list-view');
-                } else {
-                    propertyResults.classList.remove('list-view');
-                }
-                localStorage.setItem('propertyView', viewType); // Save preference
-            });
-        });
-    }
-
-    // Smooth Scrolling for anchor links
-    function initSmoothScrolling() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-    }
-
-    // Utility Functions
-    function debounce(func, delay) {
-        let timeout;
-        return function(...args) {
-            const context = this;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(context, args), delay);
-        };
-    }
-});
-</script>
-
-
-
-    <script>
-        // Toggle filters functionality
-        const toggleBtn = document.getElementById('toggle-filters');
-        const filtersContent = document.getElementById('filters-content');
-        const toggleText = toggleBtn.querySelector('span');
-
-        toggleBtn.addEventListener('click', function() {
-            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'false';
-            
-            if (isExpanded) {
-                filtersContent.classList.add('collapsed');
-                toggleBtn.setAttribute('aria-expanded', 'false');
-                toggleText.textContent = 'إخفاء الفلاتر';
-            } else {
-                filtersContent.classList.remove('collapsed');
-                toggleBtn.setAttribute('aria-expanded', 'true');
-                toggleText.textContent = 'إظهار الفلاتر';
-            }
-        });
-
-        // Add smooth focus transitions
-        const inputs = document.querySelectorAll('.filter-input, .filter-select, .price-input, .area-input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'scale(1)';
-            });
-        });
-    </script>
+{% block extra_scripts %}
+<script src="{% static 'js/property_list.js' %}" defer></script>
 {% endblock %}
