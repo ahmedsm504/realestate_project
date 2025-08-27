@@ -49,11 +49,10 @@
     </div>
 
 
-
-        <div class="filters-section">
+<div class="filters-section">
         <div class="filters-header">
             <h2 class="filters-title">فلترة البحث</h2>
-            <button type="button" id="toggle-filters" class="toggle-filters-btn" aria-expanded="true">
+            <button type="button" id="toggle-filters" class="toggle-filters-btn">
                 <span>إظهار الفلاتر</span>
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -62,8 +61,8 @@
         </div>
 
         <div class="filters-content" id="filters-content">
-            <form method="GET" action="#" id="filters-form">
-                <input type="hidden" name="q" id="hidden-q" value="">
+            <form method="GET" action="{% url 'properties:property_list' %}" id="filters-form">
+                <input type="hidden" name="q" id="hidden-q" value="{{ request.GET.q }}">
                 <div class="filters-grid">
                     <div class="filter-group">
                         <label for="city_search" class="filter-label">
@@ -76,7 +75,7 @@
                                name="city_search"
                                id="city_search"
                                placeholder="اختر المدينة..."
-                               value=""
+                               value="{{ request.GET.city_search }}"
                                class="filter-input city-input">
                         <div id="city-dropdown" class="city-dropdown"></div>
                     </div>
@@ -90,11 +89,9 @@
                         </label>
                         <select name="property_type" id="property_type" class="filter-select">
                             <option value="">جميع الأنواع</option>
-                            <option value="apartment">شقة</option>
-                            <option value="villa">فيلا</option>
-                            <option value="house">منزل</option>
-                            <option value="office">مكتب</option>
-                            <option value="shop">محل</option>
+                            {% for value, text in property_type_choices %}
+                                <option value="{{ value }}" {% if request.GET.property_type == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
@@ -107,10 +104,9 @@
                         </label>
                         <select name="status" id="status" class="filter-select">
                             <option value="">جميع الحالات</option>
-                            <option value="sale">للبيع</option>
-                            <option value="rent">للإيجار</option>
-                            <option value="sold">مباع</option>
-                            <option value="rented">مؤجر</option>
+                            {% for value, text in property_status_choices %}
+                                <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
@@ -123,16 +119,16 @@
                         </label>
                         <div class="price-range-inputs">
                             <input type="number"
-                                   name="min_price"
-                                   placeholder="من"
-                                   value=""
-                                   class="price-input">
+                                           name="min_price"
+                                           placeholder="من"
+                                           value="{{ request.GET.min_price }}"
+                                           class="price-input">
                             <span class="price-separator">-</span>
                             <input type="number"
-                                   name="max_price"
-                                   placeholder="إلى"
-                                   value=""
-                                   class="price-input">
+                                           name="max_price"
+                                           placeholder="إلى"
+                                           value="{{ request.GET.max_price }}"
+                                           class="price-input">
                         </div>
                     </div>
 
@@ -145,10 +141,10 @@
                         </label>
                         <select name="bedrooms" id="bedrooms" class="filter-select">
                             <option value="">أي عدد</option>
-                            <option value="1">1 غرفة</option>
-                            <option value="2">2 غرف</option>
-                            <option value="3">3 غرف</option>
-                            <option value="4">4+ غرف</option>
+                            <option value="1" {% if request.GET.bedrooms == '1' %}selected{% endif %}>1 غرفة</option>
+                            <option value="2" {% if request.GET.bedrooms == '2' %}selected{% endif %}>2 غرف</option>
+                            <option value="3" {% if request.GET.bedrooms == '3' %}selected{% endif %}>3 غرف</option>
+                            <option value="4" {% if request.GET.bedrooms == '4' %}selected{% endif %}>4+ غرف</option>
                         </select>
                     </div>
 
@@ -161,16 +157,16 @@
                         </label>
                         <div class="area-range-inputs">
                             <input type="number"
-                                   name="min_area"
-                                   placeholder="من"
-                                   value=""
-                                   class="area-input">
+                                           name="min_area"
+                                           placeholder="من"
+                                           value="{{ request.GET.min_area }}"
+                                           class="area-input">
                             <span class="area-separator">-</span>
                             <input type="number"
-                                   name="max_area"
-                                   placeholder="إلى"
-                                   value=""
-                                   class="area-input">
+                                           name="max_area"
+                                           placeholder="إلى"
+                                           value="{{ request.GET.max_area }}"
+                                           class="area-input">
                         </div>
                     </div>
                 </div>
@@ -182,7 +178,7 @@
                         </svg>
                         تطبيق الفلاتر
                     </button>
-                    <a href="#" class="clear-filters-btn">
+                    <a href="{% url 'properties:property_list' %}" class="clear-filters-btn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
