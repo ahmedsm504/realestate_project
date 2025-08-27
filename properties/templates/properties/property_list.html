@@ -750,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const toggleText = toggleBtn.querySelector('span');
 
         toggleBtn.addEventListener('click', function() {
-            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'false';
             
             if (isExpanded) {
                 filtersContent.classList.add('collapsed');
