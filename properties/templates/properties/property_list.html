@@ -734,4 +734,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+
+
+    <script>
+        // Toggle filters functionality
+        const toggleBtn = document.getElementById('toggle-filters');
+        const filtersContent = document.getElementById('filters-content');
+        const toggleText = toggleBtn.querySelector('span');
+
+        toggleBtn.addEventListener('click', function() {
+            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+            
+            if (isExpanded) {
+                filtersContent.classList.add('collapsed');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                toggleText.textContent = 'إظهار الفلاتر';
+            } else {
+                filtersContent.classList.remove('collapsed');
+                toggleBtn.setAttribute('aria-expanded', 'true');
+                toggleText.textContent = 'إخفاء الفلاتر';
+            }
+        });
+
+        // Add smooth focus transitions
+        const inputs = document.querySelectorAll('.filter-input, .filter-select, .price-input, .area-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
 {% endblock %}
