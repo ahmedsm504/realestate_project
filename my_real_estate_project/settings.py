@@ -202,16 +202,32 @@ if not DEBUG:
 PORT = config('PORT', default=8000, cast=int)
 # settings.py
 
+# settings.py
+
+# settings.py
+
 import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from decouple import config  # Make sure this import is at the top
 
-# قم بتثبيت المكتبة: pip install django-cloudinary-storage
+# ... (rest of your settings) ...
+
+# This is the corrected block
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET')
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default='')
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+    secure=True
+)
