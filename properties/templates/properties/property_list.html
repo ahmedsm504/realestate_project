@@ -54,7 +54,7 @@
         <div class="filters-header">
             <h2 class="filters-title">فلترة البحث</h2>
             <button type="button" id="toggle-filters" class="toggle-filters-btn" aria-expanded="true">
-                <span>إظهار الفلاتر</span>
+                <span>إخفاء الفلاتر</span>
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -741,11 +741,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isExpanded) {
                 filtersContent.classList.add('collapsed');
                 toggleBtn.setAttribute('aria-expanded', 'false');
-                toggleText.textContent = 'إظهار الفلاتر';
+                toggleText.textContent = 'إخفاء الفلاتر';
             } else {
                 filtersContent.classList.remove('collapsed');
                 toggleBtn.setAttribute('aria-expanded', 'true');
-                toggleText.textContent = 'إخفاء الفلاتر';
+                toggleText.textContent = 'إظهار الفلاتر';
             }
         });
 
