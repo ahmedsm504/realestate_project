@@ -539,21 +539,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cityInput = document.getElementById('city_search');
         const cityDropdown = document.getElementById('city-dropdown');
 
-        if (toggleBtn && filtersContent) {
-            toggleBtn.addEventListener('click', function() {
-                const isVisible = filtersContent.classList.contains('show');
-
-                if (isVisible) {
-                    filtersContent.classList.remove('show');
-                    toggleBtn.querySelector('span').textContent = 'إظهار الفلاتر';
-                    toggleBtn.querySelector('.toggle-icon').style.transform = 'rotate(0deg)';
-                } else {
-                    filtersContent.classList.add('show');
-                    toggleBtn.querySelector('span').textContent = 'إخفاء الفلاتر';
-                    toggleBtn.querySelector('.toggle-icon').style.transform = 'rotate(180deg)';
-                }
-            });
-        }
+        
 
         // City dropdown functionality
         if (cityInput && cityDropdown) {
