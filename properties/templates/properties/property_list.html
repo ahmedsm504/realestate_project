@@ -35,6 +35,7 @@
                                id="main-search"
                                class="main-search-input"
                                placeholder="ابحث عن عقار، مدينة، أو منطقة..."
+                               value="{{ request.GET.q|default:'' }}"
                                autocomplete="off">
                 <div id="search-suggestions" class="search-suggestions"></div>
             </div>
@@ -61,8 +62,8 @@
         </div>
 
         <div class="filters-content collapsed" id="filters-content">
-            <form method="GET" action="#" id="filters-form">
-                <input type="hidden" name="q" id="hidden-q" value="">
+            <form method="GET" action="{% url 'properties:property_list' %}" id="filters-form">
+                <input type="hidden" name="q" id="hidden-q" value="{{ request.GET.q|default:'' }}">
                 <div class="filters-grid">
                     <div class="filter-group">
                         <label for="city_search" class="filter-label">
@@ -75,7 +76,7 @@
                                name="city_search"
                                id="city_search"
                                placeholder="اختر المدينة..."
-                               value=""
+                               value="{{ request.GET.city_search|default:'' }}"
                                class="filter-input city-input">
                         <div id="city-dropdown" class="city-dropdown"></div>
                     </div>
@@ -89,11 +90,12 @@
                         </label>
                         <select name="property_type" id="property_type" class="filter-select">
                             <option value="">جميع الأنواع</option>
-                            <option value="apartment">شقة</option>
-                            <option value="villa">فيلا</option>
-                            <option value="house">منزل</option>
-                            <option value="office">مكتب</option>
-                            <option value="shop">محل</option>
+                            <option value="apartment" {% if request.GET.property_type == 'apartment' %}selected{% endif %}>شقة</option>
+                            <option value="villa" {% if request.GET.property_type == 'villa' %}selected{% endif %}>فيلا</option>
+                            <option value="land" {% if request.GET.property_type == 'land' %}selected{% endif %}>أرض</option>
+                            <option value="commercial" {% if request.GET.property_type == 'commercial' %}selected{% endif %}>محل/مكتب</option>
+                            <option value="chalet" {% if request.GET.property_type == 'chalet' %}selected{% endif %}>شاليه</option>
+                            <option value="other" {% if request.GET.property_type == 'other' %}selected{% endif %}>أخرى</option>
                         </select>
                     </div>
 
@@ -106,10 +108,8 @@
                         </label>
                         <select name="status" id="status" class="filter-select">
                             <option value="">جميع الحالات</option>
-                            <option value="sale">للبيع</option>
-                            <option value="rent">للإيجار</option>
-                            <option value="sold">مباع</option>
-                            <option value="rented">مؤجر</option>
+                            <option value="for_sale" {% if request.GET.status == 'for_sale' %}selected{% endif %}>للبيع</option>
+                            <option value="for_rent" {% if request.GET.status == 'for_rent' %}selected{% endif %}>للإيجار</option>
                         </select>
                     </div>
 
@@ -124,13 +124,13 @@
                             <input type="number"
                                    name="min_price"
                                    placeholder="من"
-                                   value=""
+                                   value="{{ request.GET.min_price|default:'' }}"
                                    class="price-input">
                             <span class="price-separator">-</span>
                             <input type="number"
                                    name="max_price"
                                    placeholder="إلى"
-                                   value=""
+                                   value="{{ request.GET.max_price|default:'' }}"
                                    class="price-input">
                         </div>
                     </div>
@@ -144,10 +144,10 @@
                         </label>
                         <select name="bedrooms" id="bedrooms" class="filter-select">
                             <option value="">أي عدد</option>
-                            <option value="1">1 غرفة</option>
-                            <option value="2">2 غرف</option>
-                            <option value="3">3 غرف</option>
-                            <option value="4">4+ غرف</option>
+                            <option value="1" {% if request.GET.bedrooms == '1' %}selected{% endif %}>1 غرفة</option>
+                            <option value="2" {% if request.GET.bedrooms == '2' %}selected{% endif %}>2 غرف</option>
+                            <option value="3" {% if request.GET.bedrooms == '3' %}selected{% endif %}>3 غرف</option>
+                            <option value="4" {% if request.GET.bedrooms == '4' %}selected{% endif %}>4+ غرف</option>
                         </select>
                     </div>
 
@@ -162,13 +162,13 @@
                             <input type="number"
                                    name="min_area"
                                    placeholder="من"
-                                   value=""
+                                   value="{{ request.GET.min_area|default:'' }}"
                                    class="area-input">
                             <span class="area-separator">-</span>
                             <input type="number"
                                    name="max_area"
                                    placeholder="إلى"
-                                   value=""
+                                   value="{{ request.GET.max_area|default:'' }}"
                                    class="area-input">
                         </div>
                     </div>
@@ -406,6 +406,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollToTop();
     initViewToggle();
     initSmoothScrolling();
+    
+    // Check if we need to scroll to results after page load
+    checkAndScrollToResults();
 
     // Main search functionality
     function initMainSearch() {
@@ -440,8 +443,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Search button click
         searchBtn.addEventListener('click', function() {
             const query = mainSearchEl.value.trim();
+            console.log('Search button clicked with query:', query);
             if (query) {
+                // Store scroll flag for main search
+                sessionStorage.setItem('scrollToResults', 'true');
                 performSearch(query);
+            } else {
+                console.log('No query provided');
             }
         });
 
@@ -449,8 +457,13 @@ document.addEventListener('DOMContentLoaded', function() {
         mainSearchEl.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const query = mainSearchEl.value.trim();
+                console.log('Enter key pressed with query:', query);
                 if (query) {
+                    // Store scroll flag for main search
+                    sessionStorage.setItem('scrollToResults', 'true');
                     performSearch(query);
+                } else {
+                    console.log('No query provided on Enter');
                 }
             }
         });
@@ -483,6 +496,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const searchValue = (result && result.city) ? result.city : (result && result.title ? result.title : '');
                 if (mainSearchEl) mainSearchEl.value = searchValue;
                 hideSearchSuggestions();
+                // Store scroll flag for search suggestion click
+                sessionStorage.setItem('scrollToResults', 'true');
                 // Navigate and filter on server to ensure full, correct results
                 performSearch(searchValue.trim());
             });
@@ -499,7 +514,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function performSearch(query) {
         // Submit via filters form, preserving existing filter fields
         const form = document.getElementById('filters-form');
-        if (!form) return;
+        if (!form) {
+            console.error('Filters form not found');
+            return;
+        }
 
         const hiddenQ = document.getElementById('hidden-q');
         const cityInput = document.getElementById('city_search');
@@ -520,11 +538,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (hiddenQ) hiddenQ.value = query;
         }
 
-        // Auto-scroll to results after form submission
-        setTimeout(() => {
-            scrollToResults();
-        }, 100);
+        // Ensure the form has the correct action URL
+        if (!form.action || form.action === '#') {
+            form.action = window.location.pathname;
+        }
 
+        console.log('Submitting form with query:', query);
         form.submit();
     }
 
@@ -654,10 +673,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('filters-form');
         if (form) {
             form.addEventListener('submit', function(e) {
-                // Auto-scroll to results after form submission
-                setTimeout(() => {
-                    scrollToResults();
-                }, 100);
+                // Store scroll flag in sessionStorage to scroll after page loads
+                sessionStorage.setItem('scrollToResults', 'true');
             });
         }
 
@@ -677,10 +694,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 
-                // Submit form to show all properties
-                setTimeout(() => {
-                    scrollToResults();
-                }, 100);
+                // Store scroll flag and submit form to show all properties
+                sessionStorage.setItem('scrollToResults', 'true');
                 form.submit();
             });
         }
@@ -791,6 +806,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+    }
+
+    // Check and scroll to results if needed
+    function checkAndScrollToResults() {
+        // Check if we need to scroll to results after page load
+        if (sessionStorage.getItem('scrollToResults') === 'true') {
+            // Clear the flag
+            sessionStorage.removeItem('scrollToResults');
+            
+            // Wait a bit for the page to fully load, then scroll
+            setTimeout(() => {
+                scrollToResults();
+            }, 500);
+        }
     }
 
     // Utility Functions
