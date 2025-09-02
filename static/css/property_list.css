@@ -448,6 +448,30 @@ body {
             display: block;
         }
 
+        .city-suggestion {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .city-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .city-suggestion:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        .city-highlight {
+            background: linear-gradient(120deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+            padding: 0.125rem 0.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         /* ===== Actions ===== */
         .filters-actions {
             display: flex;
@@ -575,13 +599,16 @@ body {
 
         /* ===== Animation for collapsible content ===== */
         .filters-content {
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
             overflow: hidden;
+            max-height: 2000px;
+            opacity: 1;
         }
 
         .filters-content.collapsed {
             max-height: 0;
             padding: 0 2rem;
+            opacity: 0;
         }
 
         /* ===== Focus states for accessibility ===== */

@@ -49,18 +49,18 @@
 
 
 
-        <div class="filters-section">
+    <div class="filters-section">
         <div class="filters-header">
             <h2 class="filters-title">فلترة البحث</h2>
-            <button type="button" id="toggle-filters" class="toggle-filters-btn" aria-expanded="true">
-                <span>إخفاء الفلاتر</span>
+            <button type="button" id="toggle-filters" class="toggle-filters-btn" aria-expanded="false">
+                <span>إظهار الفلاتر</span>
                 <svg class="toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
         </div>
 
-        <div class="filters-content" id="filters-content">
+        <div class="filters-content collapsed" id="filters-content">
             <form method="GET" action="#" id="filters-form">
                 <input type="hidden" name="q" id="hidden-q" value="">
                 <div class="filters-grid">
@@ -234,7 +234,9 @@
                              data-search="{{ property.title|lower }} {{ property.city|lower }} {{ property.location_address|lower }}"
                              data-price="{{ property.price }}"
                              data-type="{{ property.property_type }}"
-                             data-status="{{ property.status }}">
+                             data-status="{{ property.status }}"
+                             data-bedrooms="{{ property.bedrooms|default:0 }}"
+                             data-area="{{ property.area|default:0 }}">
                 <div class="property-image-container">
                     <a href="{% if property.slug %}{% url 'properties:property_detail' property.slug %}{% else %}{% url 'properties:property_detail' property.pk %}{% endif %}">
                         <img src="{{ item.display_image_url }}"
@@ -283,25 +285,30 @@
                     </div>
 
                     <div class="property-features">
+                        {% if property.bedrooms %}
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M3 7V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H7M3 7V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V7M3 7H7M7 3V7M7 7H21M7 7V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span>3 غرف</span> {# Assuming this comes from property.bedrooms #}
+                            <span>{{ property.bedrooms }} غرف</span>
                         </div>
+                        {% endif %}
+                        {% if property.bathrooms %}
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M8 12H8.01M12 12H12.01M16 12H16.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span>2 حمام</span> {# Assuming this comes from property.bathrooms #}
+                            <span>{{ property.bathrooms }} حمام</span>
                         </div>
+                        {% endif %}
+                        {% if property.area %}
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 16V8C21 7.46957 20.7893 6.96086 20.4142 6.58579C20.0391 6.21071 19.5304 6 19 6H5C4.46957 6 3.96086 6.21071 3.58579 6.58579C3.21071 6.96086 3 7.46957 3 8V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H19C19.5304 18 20.0391 17.7893 20.4142 17.4142C20.7893 17.0391 21 16.5304 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span>150م²</span> {# Assuming this comes from property.area #}
+                            <span>{{ property.area }}م²</span>
                         </div>
-                        {# Added Views Count Feature #}
+                        {% endif %}
                         <div class="feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -391,6 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let mainSearchEl = null;
     let searchSuggestionsEl = null;
     let searchableData = [];
+    
     // Initialize all components
     initMainSearch();
     initFilters();
@@ -512,23 +520,31 @@ document.addEventListener('DOMContentLoaded', function() {
             if (hiddenQ) hiddenQ.value = query;
         }
 
+        // Auto-scroll to results after form submission
+        setTimeout(() => {
+            scrollToResults();
+        }, 100);
+
         form.submit();
     }
 
-    function scrollToProperty(propertyElement) {
+    function scrollToResults() {
         const resultsSection = document.getElementById('results-section');
-        const propertyTop = propertyElement.offsetTop - 200;
-
-        // Smooth scroll to results section first
-        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        // Then scroll to specific property
-        setTimeout(() => {
+        if (resultsSection) {
+            const offsetTop = resultsSection.getBoundingClientRect().top + window.pageYOffset - 100;
             window.scrollTo({
-                top: propertyTop,
+                top: offsetTop,
                 behavior: 'smooth'
             });
-        }, 500);
+            
+            // Add highlight effect to results
+            setTimeout(() => {
+                resultsSection.classList.add('search-results-highlight');
+                setTimeout(() => {
+                    resultsSection.classList.remove('search-results-highlight');
+                }, 1000);
+            }, 500);
+        }
     }
 
     // Filters functionality
@@ -537,8 +553,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const filtersContent = document.getElementById('filters-content');
         const cityInput = document.getElementById('city_search');
         const cityDropdown = document.getElementById('city-dropdown');
+        const toggleText = toggleBtn.querySelector('span');
 
-        
+        // Toggle filters functionality
+        toggleBtn.addEventListener('click', function() {
+            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+            
+            if (isExpanded) {
+                filtersContent.classList.add('collapsed');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                toggleText.textContent = 'إظهار الفلاتر';
+            } else {
+                filtersContent.classList.remove('collapsed');
+                toggleBtn.setAttribute('aria-expanded', 'true');
+                toggleText.textContent = 'إخفاء الفلاتر';
+            }
+        });
 
         // City dropdown functionality
         if (cityInput && cityDropdown) {
@@ -561,7 +591,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 showCityDropdown(filteredCities, query);
             }, 300));
 
-            // Added remaining city dropdown JavaScript:
             function showCityDropdown(cities, query) {
                 const cityDropdown = document.getElementById('city-dropdown');
                 if (!cityDropdown) return;
@@ -608,6 +637,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+
+        // Add smooth focus transitions
+        const inputs = document.querySelectorAll('.filter-input, .filter-select, .price-input, .area-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Handle form submission with auto-scroll
+        const form = document.getElementById('filters-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Auto-scroll to results after form submission
+                setTimeout(() => {
+                    scrollToResults();
+                }, 100);
+            });
+        }
+
+        // Handle clear filters button
+        const clearBtn = document.querySelector('.clear-filters-btn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Clear all filter inputs
+                const allInputs = form.querySelectorAll('input, select');
+                allInputs.forEach(input => {
+                    if (input.type === 'text' || input.type === 'number') {
+                        input.value = '';
+                    } else if (input.type === 'select-one') {
+                        input.selectedIndex = 0;
+                    }
+                });
+                
+                // Submit form to show all properties
+                setTimeout(() => {
+                    scrollToResults();
+                }, 100);
+                form.submit();
+            });
+        }
     }
 
     // Property Card Interactions (Favorites, Shares, etc.)
@@ -624,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.share-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const propertyId = this.dataset.propertyId;
-                const propertyUrl = window.location.origin + `{% url 'properties:property_detail' 0 %}`.replace('0', propertyId); // Example URL, adjust if slugs are used
+                const propertyUrl = window.location.origin + `{% url 'properties:property_detail' 0 %}`.replace('0', propertyId);
                 
                 if (navigator.share) {
                     navigator.share({
@@ -654,8 +730,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!scrollToTopBtn) return;
 
         window.addEventListener('scroll', debounce(() => {
-            if (window.scrollY > 300) { // Show button after scrolling down 300px
-                scrollToTopBtn.style.display = 'flex'; // Use flex for centering icon and text
+            if (window.scrollY > 300) {
+                scrollToTopBtn.style.display = 'flex';
             } else {
                 scrollToTopBtn.style.display = 'none';
             }
@@ -697,7 +773,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     propertyResults.classList.remove('list-view');
                 }
-                localStorage.setItem('propertyView', viewType); // Save preference
+                localStorage.setItem('propertyView', viewType);
             });
         });
     }
@@ -707,9 +783,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
     }
@@ -725,39 +804,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-
-
-    <script>
-        // Toggle filters functionality
-        const toggleBtn = document.getElementById('toggle-filters');
-        const filtersContent = document.getElementById('filters-content');
-        const toggleText = toggleBtn.querySelector('span');
-
-        toggleBtn.addEventListener('click', function() {
-            const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-            
-            if (isExpanded) {
-                filtersContent.classList.add('collapsed');
-                toggleBtn.setAttribute('aria-expanded', 'false');
-                toggleText.textContent = 'Filters';
-            } else {
-                filtersContent.classList.remove('collapsed');
-                toggleBtn.setAttribute('aria-expanded', 'true');
-                toggleText.textContent = 'Filters';
-            }
-        });
-
-        // Add smooth focus transitions
-        const inputs = document.querySelectorAll('.filter-input, .filter-select, .price-input, .area-input');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'scale(1.02)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'scale(1)';
-            });
-        });
-    </script>
 {% endblock %}
