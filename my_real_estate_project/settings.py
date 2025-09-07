@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'pages',
     'cloudinary',
     'cloudinary_storage',
+    'channels',             # 👈 أضف هذا السطر أولاً
+    'notifications',
 ]
 import os
 
@@ -231,3 +233,28 @@ cloudinary.config(
     api_secret=config('CLOUDINARY_API_SECRET'),
     secure=True
 )
+# settings.py
+
+# ASGI configuration for Django Channels
+ASGI_APPLICATION = 'my_real_estate_project.asgi.application'
+
+# Channel Layers configuration
+REDIS_URL = config("REDIS_URL", default=None)
+
+if REDIS_URL:
+    # في Railway أو أي سيرفر فيه Redis
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [REDIS_URL],
+            },
+        },
+    }
+else:
+    # محليًا (من غير Redis)
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }

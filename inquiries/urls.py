@@ -8,4 +8,6 @@ urlpatterns = [
     path('realtor/', views.realtor_inquiries, name='realtor_inquiries'),
     path('user/', views.user_inquiries, name='user_inquiries'),
     path('reply/<int:inquiry_pk>/', views.reply_to_inquiry, name='reply_to_inquiry'),
+    path('<int:inquiry_pk>/', views.inquiry_detail, name='inquiry_detail'),
+
 ]

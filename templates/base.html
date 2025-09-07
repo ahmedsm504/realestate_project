@@ -2,154 +2,183 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-
-    <!--favicon-->
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" style="width: 96px; height: 96px;">
-
-    <!-- تحسين محركات البحث SEO -->
     <meta name="description" content="عقاراتنا - اكتشف أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك بسهولة وسرعة.">
     <meta name="keywords" content="عقارات, شقق للبيع, شقق للإيجار, عقارات مصر, منازل, فلل, عقاراتنا">
     <meta name="author" content="عقاراتنا">
-
-    <!-- تحسين عرض الموقع على السوشيال ميديا -->
     <meta property="og:title" content="عقاراتنا - أفضل العقارات في مصر">
     <meta property="og:description" content="ابحث عن أفضل الشقق والعقارات للبيع أو الإيجار في مدينتك.">
     <meta property="og:image" content="{% static 'img/realestate.jfif' %}">
     <meta property="og:type" content="website">
-
-        <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GK67V6HEYS"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-GK67V6HEYS');
-    </script>
-    
-    <!-- دعم محركات البحث للغة -->
     <meta name="robots" content="index, follow">
     <meta http-equiv="Content-Language" content="ar">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}عقاراتنا{% endblock %}</title>
     
-    <!-- External CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/property_list.css' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GK67V6HEYS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-GK67V6HEYS');
+    </script>
+
+    <!-- CSRF Token -->
+    {% csrf_token %}
+
+    <style>
+        .notification-container { position: relative; display: inline-block; }
+        .notification-badge { background-color: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -8px; right: -8px; min-width: 18px; text-align: center; display: none; }
+        .notification-dropdown { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 300px; max-height: 400px; overflow-y: auto; z-index: 1000; display: none; }
+        .notification-dropdown.show { display: block; }
+        .notification-header { padding: 12px 16px; border-bottom: 1px solid #eee; font-weight: bold; background-color: #f8f9fa; color: #333; }
+        .notification-item { padding: 12px 16px; border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s; }
+        .notification-item:hover { background-color: #f8f9fa; }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-empty { padding: 20px 16px; text-align: center; color: #666; }
+        .notification-bell { font-size: 20px; color: #666; cursor: pointer; transition: color 0.2s; }
+        .notification-bell:hover { color: #333; }
+        
+        /* تحسينات للرسائل */
+        .messages-container {
+            position: fixed;
+            top: 80px;
+            right: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+        .message-item {
+            margin-bottom: 10px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            max-width: 90%;
+            pointer-events: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .message-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .message-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .message-content { display: flex; align-items: center; }
+        .message-icon { width: 20px; height: 20px; margin-left: 10px; }
+        .message-close { background: none; border: none; cursor: pointer; color: inherit; }
+    </style>
     
-    <!-- Extra CSS block for child templates -->
     {% block extra_css %}{% endblock %}
 </head>
 
 <body class="flex flex-col min-h-screen">
     {% load socialaccount %}
 
-    <!-- Password Status Message -->
-    <div class="user-password-status-message">
-        {% if user.is_authenticated %}
-            {% if not user.has_usable_password %}
-                <div class="bg-amber-50 border-r-4 border-amber-400 text-amber-800 p-4 mb-4 rounded-lg shadow-sm mx-4 mt-4" role="alert">
-                    <div class="flex items-center">
-                        <svg class="h-6 w-6 text-amber-600 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                        </svg>
-                        <div>
-                            <p class="font-bold">تنبيه:</p>
-                            <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
-                            <p class="mt-2 text-sm">
-                                <a href="{% url 'account_set_password' %}" class="font-semibold text-amber-900 hover:text-amber-950 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
-                            </p>
-                        </div>
+    {% if user.is_authenticated %}
+        {% if not user.has_usable_password %}
+            <div class="bg-amber-50 border-r-4 border-amber-400 text-amber-800 p-4 mb-4 rounded-lg shadow-sm mx-4 mt-4" role="alert">
+                <div class="flex items-center">
+                    <svg class="h-6 w-6 text-amber-600 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div>
+                        <p class="font-bold">تنبيه:</p>
+                        <p>لم تقم بتعيين كلمة مرور لحسابك بعد.</p>
+                        <p class="mt-2 text-sm">
+                            <a href="{% url 'account_set_password' %}" class="font-semibold text-amber-900 hover:text-amber-950 underline">اضغط هنا لتعيين كلمة مرور</a> لتمكين تسجيل الدخول المباشر.
+                        </p>
                     </div>
                 </div>
-            {% endif %}
-        {% endif %}
-    </div>
-
-    <!-- Enhanced Navigation Bar -->
-    <!-- Enhanced Navbar with your CSS -->
-<nav class="navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-    <div class="container">
-        <div class="navbar-content">
-            
-            <!-- Sign Out Section (Left) -->
-            <div class="sign-out-section">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'users:logout' %}" class="nav-button nav-button-danger"><i class="fas fa-sign-out-alt"></i></a>
-                {% else %}
-                    <a href="{% url 'users:login' %}" class="nav-link">
-                    <i class="fas fa-sign-in-alt"></i>
-</a>                {% endif %}
             </div>
+        {% endif %}
+    {% endif %}
 
-            <!-- Center Navigation -->
-            <div class="center-nav">
-                <a href="{% url 'properties:property_list' %}" class="nav-link">الرئيسية</a>
+    <nav class="navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="sign-out-section">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'users:logout' %}" class="nav-button nav-button-danger"><i class="fas fa-sign-out-alt"></i></a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i></a>
+                    {% endif %}
+                </div>
+
+                <div class="center-nav">
+                    <a href="{% url 'properties:property_list' %}" class="nav-link">الرئيسية</a>
+                    {% if user.is_authenticated %}
+                        {% if user.is_realtor %}
+                            <a href="{% url 'properties:my_properties' %}" class="nav-link">عقاراتي</a>
+                            <a href="{% url 'properties:add_property' %}" class="nav-link">إضافة عقار</a>
+                            <a href="{% url 'inquiries:realtor_inquiries' %}" class="nav-link">استفسارات عقاراتي</a>
+                        {% else %}
+                            <a href="{% url 'inquiries:user_inquiries' %}" class="nav-link">استفساراتي المرسلة</a>
+                        {% endif %}
+                        {% if not user.is_realtor %}
+                            <a href="{% url 'properties:favorite_list' %}" class="nav-link">مفضلاتي</a>
+                        {% endif %}
+                        <a href="{% url 'users:profile' %}" class="nav-link">ملفي الشخصي</a>
+                        <div class="notification-container">
+                            <i class="fas fa-bell notification-bell" id="notification-bell"></i>
+                            <span class="notification-badge" id="notification-count">0</span>
+                            <div class="notification-dropdown" id="notification-dropdown">
+                                <div class="notification-header">الإشعارات</div>
+                                <div class="notification-empty" id="notification-empty">لا توجد إشعارات جديدة</div>
+                                <div id="notification-list"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="logo-section">
+                    <a href="{% url 'properties:property_list' %}" class="logo-container">
+                        <img src="{% static 'img/logo.png' %}" alt="عقاراتنا" class="logo">
+                    </a>
+                </div>
+
+                <button id="mobile-menu-button" class="mobile-menu-btn">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="mobile-nav">
+            <div class="mobile-nav-content">
+                <a href="{% url 'properties:property_list' %}" class="mobile-nav-link">الرئيسية</a>
                 {% if user.is_authenticated %}
                     {% if user.is_realtor %}
-                        <a href="{% url 'properties:my_properties' %}" class="nav-link">عقاراتي</a>
-                        <a href="{% url 'properties:add_property' %}" class="nav-link">إضافة عقار</a>
-                        <a href="{% url 'inquiries:realtor_inquiries' %}" class="nav-link">استفسارات عقاراتي</a>
+                        <a href="{% url 'properties:my_properties' %}" class="mobile-nav-link">عقاراتي</a>
+                        <a href="{% url 'properties:add_property' %}" class="mobile-nav-link">إضافة عقار</a>
+                        <a href="{% url 'inquiries:realtor_inquiries' %}" class="mobile-nav-link">استفسارات عقاراتي</a>
                     {% else %}
-                        <a href="{% url 'inquiries:user_inquiries' %}" class="nav-link">استفساراتي المرسلة</a>
+                        <a href="{% url 'inquiries:user_inquiries' %}" class="mobile-nav-link">استفساراتي المرسلة</a>
                     {% endif %}
                     {% if not user.is_realtor %}
-                        <a href="{% url 'properties:favorite_list' %}" class="nav-link">مفضلاتي</a>
+                        <a href="{% url 'properties:favorite_list' %}" class="mobile-nav-link">مفضلاتي</a>
                     {% endif %}
-                    <a href="{% url 'users:profile' %}" class="nav-link">ملفي الشخصي</a>
-                {% endif %}
-            </div>
-
-            <!-- Logo Section (Right) -->
-            <div class="logo-section">
-                <a href="{% url 'properties:property_list' %}" class="logo-container">
-                    <img src="{% static 'img/logo.png' %}" alt="عقاراتنا" class="logo">
-                </a>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-button" class="mobile-menu-btn">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Mobile Navigation -->
-    <div id="mobile-menu" class="mobile-nav">
-        <div class="mobile-nav-content">
-            <a href="{% url 'properties:property_list' %}" class="mobile-nav-link">الرئيسية</a>
-            {% if user.is_authenticated %}
-                {% if user.is_realtor %}
-                    <a href="{% url 'properties:my_properties' %}" class="mobile-nav-link">عقاراتي</a>
-                    <a href="{% url 'properties:add_property' %}" class="mobile-nav-link">إضافة عقار</a>
-                    <a href="{% url 'inquiries:realtor_inquiries' %}" class="mobile-nav-link">استفسارات عقاراتي</a>
+                    <a href="{% url 'users:profile' %}" class="mobile-nav-link">ملفي الشخصي</a>
+                    <a href="{% url 'users:logout' %}" class="mobile-nav-link danger">تسجيل الخروج</a>
                 {% else %}
-                    <a href="{% url 'inquiries:user_inquiries' %}" class="mobile-nav-link">استفساراتي المرسلة</a>
+                    <a href="{% url 'users:register' %}" class="mobile-nav-link">تسجيل حساب</a>
+                    <a href="{% url 'users:login' %}" class="mobile-nav-link primary">تسجيل الدخول</a>
                 {% endif %}
-                {% if not user.is_realtor %}
-                    <a href="{% url 'properties:favorite_list' %}" class="mobile-nav-link">مفضلاتي</a>
-                {% endif %}
-                <a href="{% url 'users:profile' %}" class="mobile-nav-link">ملفي الشخصي</a>
-                <a href="{% url 'users:logout' %}" class="mobile-nav-link danger">تسجيل الخروج</a>
-            {% else %}
-                <a href="{% url 'users:register' %}" class="mobile-nav-link">تسجيل حساب</a>
-                <a href="{% url 'users:login' %}" class="mobile-nav-link primary">تسجيل الدخول</a>
-            {% endif %}
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    <!-- Search Section -->
-
-
-    <!-- System Messages -->
     <div class="messages-container">
         {% if messages %}
             {% for message in messages %}
@@ -176,11 +205,9 @@
         {% endif %}
     </div>
 
-    <!-- Main Content -->
     <main class="main-content" id="search-section">
         <div class="container mx-auto px-6">
             {% block content %}
-            <!-- Default content when no block is provided -->
             <section class="features-section">
                 <h2 class="section-title">لماذا تختار عقاراتنا؟</h2>
                 <div class="features-grid">
@@ -205,48 +232,285 @@
         </div>
     </main>
 
+    <footer class="footer">
+        <div class="container mx-auto px-6">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="{% static 'img/logo.png' %}" alt="عقاراتنا" class="footer-logo-img">
+                </div>
 
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/your-page" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/company/your-company" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@Aqarutna" target="_blank" rel="noopener noreferrer" class="social-link youtube" aria-label="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@your-account" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="container mx-auto px-6">
-        <div class="footer-content">
-            <!-- Logo Section -->
-            <div class="footer-logo">
-                <img src="{% static 'img/logo.png' %}" alt="عقاراتنا" class="footer-logo-img">
+                <div class="footer-links">
+                    <a href="{% url 'about' %}" class="footer-link">من نحن</a>
+                    <a href="{% url 'terms' %}" class="footer-link">شروط الخدمة</a>
+                    <a href="{% url 'privacy_policy' %}" class="footer-link">سياسة الخصوصية</a>
+                </div>
+
+                <p class="footer-text">&copy; 2025 عقاراتنا. جميع الحقوق محفوظة.</p>
             </div>
-
-            <!-- Social Media Links -->
-            <div class="footer-social">
-                <a href="https://www.facebook.com/your-page" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://www.linkedin.com/company/your-company" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-                <a href="https://www.youtube.com/@Aqarutna" target="_blank" rel="noopener noreferrer" class="social-link youtube" aria-label="YouTube">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="https://www.tiktok.com/@your-account" target="_blank" rel="noopener noreferrer" class="social-link tiktok" aria-label="TikTok">
-                    <i class="fab fa-tiktok"></i>
-                </a>
-            </div>
-
-            <!-- Footer Navigation Links -->
-            <div class="footer-links">
-                <a href="{% url 'about' %}" class="footer-link">من نحن</a>
-                <a href="{% url 'terms' %}" class="footer-link">شروط الخدمة</a>
-                <a href="{% url 'privacy_policy' %}" class="footer-link">سياسة الخصوصية</a>
-            </div>
-
-            <!-- Copyright Text -->
-            <p class="footer-text">&copy; 2025 عقاراتنا. جميع الحقوق محفوظة.</p>
         </div>
-    </div>
-</footer>
-   
+    </footer>
 
+    <!-- JavaScript Files -->
     <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- Notifications JavaScript -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userIsAuthenticated = '{{ user.is_authenticated|yesno:"True,False" }}' === 'True';
+        
+        if (userIsAuthenticated) {
+            console.log('المستخدم مسجل دخول، بدء تهيئة الإشعارات...');
+            
+            let notificationSocket = null;
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
 
+            const notificationBell = document.getElementById('notification-bell');
+            const notificationDropdown = document.getElementById('notification-dropdown');
+            const notificationCount = document.getElementById('notification-count');
+            const notificationEmpty = document.getElementById('notification-empty');
+            const notificationList = document.getElementById('notification-list');
+
+            if (!notificationBell) {
+                console.error('عنصر جرس الإشعارات غير موجود');
+                return;
+            }
+
+            // تحميل الإشعارات عند النقر على الجرس
+            notificationBell.addEventListener('click', function(e) {
+                console.log('تم النقر على جرس الإشعارات');
+                e.stopPropagation();
+                
+                if (!notificationDropdown.classList.contains('show')) {
+                    console.log('فتح قائمة الإشعارات وتحميل البيانات...');
+                    loadExistingNotifications();
+                    markNotificationsAsRead();
+                }
+                
+                notificationDropdown.classList.toggle('show');
+            });
+
+            // إغلاق القائمة عند النقر خارجها
+            document.addEventListener('click', function(e) {
+                if (!notificationDropdown.contains(e.target) && e.target !== notificationBell) {
+                    notificationDropdown.classList.remove('show');
+                }
+            });
+
+            // منع إغلاق القائمة عند النقر داخلها
+            notificationDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            function connectWebSocket() {
+                if (reconnectAttempts >= maxReconnectAttempts) {
+                    console.log('تم الوصول إلى الحد الأقصى لمحاولات إعادة الاتصال');
+                    return;
+                }
+
+                const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+                const wsUrl = protocol + window.location.host + '/ws/notifications/';
+                console.log('محاولة الاتصال بـ WebSocket:', wsUrl);
+                
+                notificationSocket = new WebSocket(wsUrl);
+
+                notificationSocket.onopen = function(e) {
+                    console.log('تم إنشاء اتصال WebSocket بنجاح');
+                    reconnectAttempts = 0;
+                };
+
+                notificationSocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    console.log('تم استقبال بيانات من WebSocket:', data);
+                    
+                    if (data.type === 'initial_count') {
+                        updateNotificationCount(data.notification_count);
+                    } else if (data.type === 'new_notification') {
+                        updateNotificationCount(data.notification_count);
+                        addNotificationToDropdown(data.message, data.link, data.created_at || 'الآن');
+                        showNotificationPopup(data.message);
+                    }
+                };
+
+                notificationSocket.onclose = function(e) {
+                    console.log('تم إغلاق اتصال WebSocket، جاري إعادة الاتصال...');
+                    reconnectAttempts++;
+                    setTimeout(connectWebSocket, 3000);
+                };
+
+                notificationSocket.onerror = function(e) {
+                    console.error('حدث خطأ في WebSocket:', e);
+                };
+            }
+
+            function updateNotificationCount(count) {
+                console.log('تحديث عداد الإشعارات:', count);
+                notificationCount.textContent = count;
+                notificationCount.style.display = count > 0 ? 'block' : 'none';
+            }
+
+            function addNotificationToDropdown(message, link, createdAt) {
+                console.log('إضافة إشعار جديد للقائمة:', message);
+                
+                if (notificationEmpty.style.display !== 'none') {
+                    notificationEmpty.style.display = 'none';
+                }
+                
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item';
+                notificationItem.innerHTML = `
+                    <a href="${link}" style="text-decoration:none;color:inherit;display:block;">
+                        <div style="font-size:14px;margin-bottom:5px;">${message}</div>
+                        <small style="color:#666;">${createdAt}</small>
+                    </a>
+                `;
+                
+                notificationList.insertBefore(notificationItem, notificationList.firstChild);
+            }
+
+            function showNotificationPopup(message) {
+                console.log('عرض إشعار منبثق:', message);
+                
+                if ("Notification" in window) {
+                    if (Notification.permission === "granted") {
+                        const notification = new Notification("عقاراتنا", { 
+                            body: message, 
+                            icon: "{% static 'img/logo.png' %}",
+                            requireInteraction: false,
+                            silent: false,
+                            tag: 'notification-' + Date.now()
+                        });
+                        
+                        setTimeout(() => {
+                            notification.close();
+                        }, 10000);
+                        
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission().then(function(permission) {
+                            if (permission === "granted") {
+                                const notification = new Notification("عقاراتنا", { 
+                                    body: message, 
+                                    icon: "{% static 'img/logo.png' %}",
+                                    requireInteraction: false,
+                                    silent: false,
+                                    tag: 'notification-' + Date.now()
+                                });
+                                
+                                setTimeout(() => {
+                                    notification.close();
+                                }, 10000);
+                            }
+                        });
+                    }
+                }
+            }
+
+            function loadExistingNotifications() {
+                console.log('تحميل الإشعارات الموجودة...');
+                
+                fetch('/notifications/api/')
+                    .then(response => {
+                        console.log('استجابة API:', response);
+                        if (!response.ok) {
+                            throw new Error('فشل في تحميل الإشعارات: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('بيانات الإشعارات المستلمة:', data);
+                        
+                        notificationList.innerHTML = '';
+                        
+                        if (data.notifications && data.notifications.length > 0) {
+                            notificationEmpty.style.display = 'none';
+                            
+                            data.notifications.forEach(notification => {
+                                const notificationItem = document.createElement('div');
+                                notificationItem.className = 'notification-item';
+                                notificationItem.innerHTML = `
+                                    <a href="${notification.link}" style="text-decoration:none;color:inherit;display:block;">
+                                        <div style="font-size:14px;margin-bottom:5px;">${notification.message}</div>
+                                        <small style="color:#666;">${notification.created_at}</small>
+                                    </a>
+                                `;
+                                notificationList.appendChild(notificationItem);
+                            });
+                        } else {
+                            notificationEmpty.style.display = 'block';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('خطأ في تحميل الإشعارات:', error);
+                        notificationEmpty.textContent = 'حدث خطأ في تحميل الإشعارات';
+                        notificationEmpty.style.display = 'block';
+                    });
+            }
+
+            function markNotificationsAsRead() {
+                console.log('تحديد الإشعارات كمقروءة...');
+                
+                fetch('/notifications/mark-as-read/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('فشل في تحديث حالة الإشعارات: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('نتيجة تحديث الإشعارات:', data);
+                    if (data.success) {
+                        updateNotificationCount(0);
+                    }
+                })
+                .catch(error => {
+                    console.error('خطأ في تحديث حالة الإشعارات:', error);
+                });
+            }
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // بدء اتصال WebSocket
+            connectWebSocket();
+            
+            console.log('تم تهيئة نظام الإشعارات بنجاح');
+        } else {
+            console.log('المستخدم غير مسجل دخول');
+        }
+    });
+    </script>
 </body>
 </html>

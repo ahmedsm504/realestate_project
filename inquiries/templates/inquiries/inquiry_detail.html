@@ -1,0 +1,612 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  body {
+      font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+  }
+
+  .inquiry-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: calc(100vh - 200px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+  }
+
+  .main-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      box-shadow: 
+          0 20px 40px rgba(0, 0, 0, 0.1),
+          0 8px 32px rgba(31, 38, 135, 0.2);
+      overflow: hidden;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      animation: slideUp 0.6s ease-out;
+  }
+
+  @keyframes slideUp {
+      from {
+          opacity: 0;
+          transform: translateY(50px);
+      }
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+
+  .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+  }
+
+  .card-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+
+  .card-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+  }
+
+  .card-title i {
+      font-size: 1.8rem;
+      opacity: 0.9;
+  }
+
+  .card-body {
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.9);
+  }
+
+  .info-grid {
+      display: grid;
+      gap: 25px;
+      margin-bottom: 30px;
+  }
+
+  .info-item {
+      background: linear-gradient(135deg, #f8f9ff 0%, #e8f0fe 100%);
+      border: 2px solid rgba(102, 126, 234, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+  }
+
+  .info-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+  }
+
+  .info-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+      border-color: rgba(102, 126, 234, 0.3);
+  }
+
+  .info-item:hover::before {
+      transform: scaleX(1);
+  }
+
+  .info-label {
+      font-weight: 700;
+      color: #667eea;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .info-value {
+      color: #2d3748;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin: 0;
+  }
+
+  .message-content {
+      background: linear-gradient(135deg, #fff7ed 0%, #fef3e8 100%);
+      border: 2px solid rgba(251, 146, 60, 0.2);
+      border-radius: 15px;
+      padding: 25px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #7c2d12;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(251, 146, 60, 0.1);
+  }
+
+  .message-content::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      font-size: 4rem;
+      color: rgba(251, 146, 60, 0.3);
+      font-family: serif;
+  }
+
+  .reply-section {
+      margin-top: 30px;
+      padding: 25px;
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 2px solid rgba(34, 197, 94, 0.2);
+      border-radius: 15px;
+      position: relative;
+      animation: fadeIn 0.6s ease-out 0.3s both;
+  }
+
+  @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+  }
+
+  .reply-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, #22c55e, #16a34a);
+      border-radius: 0 15px 15px 0;
+  }
+
+  .reply-header {
+      font-weight: 700;
+      color: #15803d;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+  }
+
+  .reply-text {
+      color: #166534;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      margin: 0;
+  }
+
+  .no-reply {
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+      padding: 40px;
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      border-radius: 15px;
+      border: 2px dashed #d1d5db;
+  }
+
+  .action-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+  }
+
+  .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 30px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+  }
+
+  .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      transform: translate(-50%, -50%);
+  }
+
+  .btn:hover::before {
+      width: 200px;
+      height: 200px;
+  }
+
+  .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+
+  .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn i {
+      position: relative;
+      z-index: 2;
+  }
+
+  .btn span {
+      position: relative;
+      z-index: 2;
+  }
+
+  .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-right: 10px;
+  }
+
+  .status-read {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      color: #166534;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .status-unread {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .floating-actions {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+  }
+
+  .fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s ease;
+  }
+
+  .fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+
+  .fab-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+      .inquiry-wrapper {
+          padding: 20px 10px;
+      }
+
+      .card-body {
+          padding: 25px 20px;
+      }
+
+      .card-title {
+          font-size: 1.5rem;
+      }
+
+      .action-buttons {
+          flex-direction: column;
+          align-items: stretch;
+      }
+
+      .btn {
+          justify-content: center;
+      }
+
+      .floating-actions {
+          bottom: 20px;
+          left: 20px;
+      }
+  }
+
+  /* Loading Animation */
+  .loading {
+      pointer-events: none;
+      opacity: 0.7;
+  }
+
+  .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      transform: translate(-50%, -50%);
+  }
+
+  @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>
+
+<div class="inquiry-wrapper">
+    <div class="main-card">
+        <div class="card-header">
+            <h1 class="card-title">
+                <i class="fas fa-envelope-open-text"></i>
+                <span>تفاصيل الاستفسار</span>
+            </h1>
+        </div>
+        
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-home"></i>
+                        العقار
+                    </div>
+                    <p class="info-value">{{ inquiry.property.title }}</p>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-user"></i>
+                        المرسل
+                    </div>
+                    <p class="info-value">
+                        {{ inquiry.inquirer.username }}
+                        {% if not inquiry.is_read %}
+                            <span class="status-badge status-unread">
+                                <i class="fas fa-exclamation-circle"></i>
+                                جديد
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-read">
+                                <i class="fas fa-check-circle"></i>
+                                مقروء
+                            </span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        تاريخ الإرسال
+                    </div>
+                    <p class="info-value">{{ inquiry.created_at|date:"d F Y - H:i" }}</p>
+                </div>
+
+                <div class="info-item" style="grid-column: 1 / -1;">
+                    <div class="info-label">
+                        <i class="fas fa-comment-alt"></i>
+                        محتوى الرسالة
+                    </div>
+                    <div class="message-content">
+                        {{ inquiry.message }}
+                    </div>
+                </div>
+            </div>
+
+            {% if inquiry.reply_message %}
+                <div class="reply-section">
+                    <div class="reply-header">
+                        <i class="fas fa-reply"></i>
+                        الرد
+                    </div>
+                    <p class="reply-text">{{ inquiry.reply_message }}</p>
+
+                </div>
+            {% else %}
+                <div class="no-reply">
+                    <i class="fas fa-hourglass-half" style="font-size: 2rem; color: #9ca3af; margin-bottom: 15px;"></i>
+                    <p style="margin: 0; font-size: 1.1rem;">لم يتم الرد على هذا الاستفسار بعد</p>
+                </div>
+            {% endif %}
+
+                
+                <a href="{% url 'inquiries:user_inquiries' %}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>العودة للقائمة</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<div class="floating-actions">
+    <a href="{% url 'inquiries:user_inquiries' %}" class="fab fab-primary" title="العودة للقائمة">
+        <i class="fas fa-list"></i>
+    </a>
+</div>
+
+<script>
+function markAsRead(inquiryId) {
+    const btn = document.getElementById('markReadBtn');
+    const originalContent = btn.innerHTML;
+    
+    // Add loading state
+    btn.classList.add('loading');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>جاري التحديث...</span>';
+    
+    fetch(`/inquiries/mark-read/${inquiryId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI
+            btn.style.transform = 'scale(0)';
+            setTimeout(() => {
+                btn.remove();
+                
+                // Update status badge
+                const statusBadge = document.querySelector('.status-unread');
+                if (statusBadge) {
+                    statusBadge.className = 'status-badge status-read';
+                    statusBadge.innerHTML = '<i class="fas fa-check-circle"></i>مقروء';
+                }
+                
+                // Show success message
+                showMessage('تم تمييز الاستفسار كـ مقروء بنجاح!', 'success');
+            }, 300);
+        } else {
+            throw new Error(data.error || 'حدث خطأ غير متوقع');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        btn.classList.remove('loading');
+        btn.innerHTML = originalContent;
+        showMessage('حدث خطأ أثناء التحديث. يرجى المحاولة مرة أخرى.', 'error');
+    });
+}
+
+function showMessage(message, type) {
+    // Create message element
+    const messageEl = document.createElement('div');
+    messageEl.className = `message-item message-${type}`;
+    messageEl.innerHTML = `
+        <div class="message-content">
+            <svg class="message-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>${message}</span>
+        </div>
+        <button class="message-close" onclick="this.parentElement.remove()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    `;
+    
+    // Add to messages container
+    const container = document.querySelector('.messages-container');
+    if (container) {
+        container.appendChild(messageEl);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (messageEl.parentNode) {
+                messageEl.remove();
+            }
+        }, 5000);
+    }
+}
+
+// Add event listener for mark as read button
+document.addEventListener('DOMContentLoaded', function() {
+    const markReadBtn = document.getElementById('markReadBtn');
+    if (markReadBtn) {
+        markReadBtn.addEventListener('click', function() {
+            const inquiryId = this.dataset.inquiryId;
+            markAsRead(inquiryId);
+        });
+    }
+
+    // Add smooth scrolling and animations
+    // Animate cards on load
+    const cards = document.querySelectorAll('.info-item');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+    
+    // Add parallax effect to header
+    const header = document.querySelector('.card-header');
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        if (header) {
+            header.style.transform = `translateY(${rate}px)`;
+        }
+    });
+});
+</script>
+{% endblock %}

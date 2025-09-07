@@ -1,23 +1,21 @@
-# my_real_estate_project/urls.py
-
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings # لاستخدام MEDIA_URL في التطوير
-from django.conf.urls.static import static # لاستخدام MEDIA_URL في التطوير
+from django.conf import settings
+from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('allauth.urls')),
-    path('', include('pages.urls')), 
-    path('', include('properties.urls', namespace='properties')),
-    path('users/', include('users.urls')),          # روابط تطبيق المستخدمين
-    path('inquiries/', include('inquiries.urls')),  # روابط تطبيق الاستفسارات
-    path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
+    path('', include('pages.urls')),
+    path('', include(('properties.urls', 'properties'), namespace='properties')),
+    path('users/', include('users.urls')),
+    path('inquiries/', include('inquiries.urls')),
+    path('notifications/', include('notifications.urls')),  # ✅ هنا الاشعارات
 
+    path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
 ]
 
-# لخدمة ملفات الوسائط في وضع التطوير فقط
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
